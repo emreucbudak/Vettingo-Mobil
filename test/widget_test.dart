@@ -6,15 +6,24 @@ import 'package:vettingomobil/features/auth/domain/entities/login_credentials.da
 import 'package:vettingomobil/features/auth/presentation/pages/login_page.dart';
 
 void main() {
-  testWidgets('login page renders its main controls', (tester) async {
+  testWidgets('landing page opens the dashboard login', (tester) async {
     await tester.pumpWidget(const VettingoApp());
 
     expect(find.text('TalentPulse'), findsOneWidget);
+    expect(find.text('Precision Talent\nIntelligence.'), findsOneWidget);
+    expect(find.byKey(const ValueKey('startHiringButton')), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('startHiringButton')));
+    await tester.pumpAndSettle();
+
     expect(find.text('Access your dashboard'), findsOneWidget);
     expect(find.text('Job Seeker'), findsOneWidget);
     expect(find.text('Employer'), findsOneWidget);
-    expect(find.byKey(const ValueKey('emailField')), findsOneWidget);
-    expect(find.byKey(const ValueKey('passwordField')), findsOneWidget);
+    expect(find.byKey(const ValueKey('dashboardEmailField')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('dashboardPasswordField')),
+      findsOneWidget,
+    );
   });
 
   testWidgets('account type and remember me are managed by controller', (
