@@ -8,6 +8,17 @@ import '../../features/candidate_assessment/domain/usecases/get_assessment_answe
 import '../../features/candidate_assessment/domain/usecases/get_candidate_assessment.dart';
 import '../../features/candidate_assessment/domain/usecases/save_assessment_answer.dart';
 import '../../features/candidate_assessment/presentation/controllers/candidate_assessment_controller.dart';
+import '../../features/candidate_detail/data/datasources/candidate_detail_data_source.dart';
+import '../../features/candidate_detail/data/repositories/candidate_detail_repository_impl.dart';
+import '../../features/candidate_detail/domain/usecases/get_candidate_detail.dart';
+import '../../features/candidate_detail/domain/usecases/get_candidate_pipeline_action.dart';
+import '../../features/candidate_detail/domain/usecases/save_candidate_pipeline_action.dart';
+import '../../features/candidate_detail/presentation/controllers/candidate_detail_controller.dart';
+import '../../features/cv_review/data/datasources/cv_review_data_source.dart';
+import '../../features/cv_review/data/repositories/cv_review_repository_impl.dart';
+import '../../features/cv_review/domain/usecases/get_cv_review.dart';
+import '../../features/cv_review/domain/usecases/save_cv_review.dart';
+import '../../features/cv_review/presentation/controllers/cv_review_controller.dart';
 import '../../features/dashboard/data/datasources/dashboard_data_source.dart';
 import '../../features/dashboard/data/repositories/dashboard_repository_impl.dart';
 import '../../features/dashboard/domain/usecases/get_candidate_dashboard.dart';
@@ -85,6 +96,25 @@ class AppDependencies {
     return NewRequisitionController(
       GetRequisitionCatalog(repository),
       SaveRequisitionDraft(repository),
+    );
+  }
+
+  CvReviewController createCvReviewController() {
+    final dataSource = LocalCvReviewDataSource();
+    final repository = CvReviewRepositoryImpl(dataSource);
+    return CvReviewController(
+      GetCvReview(repository),
+      SaveCvReview(repository),
+    );
+  }
+
+  CandidateDetailController createCandidateDetailController() {
+    final dataSource = LocalCandidateDetailDataSource();
+    final repository = CandidateDetailRepositoryImpl(dataSource);
+    return CandidateDetailController(
+      GetCandidateDetail(repository),
+      GetCandidatePipelineAction(repository),
+      SaveCandidatePipelineAction(repository),
     );
   }
 }
