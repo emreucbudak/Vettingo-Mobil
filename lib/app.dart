@@ -3,9 +3,12 @@ import 'package:flutter/material.dart';
 import 'core/di/app_dependencies.dart';
 import 'core/theme/app_theme.dart';
 import 'features/auth/presentation/pages/dashboard_login_page.dart';
+import 'features/candidate_assessment/presentation/pages/candidate_assessment_page.dart';
 import 'features/dashboard/presentation/pages/candidate_dashboard_page.dart';
 import 'features/dashboard/presentation/pages/employer_dashboard_page.dart';
+import 'features/job_search/presentation/pages/job_search_page.dart';
 import 'features/landing/presentation/pages/landing_page.dart';
+import 'features/new_requisition/presentation/pages/new_requisition_page.dart';
 import 'features/talent_comparison/presentation/pages/talent_comparison_page.dart';
 
 class VettingoApp extends StatelessWidget {
@@ -32,6 +35,14 @@ class VettingoApp extends StatelessWidget {
         ),
         TalentComparisonPage.routeName: (context) => TalentComparisonPage(
           controller: dependencies.createTalentComparisonController(),
+        ),
+        CandidateAssessmentPage.routeName: (context) => CandidateAssessmentPage(
+          controller: dependencies.createCandidateAssessmentController(),
+        ),
+        JobSearchPage.routeName: (context) =>
+            JobSearchPage(controller: dependencies.createJobSearchController()),
+        NewRequisitionPage.routeName: (context) => NewRequisitionPage(
+          controller: dependencies.createNewRequisitionController(),
         ),
       },
     );
