@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/talent_pulse_shell.dart';
+import '../../../candidate_assessment/presentation/pages/candidate_assessment_page.dart';
+import '../../../job_search/presentation/pages/job_search_page.dart';
 import '../../domain/entities/candidate_dashboard.dart';
 import '../controllers/candidate_dashboard_controller.dart';
 
@@ -70,8 +72,9 @@ class CandidateDashboardPage extends StatelessWidget {
                     separatorBuilder: (_, _) => const SizedBox(width: 16),
                     itemBuilder: (context, index) => _ApplicationCard(
                       application: dashboard.applications[index],
-                      onTap: () =>
-                          showComingSoon(context, 'Application details'),
+                      onTap: () => Navigator.of(
+                        context,
+                      ).pushNamed(CandidateAssessmentPage.routeName),
                     ),
                   ),
                 ),
@@ -112,6 +115,10 @@ class CandidateDashboardPage extends StatelessWidget {
       ),
       bottomNavigationBar: TalentPulseBottomBar(
         onSelected: (index) {
+          if (index == 2) {
+            Navigator.of(context).pushNamed(JobSearchPage.routeName);
+            return;
+          }
           if (index != 0) {
             showComingSoon(
               context,

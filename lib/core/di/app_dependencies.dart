@@ -2,12 +2,27 @@ import '../../features/auth/data/datasources/auth_data_source.dart';
 import '../../features/auth/data/repositories/auth_repository_impl.dart';
 import '../../features/auth/domain/usecases/sign_in.dart';
 import '../../features/auth/presentation/controllers/login_controller.dart';
+import '../../features/candidate_assessment/data/datasources/candidate_assessment_data_source.dart';
+import '../../features/candidate_assessment/data/repositories/candidate_assessment_repository_impl.dart';
+import '../../features/candidate_assessment/domain/usecases/get_assessment_answer.dart';
+import '../../features/candidate_assessment/domain/usecases/get_candidate_assessment.dart';
+import '../../features/candidate_assessment/domain/usecases/save_assessment_answer.dart';
+import '../../features/candidate_assessment/presentation/controllers/candidate_assessment_controller.dart';
 import '../../features/dashboard/data/datasources/dashboard_data_source.dart';
 import '../../features/dashboard/data/repositories/dashboard_repository_impl.dart';
 import '../../features/dashboard/domain/usecases/get_candidate_dashboard.dart';
 import '../../features/dashboard/domain/usecases/get_employer_dashboard.dart';
 import '../../features/dashboard/presentation/controllers/candidate_dashboard_controller.dart';
 import '../../features/dashboard/presentation/controllers/employer_dashboard_controller.dart';
+import '../../features/job_search/data/datasources/job_search_data_source.dart';
+import '../../features/job_search/data/repositories/job_search_repository_impl.dart';
+import '../../features/job_search/domain/usecases/get_job_search.dart';
+import '../../features/job_search/presentation/controllers/job_search_controller.dart';
+import '../../features/new_requisition/data/datasources/requisition_data_source.dart';
+import '../../features/new_requisition/data/repositories/requisition_repository_impl.dart';
+import '../../features/new_requisition/domain/usecases/get_requisition_catalog.dart';
+import '../../features/new_requisition/domain/usecases/save_requisition_draft.dart';
+import '../../features/new_requisition/presentation/controllers/new_requisition_controller.dart';
 import '../../features/talent_comparison/data/datasources/talent_comparison_data_source.dart';
 import '../../features/talent_comparison/data/repositories/talent_comparison_repository_impl.dart';
 import '../../features/talent_comparison/domain/usecases/get_candidate_decision.dart';
@@ -45,6 +60,31 @@ class AppDependencies {
       GetTalentComparison(repository),
       GetCandidateDecision(repository),
       SaveCandidateDecision(repository),
+    );
+  }
+
+  CandidateAssessmentController createCandidateAssessmentController() {
+    final dataSource = LocalCandidateAssessmentDataSource();
+    final repository = CandidateAssessmentRepositoryImpl(dataSource);
+    return CandidateAssessmentController(
+      GetCandidateAssessment(repository),
+      GetAssessmentAnswer(repository),
+      SaveAssessmentAnswer(repository),
+    );
+  }
+
+  JobSearchController createJobSearchController() {
+    const dataSource = LocalJobSearchDataSource();
+    const repository = JobSearchRepositoryImpl(dataSource);
+    return JobSearchController(const GetJobSearch(repository));
+  }
+
+  NewRequisitionController createNewRequisitionController() {
+    final dataSource = LocalRequisitionDataSource();
+    final repository = RequisitionRepositoryImpl(dataSource);
+    return NewRequisitionController(
+      GetRequisitionCatalog(repository),
+      SaveRequisitionDraft(repository),
     );
   }
 }
