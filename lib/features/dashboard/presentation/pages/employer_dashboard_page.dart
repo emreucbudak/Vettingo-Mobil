@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/talent_pulse_shell.dart';
+import '../../../candidate_detail/presentation/pages/candidate_detail_page.dart';
 import '../../../new_requisition/presentation/pages/new_requisition_page.dart';
 import '../../../talent_comparison/presentation/pages/talent_comparison_page.dart';
 import '../../domain/entities/employer_dashboard.dart';
@@ -49,7 +50,7 @@ class EmployerDashboardPage extends StatelessWidget {
                       match: dashboard.topMatches[index],
                       onTap: () => Navigator.of(
                         context,
-                      ).pushNamed(TalentComparisonPage.routeName),
+                      ).pushNamed(CandidateDetailPage.routeName),
                     ),
                   ),
                 ),

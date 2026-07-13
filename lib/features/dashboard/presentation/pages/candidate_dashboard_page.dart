@@ -4,6 +4,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/talent_pulse_shell.dart';
 import '../../../candidate_assessment/presentation/pages/candidate_assessment_page.dart';
 import '../../../job_search/presentation/pages/job_search_page.dart';
+import '../../../cv_review/presentation/pages/cv_review_page.dart';
 import '../../domain/entities/candidate_dashboard.dart';
 import '../controllers/candidate_dashboard_controller.dart';
 
@@ -115,6 +116,10 @@ class CandidateDashboardPage extends StatelessWidget {
       ),
       bottomNavigationBar: TalentPulseBottomBar(
         onSelected: (index) {
+          if (index == 1) {
+            Navigator.of(context).pushNamed(CvReviewPage.routeName);
+            return;
+          }
           if (index == 2) {
             Navigator.of(context).pushNamed(JobSearchPage.routeName);
             return;

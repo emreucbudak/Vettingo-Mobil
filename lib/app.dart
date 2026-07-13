@@ -4,6 +4,8 @@ import 'core/di/app_dependencies.dart';
 import 'core/theme/app_theme.dart';
 import 'features/auth/presentation/pages/dashboard_login_page.dart';
 import 'features/candidate_assessment/presentation/pages/candidate_assessment_page.dart';
+import 'features/candidate_detail/presentation/pages/candidate_detail_page.dart';
+import 'features/cv_review/presentation/pages/cv_review_page.dart';
 import 'features/dashboard/presentation/pages/candidate_dashboard_page.dart';
 import 'features/dashboard/presentation/pages/employer_dashboard_page.dart';
 import 'features/job_search/presentation/pages/job_search_page.dart';
@@ -43,6 +45,11 @@ class VettingoApp extends StatelessWidget {
             JobSearchPage(controller: dependencies.createJobSearchController()),
         NewRequisitionPage.routeName: (context) => NewRequisitionPage(
           controller: dependencies.createNewRequisitionController(),
+        ),
+        CvReviewPage.routeName: (context) =>
+            CvReviewPage(controller: dependencies.createCvReviewController()),
+        CandidateDetailPage.routeName: (context) => CandidateDetailPage(
+          controller: dependencies.createCandidateDetailController(),
         ),
       },
     );
