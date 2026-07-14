@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/talent_pulse_shell.dart';
@@ -13,13 +14,23 @@ class LandingPage extends StatelessWidget {
     Navigator.of(context).pushNamed(DashboardLoginPage.routeName);
   }
 
+  void _showDemoMessage(BuildContext context) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        const SnackBar(
+          content: Text('Demo talebi yakında kullanıma sunulacak.'),
+        ),
+      );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: TalentPulseTopBar(
-        avatarLabel: 'TP',
+      appBar: const TalentPulseTopBar(
         centerTitle: false,
-        onNotifications: () => showComingSoon(context, 'Notifications'),
+        showAvatar: false,
+        showNotifications: false,
       ),
       body: CustomPaint(
         painter: const _GridPainter(),
@@ -33,7 +44,7 @@ class LandingPage extends StatelessWidget {
                 children: [
                   _Hero(
                     onStartHiring: () => _openLogin(context),
-                    onDemo: () => showComingSoon(context, 'Demo request'),
+                    onDemo: () => _showDemoMessage(context),
                   ),
                   const SizedBox(height: 24),
                   const _TrustStrip(),
@@ -42,9 +53,9 @@ class LandingPage extends StatelessWidget {
                     icon: Icons.dashboard_rounded,
                     iconColor: AppColors.primary,
                     iconSurface: AppColors.surfaceHigh,
-                    title: 'Executive Dashboard',
+                    title: 'Yönetici Paneli',
                     description:
-                        'Centralized visibility into pipeline velocity, diversity metrics, and strategic hiring goals across all departments.',
+                        'Tüm departmanlardaki aday havuzu hızını, çeşitlilik metriklerini ve stratejik işe alım hedeflerini tek merkezden izleyin.',
                     preview: _PipelinePreview(),
                   ),
                   const SizedBox(height: 16),
@@ -52,9 +63,9 @@ class LandingPage extends StatelessWidget {
                     icon: Icons.document_scanner_rounded,
                     iconColor: Colors.white,
                     iconSurface: AppColors.surfaceTint,
-                    title: 'Smart CV Analysis',
+                    title: 'Akıllı CV Analizi',
                     description:
-                        'Objective parsing of unstructured resume data to identify core competencies and eliminate initial screening bias.',
+                        'Temel yetkinlikleri belirlemek ve ilk elemedeki önyargıyı azaltmak için özgeçmiş verilerini nesnel biçimde analiz edin.',
                     preview: _SkillPreview(),
                   ),
                   const SizedBox(height: 16),
@@ -62,9 +73,9 @@ class LandingPage extends StatelessWidget {
                     icon: Icons.bar_chart_rounded,
                     iconColor: Colors.white,
                     iconSurface: AppColors.tertiaryContainer,
-                    title: 'Talent Benchmarking',
+                    title: 'Yetenek Karşılaştırması',
                     description:
-                        'Compare candidate profiles against industry standards and top-performing internal benchmarks in real-time.',
+                        'Aday profillerini sektör standartları ve şirket içindeki en başarılı profillerle gerçek zamanlı karşılaştırın.',
                     preview: _BenchmarkPreview(),
                   ),
                 ],
@@ -72,16 +83,6 @@ class LandingPage extends StatelessWidget {
             ),
           ),
         ),
-      ),
-      bottomNavigationBar: TalentPulseBottomBar(
-        onSelected: (index) {
-          if (index != 0) {
-            showComingSoon(
-              context,
-              const ['Home', 'Apps', 'Search', 'Jobs'][index],
-            );
-          }
-        },
       ),
     );
   }
@@ -109,7 +110,7 @@ class _Hero extends StatelessWidget {
               ),
             ),
             child: const Text(
-              'ENTERPRISE RECRUITMENT',
+              'KURUMSAL İŞE ALIM',
               style: TextStyle(
                 color: AppColors.primary,
                 fontSize: 12,
@@ -120,7 +121,7 @@ class _Hero extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           const Text(
-            'Precision Talent\nIntelligence.',
+            'Hassas Yetenek\nAnalizi.',
             textAlign: TextAlign.center,
             style: TextStyle(
               color: AppColors.primary,
@@ -134,7 +135,7 @@ class _Hero extends StatelessWidget {
           const SizedBox(
             width: 300,
             child: Text(
-              'Accelerate executive hiring with AI-driven benchmarking and objective profile analysis.',
+              'Yapay zekâ destekli karşılaştırma ve nesnel profil analiziyle yönetici işe alım süreçlerini hızlandırın.',
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: AppColors.onSurfaceVariant,
@@ -152,7 +153,7 @@ class _Hero extends StatelessWidget {
               onPressed: onStartHiring,
               iconAlignment: IconAlignment.end,
               icon: const Icon(Icons.arrow_forward_rounded, size: 20),
-              label: const Text('Start Hiring'),
+              label: const Text('İşe Alıma Başla'),
               style: FilledButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 foregroundColor: Colors.white,
@@ -183,7 +184,7 @@ class _Hero extends StatelessWidget {
                   fontWeight: FontWeight.w500,
                 ),
               ),
-              child: const Text('Request a Demo'),
+              child: const Text('Demo Talep Et'),
             ),
           ),
         ],
@@ -192,8 +193,50 @@ class _Hero extends StatelessWidget {
   }
 }
 
-class _TrustStrip extends StatelessWidget {
+class _TrustStrip extends StatefulWidget {
   const _TrustStrip();
+
+  @override
+  State<_TrustStrip> createState() => _TrustStripState();
+}
+
+class _TrustStripState extends State<_TrustStrip>
+    with SingleTickerProviderStateMixin {
+  static const _companies = <(String, String)>[
+    ('Google', 'assets/images/company_logos/google.svg'),
+    ('Apple', 'assets/images/company_logos/apple.svg'),
+    ('Netflix', 'assets/images/company_logos/netflix.svg'),
+    ('Spotify', 'assets/images/company_logos/spotify.svg'),
+    ('Airbnb', 'assets/images/company_logos/airbnb.svg'),
+    ('Shopify', 'assets/images/company_logos/shopify.svg'),
+    ('GitHub', 'assets/images/company_logos/github.svg'),
+    ('PayPal', 'assets/images/company_logos/paypal.svg'),
+    ('Stripe', 'assets/images/company_logos/stripe.svg'),
+    ('Uber', 'assets/images/company_logos/uber.svg'),
+    ('Tesla', 'assets/images/company_logos/tesla.svg'),
+    ('NVIDIA', 'assets/images/company_logos/nvidia.svg'),
+  ];
+
+  static const _cardWidth = 144.0;
+  static const _gap = 40.0;
+  late final AnimationController _controller;
+
+  double get _sequenceWidth => (_cardWidth + _gap) * _companies.length;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 28),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -208,7 +251,8 @@ class _TrustStrip extends StatelessWidget {
       child: Column(
         children: [
           const Text(
-            'TRUSTED BY INDUSTRY LEADERS',
+            'DÜNYANIN ÖNDE GELEN ŞİRKETLERİ TARAFINDAN GÜVENİLİYOR',
+            textAlign: TextAlign.center,
             style: TextStyle(
               color: AppColors.onSurfaceVariant,
               fontSize: 11,
@@ -217,13 +261,49 @@ class _TrustStrip extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
-              _CompanyMark(label: 'Axiom', shape: _MarkShape.square),
-              _CompanyMark(label: 'Vertex', shape: _MarkShape.circle),
-              _CompanyMark(label: 'Nexus', shape: _MarkShape.dot),
-            ],
+          SizedBox(
+            height: 56,
+            child: ShaderMask(
+              blendMode: BlendMode.dstIn,
+              shaderCallback: (bounds) => const LinearGradient(
+                colors: [
+                  Colors.transparent,
+                  Colors.black,
+                  Colors.black,
+                  Colors.transparent,
+                ],
+                stops: [0, .12, .88, 1],
+              ).createShader(bounds),
+              child: ClipRect(
+                child: AnimatedBuilder(
+                  animation: _controller,
+                  builder: (context, child) => Transform.translate(
+                    key: const ValueKey('trustedCompaniesMarquee'),
+                    offset: Offset(-_controller.value * _sequenceWidth, 0),
+                    child: child,
+                  ),
+                  child: OverflowBox(
+                    alignment: Alignment.centerLeft,
+                    minWidth: 0,
+                    maxWidth: double.infinity,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [..._companies, ..._companies]
+                          .map(
+                            (company) => Padding(
+                              padding: const EdgeInsets.only(right: _gap),
+                              child: _CompanyLogoCard(
+                                name: company.$1,
+                                logoUrl: company.$2,
+                              ),
+                            ),
+                          )
+                          .toList(),
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ),
         ],
       ),
@@ -231,57 +311,42 @@ class _TrustStrip extends StatelessWidget {
   }
 }
 
-enum _MarkShape { square, circle, dot }
+class _CompanyLogoCard extends StatelessWidget {
+  const _CompanyLogoCard({required this.name, required this.logoUrl});
 
-class _CompanyMark extends StatelessWidget {
-  const _CompanyMark({required this.label, required this.shape});
-
-  final String label;
-  final _MarkShape shape;
+  final String name;
+  final String logoUrl;
 
   @override
   Widget build(BuildContext context) {
-    return Opacity(
-      opacity: .65,
-      child: Row(
-        children: [
-          Container(
-            width: 22,
-            height: 22,
-            decoration: BoxDecoration(
-              color: shape == _MarkShape.circle
-                  ? Colors.transparent
-                  : AppColors.primary,
-              shape: shape == _MarkShape.circle
-                  ? BoxShape.circle
-                  : BoxShape.rectangle,
-              border: shape == _MarkShape.circle
-                  ? Border.all(color: AppColors.primary, width: 2)
-                  : null,
-              borderRadius: shape == _MarkShape.circle
-                  ? null
-                  : BorderRadius.circular(3),
+    return Semantics(
+      image: true,
+      label: '$name logosu',
+      child: Container(
+        width: _TrustStripState._cardWidth,
+        height: 56,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(color: AppColors.outlineVariant),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x10091426),
+              blurRadius: 5,
+              offset: Offset(0, 2),
             ),
-            child: shape == _MarkShape.dot
-                ? const Center(
-                    child: CircleAvatar(
-                      radius: 3,
-                      backgroundColor: Colors.white,
-                    ),
-                  )
-                : null,
+          ],
+        ),
+        child: ExcludeSemantics(
+          child: SvgPicture.asset(
+            logoUrl,
+            width: 120,
+            height: 32,
+            fit: BoxFit.contain,
+            placeholderBuilder: (context) => const SizedBox.shrink(),
           ),
-          const SizedBox(width: 5),
-          Text(
-            label,
-            style: const TextStyle(
-              color: AppColors.onSurface,
-              fontSize: 17,
-              fontWeight: FontWeight.w700,
-              letterSpacing: -.5,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -371,7 +436,7 @@ class _PipelinePreview extends StatelessWidget {
           Row(
             children: [
               Text(
-                'Q3 Pipeline',
+                '3. Çeyrek Aday Havuzu',
                 style: TextStyle(
                   fontSize: 11,
                   color: AppColors.onSurfaceVariant,
@@ -411,9 +476,9 @@ class _SkillPreview extends StatelessWidget {
       spacing: 5,
       runSpacing: 5,
       children: [
-        _TinyChip(label: '98% Match', success: true),
-        _TinyChip(label: 'Leadership'),
-        _TinyChip(label: 'Strategy'),
+        _TinyChip(label: '98% Uyum', success: true),
+        _TinyChip(label: 'Liderlik'),
+        _TinyChip(label: 'Strateji'),
       ],
     );
   }
@@ -457,7 +522,7 @@ class _BenchmarkPreview extends StatelessWidget {
         children: [
           Expanded(
             child: _Bar(
-              label: 'Market',
+              label: 'Pazar',
               height: 22,
               color: AppColors.outlineVariant,
             ),
@@ -465,7 +530,7 @@ class _BenchmarkPreview extends StatelessWidget {
           SizedBox(width: 8),
           Expanded(
             child: _Bar(
-              label: 'Candidate',
+              label: 'Aday',
               height: 44,
               color: AppColors.primaryContainer,
             ),
@@ -473,7 +538,7 @@ class _BenchmarkPreview extends StatelessWidget {
           SizedBox(width: 8),
           Expanded(
             child: _Bar(
-              label: 'Internal',
+              label: 'Şirket İçi',
               height: 33,
               color: AppColors.surfaceTint,
             ),
