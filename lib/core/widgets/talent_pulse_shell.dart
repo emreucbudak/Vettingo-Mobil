@@ -8,11 +8,15 @@ class TalentPulseTopBar extends StatelessWidget implements PreferredSizeWidget {
     this.avatarLabel = 'TP',
     this.centerTitle = true,
     this.onNotifications,
+    this.showAvatar = true,
+    this.showNotifications = true,
   });
 
   final String avatarLabel;
   final bool centerTitle;
   final VoidCallback? onNotifications;
+  final bool showAvatar;
+  final bool showNotifications;
 
   @override
   Size get preferredSize => const Size.fromHeight(64);
@@ -23,22 +27,28 @@ class TalentPulseTopBar extends StatelessWidget implements PreferredSizeWidget {
       automaticallyImplyLeading: false,
       toolbarHeight: 64,
       shape: const Border(bottom: BorderSide(color: AppColors.outlineVariant)),
-      leadingWidth: 64,
-      leading: Padding(
-        padding: const EdgeInsets.only(left: 16),
-        child: Align(
-          alignment: Alignment.centerLeft,
-          child: CircleAvatar(
-            radius: 16,
-            backgroundColor: AppColors.surfaceHighest,
-            foregroundColor: AppColors.primary,
-            child: Text(
-              avatarLabel,
-              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
-            ),
-          ),
-        ),
-      ),
+      leadingWidth: showAvatar ? 64 : 0,
+      leading: showAvatar
+          ? Padding(
+              padding: const EdgeInsets.only(left: 16),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: CircleAvatar(
+                  radius: 16,
+                  backgroundColor: AppColors.surfaceHighest,
+                  foregroundColor: AppColors.primary,
+                  child: Text(
+                    avatarLabel,
+                    style: const TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            )
+          : null,
+      titleSpacing: showAvatar ? NavigationToolbar.kMiddleSpacing : 16,
       centerTitle: centerTitle,
       title: const Text(
         'TalentPulse',
@@ -50,14 +60,16 @@ class TalentPulseTopBar extends StatelessWidget implements PreferredSizeWidget {
           letterSpacing: -.2,
         ),
       ),
-      actions: [
-        IconButton(
-          tooltip: 'Notifications',
-          onPressed: onNotifications,
-          icon: const Icon(Icons.notifications_outlined),
-        ),
-        const SizedBox(width: 8),
-      ],
+      actions: showNotifications
+          ? [
+              IconButton(
+                tooltip: 'Notifications',
+                onPressed: onNotifications,
+                icon: const Icon(Icons.notifications_outlined),
+              ),
+              const SizedBox(width: 8),
+            ]
+          : null,
     );
   }
 }
