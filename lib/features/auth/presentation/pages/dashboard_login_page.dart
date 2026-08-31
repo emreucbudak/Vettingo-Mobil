@@ -5,6 +5,7 @@ import '../../../dashboard/presentation/pages/candidate_dashboard_page.dart';
 import '../../../dashboard/presentation/pages/employer_dashboard_page.dart';
 import '../../domain/entities/login_credentials.dart';
 import '../controllers/login_controller.dart';
+import 'dashboard_register_page.dart';
 
 class DashboardLoginPage extends StatefulWidget {
   const DashboardLoginPage({super.key, required this.controller});
@@ -216,7 +217,9 @@ class _DashboardLoginPageState extends State<DashboardLoginPage> {
                         ),
                         TextButton(
                           key: const ValueKey('dashboardRegisterButton'),
-                          onPressed: () => _showComingSoon('Kayıt'),
+                          onPressed: () => Navigator.of(
+                            context,
+                          ).pushNamed(DashboardRegisterPage.routeName),
                           style: TextButton.styleFrom(
                             foregroundColor: const Color(0xFF2563EB),
                             padding: EdgeInsets.zero,
