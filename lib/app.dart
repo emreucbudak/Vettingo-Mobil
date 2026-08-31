@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'core/di/app_dependencies.dart';
 import 'core/theme/app_theme.dart';
 import 'features/auth/presentation/pages/dashboard_login_page.dart';
+import 'features/auth/presentation/pages/dashboard_register_page.dart';
 import 'features/candidate_assessment/presentation/pages/candidate_assessment_page.dart';
 import 'features/candidate_detail/presentation/pages/candidate_detail_page.dart';
 import 'features/cv_review/presentation/pages/cv_review_page.dart';
@@ -30,6 +31,8 @@ class VettingoApp extends StatelessWidget {
         DashboardLoginPage.routeName: (context) => DashboardLoginPage(
           controller: dependencies.createLoginController(),
         ),
+        DashboardRegisterPage.routeName: (context) =>
+            const DashboardRegisterPage(),
         CandidateDashboardPage.routeName: (context) => CandidateDashboardPage(
           controller: dependencies.createCandidateDashboardController(),
         ),
