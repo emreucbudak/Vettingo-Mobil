@@ -4,6 +4,40 @@ import '../../../../core/theme/app_colors.dart';
 
 enum _RegisterAccountType { jobSeeker, employer }
 
+enum _LegalDocument { terms, privacy }
+
+class _LegalContent {
+  const _LegalContent({required this.title, required this.paragraphs});
+
+  final String title;
+  final List<String> paragraphs;
+}
+
+const _legalDocuments = <_LegalDocument, _LegalContent>{
+  _LegalDocument.terms: _LegalContent(
+    title: 'Kullanım Koşulları',
+    paragraphs: [
+      'Vettingo hesabınızı oluşturduğunuzda platformu işe alım, aday değerlendirme ve kariyer süreçlerini yönetmek amacıyla kullanmayı kabul etmiş olursunuz. Hesap bilgilerinizin doğru, güncel ve size ait olması gerekir; yanlış veya başka bir kişiye ait bilgilerle hesap açılması durumunda ilgili hesabın erişimi sınırlandırılabilir.',
+      'Platform içinde paylaşılan ilan, başvuru, özgeçmiş, değerlendirme notu ve benzeri içeriklerden ilgili kullanıcı sorumludur. Yanıltıcı bilgi, izinsiz veri paylaşımı, üçüncü kişilerin haklarını ihlal eden içerik veya sistemi kötüye kullanmaya yönelik işlem yapılmamalıdır.',
+      'İşveren hesapları, aday verilerini yalnızca açık işe alım süreçleri ve meşru değerlendirme amaçları için kullanmalıdır. Adaylarla ilgili bilgiler kurum dışına aktarılırken ilgili kişinin mahremiyetine, yürürlükteki mevzuata ve şirket içi yetkilendirme kurallarına uygun hareket edilmelidir.',
+      'Aday hesapları, başvuru sırasında paylaştıkları belgelerin ve açıklamaların güncel olmasına özen göstermelidir. Başvuru süreçlerinde kullanılan değerlendirme sonuçları tek başına kesin işe alım kararı anlamına gelmez; nihai karar ilgili işverenin kendi süreçleri kapsamında verilir.',
+      'Vettingo, hizmetin güvenliğini ve sürekliliğini korumak için teknik bakım, güvenlik kontrolleri ve gerekli ürün güncellemeleri yapabilir. Bu çalışmalar sırasında kısa süreli erişim kısıtları oluşabilir; planlı bakım durumlarında kullanıcıların makul şekilde bilgilendirilmesi hedeflenir.',
+      'Hizmetleri kullanmaya devam etmeniz, yürürlükteki koşulları kabul ettiğiniz anlamına gelir. Koşullarda esaslı bir değişiklik olursa kullanıcıların bunu makul şekilde fark edebileceği kanallardan bilgilendirme yapılır.',
+    ],
+  ),
+  _LegalDocument.privacy: _LegalContent(
+    title: 'Gizlilik Politikası',
+    paragraphs: [
+      'Vettingo, hesabınızı oluşturmak, başvurularınızı yönetmek, işveren ve aday deneyimini iyileştirmek ve güvenli oturum sağlamak için ad, soyad, e-posta, hesap türü ve platform kullanım bilgileri gibi verileri işler.',
+      'Özgeçmiş, başvuru geçmişi, değerlendirme notları ve yetenek eşleştirme çıktıları yalnızca ilgili işe alım süreçleri kapsamında kullanılır. Bu bilgiler, yetkisiz kişilerle satılmaz veya bağımsız ticari amaçlarla paylaşılmaz.',
+      'Platformda yapılan işlemler, hizmet kalitesini korumak, hataları gidermek, güvenlik olaylarını araştırmak ve kullanıcı desteği sağlamak amacıyla kayıt altına alınabilir. Bu kayıtlar ihtiyaçla sınırlı şekilde tutulur ve erişim yetkileri kontrollü biçimde yönetilir.',
+      'Verileriniz, hizmet sağlayıcılarımızın teknik altyapısı üzerinde güvenlik önlemleriyle saklanabilir. Erişim yetkileri sınırlı tutulur ve kayıtlar yalnızca işin gerektirdiği kişiler tarafından görüntülenebilir.',
+      'Çerezler ve benzeri teknolojiler; oturumunuzu açık tutmak, tercihlerinizi hatırlamak ve platformun nasıl kullanıldığını anlamak için kullanılabilir. Zorunlu olmayan izleme tercihleri için tarayıcı ayarlarınızdan veya sunulan tercih araçlarından seçim yapabilirsiniz.',
+      'Hesap bilgilerinizin düzeltilmesini, silinmesini veya işleme amaçları hakkında bilgi verilmesini talep edebilirsiniz. Bu talepler, kimlik doğrulaması yapıldıktan sonra makul süre içinde değerlendirilir.',
+    ],
+  ),
+};
+
 class DashboardRegisterPage extends StatefulWidget {
   const DashboardRegisterPage({super.key});
 
@@ -20,6 +54,14 @@ class _DashboardRegisterPageState extends State<DashboardRegisterPage> {
   bool _isPasswordVisible = false;
   bool _termsAccepted = false;
   bool _showTermsError = false;
+
+  Future<void> _showLegalDocument(_LegalDocument document) async {
+    await showDialog<void>(
+      context: context,
+      builder: (context) =>
+          _LegalDocumentDialog(content: _legalDocuments[document]!),
+    );
+  }
 
   void _submit() {
     FocusScope.of(context).unfocus();
@@ -119,7 +161,7 @@ class _DashboardRegisterPageState extends State<DashboardRegisterPage> {
                           fieldKey: const ValueKey('registerNameField'),
                           label: 'Ad',
                           hint: 'Adınız',
-                          icon: Icons.badge_outlined,
+                          icon: Icons.person_outline_rounded,
                           textInputAction: TextInputAction.next,
                           autofillHints: const [AutofillHints.givenName],
                           validator: (value) =>
@@ -130,7 +172,7 @@ class _DashboardRegisterPageState extends State<DashboardRegisterPage> {
                           fieldKey: const ValueKey('registerSurnameField'),
                           label: 'Soyad',
                           hint: 'Soyadınız',
-                          icon: Icons.badge_outlined,
+                          icon: Icons.account_box_outlined,
                           textInputAction: TextInputAction.next,
                           autofillHints: const [AutofillHints.familyName],
                           validator: (value) =>
@@ -215,14 +257,30 @@ class _DashboardRegisterPageState extends State<DashboardRegisterPage> {
                               ),
                             ),
                             const SizedBox(width: 10),
-                            const Expanded(
-                              child: Text(
-                                'Kullanım koşullarını ve gizlilik politikasını kabul ediyorum.',
-                                style: TextStyle(
-                                  color: AppColors.onSurfaceVariant,
-                                  fontSize: 12,
-                                  height: 1.4,
-                                ),
+                            Expanded(
+                              child: Wrap(
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                children: [
+                                  _LegalLinkButton(
+                                    key: const ValueKey('registerTermsLink'),
+                                    label: 'Kullanım koşullarını',
+                                    onPressed: () => _showLegalDocument(
+                                      _LegalDocument.terms,
+                                    ),
+                                  ),
+                                  const Text(' ve ', style: _legalTextStyle),
+                                  _LegalLinkButton(
+                                    key: const ValueKey('registerPrivacyLink'),
+                                    label: 'gizlilik politikasını',
+                                    onPressed: () => _showLegalDocument(
+                                      _LegalDocument.privacy,
+                                    ),
+                                  ),
+                                  const Text(
+                                    ' kabul ediyorum.',
+                                    style: _legalTextStyle,
+                                  ),
+                                ],
                               ),
                             ),
                           ],
@@ -297,6 +355,140 @@ class _DashboardRegisterPageState extends State<DashboardRegisterPage> {
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+const _legalTextStyle = TextStyle(
+  color: AppColors.onSurfaceVariant,
+  fontSize: 12,
+  height: 1.4,
+);
+
+class _LegalLinkButton extends StatelessWidget {
+  const _LegalLinkButton({
+    super.key,
+    required this.label,
+    required this.onPressed,
+  });
+
+  final String label;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      onPressed: onPressed,
+      style: TextButton.styleFrom(
+        foregroundColor: const Color(0xFF2563EB),
+        padding: const EdgeInsets.symmetric(vertical: 2),
+        minimumSize: Size.zero,
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        textStyle: const TextStyle(
+          fontSize: 12,
+          height: 1.4,
+          fontWeight: FontWeight.w600,
+          decoration: TextDecoration.underline,
+        ),
+      ),
+      child: Text(label),
+    );
+  }
+}
+
+class _LegalDocumentDialog extends StatefulWidget {
+  const _LegalDocumentDialog({required this.content});
+
+  final _LegalContent content;
+
+  @override
+  State<_LegalDocumentDialog> createState() => _LegalDocumentDialogState();
+}
+
+class _LegalDocumentDialogState extends State<_LegalDocumentDialog> {
+  final _scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.sizeOf(context).height;
+
+    return Dialog(
+      key: const ValueKey('registerLegalDialog'),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 32),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: 520,
+          maxHeight: screenHeight * .8,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 14, 8, 12),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      widget.content.title,
+                      style: const TextStyle(
+                        color: AppColors.primary,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    key: const ValueKey('registerLegalCloseButton'),
+                    tooltip: 'Kapat',
+                    onPressed: () => Navigator.of(context).pop(),
+                    icon: const Icon(Icons.close_rounded),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(height: 1, color: AppColors.outlineVariant),
+            Flexible(
+              child: Scrollbar(
+                controller: _scrollController,
+                thumbVisibility: true,
+                child: SingleChildScrollView(
+                  key: const ValueKey('registerLegalScroll'),
+                  controller: _scrollController,
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      for (
+                        var index = 0;
+                        index < widget.content.paragraphs.length;
+                        index++
+                      ) ...[
+                        Text(
+                          widget.content.paragraphs[index],
+                          style: const TextStyle(
+                            color: AppColors.onSurfaceVariant,
+                            fontSize: 14,
+                            height: 1.55,
+                          ),
+                        ),
+                        if (index < widget.content.paragraphs.length - 1)
+                          const SizedBox(height: 16),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

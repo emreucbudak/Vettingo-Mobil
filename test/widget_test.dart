@@ -55,6 +55,20 @@ void main() {
     expect(find.byKey(const ValueKey('registerEmailField')), findsOneWidget);
     expect(find.byKey(const ValueKey('registerPasswordField')), findsOneWidget);
     expect(find.byKey(const ValueKey('registerCompanyField')), findsNothing);
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('registerNameField')),
+        matching: find.byIcon(Icons.person_outline_rounded),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('registerSurnameField')),
+        matching: find.byIcon(Icons.account_box_outlined),
+      ),
+      findsOneWidget,
+    );
     expect(find.text('Kayıt Ol'), findsOneWidget);
     expect(find.text('veya'), findsOneWidget);
     expect(find.text('Zaten hesabınız var mı?'), findsOneWidget);
@@ -70,6 +84,42 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byKey(const ValueKey('dashboardSignInButton')), findsOneWidget);
   });
+
+  testWidgets('register legal links open scrollable documents', (tester) async {
+    await tester.pumpWidget(const VettingoApp());
+
+    final registerLink = find.byKey(const ValueKey('dashboardRegisterButton'));
+    await tester.ensureVisible(registerLink);
+    await tester.tap(registerLink);
+    await tester.pumpAndSettle();
+
+    final termsLink = find.byKey(const ValueKey('registerTermsLink'));
+    await tester.ensureVisible(termsLink);
+    await tester.tap(termsLink);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Kullanım Koşulları'), findsOneWidget);
+    expect(find.byKey(const ValueKey('registerLegalDialog')), findsOneWidget);
+    expect(find.byKey(const ValueKey('registerLegalScroll')), findsOneWidget);
+    await tester.drag(
+      find.byKey(const ValueKey('registerLegalScroll')),
+      const Offset(0, -250),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('registerLegalCloseButton')));
+    await tester.pumpAndSettle();
+
+    final privacyLink = find.byKey(const ValueKey('registerPrivacyLink'));
+    await tester.ensureVisible(privacyLink);
+    await tester.tap(privacyLink);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Gizlilik Politikası'), findsOneWidget);
+    expect(find.byKey(const ValueKey('registerLegalScroll')), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('registerLegalCloseButton')));
+    await tester.pumpAndSettle();
+  });
+
   testWidgets('account type and remember me are managed by controller', (
     tester,
   ) async {
