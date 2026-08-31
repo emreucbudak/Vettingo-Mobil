@@ -9,7 +9,6 @@ import 'features/cv_review/presentation/pages/cv_review_page.dart';
 import 'features/dashboard/presentation/pages/candidate_dashboard_page.dart';
 import 'features/dashboard/presentation/pages/employer_dashboard_page.dart';
 import 'features/job_search/presentation/pages/job_search_page.dart';
-import 'features/landing/presentation/pages/landing_page.dart';
 import 'features/new_requisition/presentation/pages/new_requisition_page.dart';
 import 'features/talent_comparison/presentation/pages/talent_comparison_page.dart';
 
@@ -24,7 +23,9 @@ class VettingoApp extends StatelessWidget {
       title: 'TalentPulse',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
-      home: const LandingPage(),
+      home: DashboardLoginPage(
+        controller: dependencies.createLoginController(),
+      ),
       routes: {
         DashboardLoginPage.routeName: (context) => DashboardLoginPage(
           controller: dependencies.createLoginController(),
