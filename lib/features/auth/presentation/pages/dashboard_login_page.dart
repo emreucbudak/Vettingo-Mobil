@@ -325,18 +325,88 @@ class _GoogleMark extends StatelessWidget {
   Widget build(BuildContext context) {
     return const SizedBox.square(
       dimension: 20,
-      child: Center(
-        child: Text(
-          'G',
-          style: TextStyle(
-            color: Color(0xFF4285F4),
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-      ),
+      child: CustomPaint(painter: _GoogleLogoPainter()),
     );
   }
+}
+
+class _GoogleLogoPainter extends CustomPainter {
+  const _GoogleLogoPainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    canvas.save();
+    canvas.scale(size.width / 18, size.height / 18);
+
+    final bluePath = Path()
+      ..moveTo(17.64, 9.2045)
+      ..relativeCubicTo(0, -.638, -.0573, -1.2518, -.1636, -1.8409)
+      ..lineTo(9, 7.3636)
+      ..relativeLineTo(0, 3.4818)
+      ..relativeLineTo(4.8436, 0)
+      ..relativeCubicTo(-.2086, 1.125, -.8427, 2.0782, -1.7964, 2.7164)
+      ..relativeLineTo(0, 2.2582)
+      ..relativeLineTo(2.9082, 0)
+      ..relativeCubicTo(1.702, -1.5668, 2.6846, -3.8741, 2.6846, -6.6155)
+      ..close();
+    canvas.drawPath(bluePath, Paint()..color = const Color(0xFF4285F4));
+
+    final greenPath = Path()
+      ..moveTo(9, 18)
+      ..relativeCubicTo(2.43, 0, 4.4673, -.8059, 5.9564, -2.18)
+      ..relativeLineTo(-2.9082, -2.2582)
+      ..relativeCubicTo(-.8059, .54, -1.8368, .8591, -3.0482, .8591)
+      ..relativeCubicTo(-2.3441, 0, -4.3286, -1.5859, -5.0373, -3.7173)
+      ..lineTo(.9564, 10.7036)
+      ..relativeLineTo(0, 2.3327)
+      ..arcToPoint(
+        const Offset(9, 18),
+        radius: const Radius.circular(9),
+        clockwise: false,
+      )
+      ..close();
+    canvas.drawPath(greenPath, Paint()..color = const Color(0xFF34A853));
+
+    final yellowPath = Path()
+      ..moveTo(3.9627, 10.7036)
+      ..arcToPoint(
+        const Offset(3.6818, 9),
+        radius: const Radius.circular(5.41),
+        clockwise: true,
+      )
+      ..relativeCubicTo(0, -.5909, .1014, -1.1645, .2809, -1.7036)
+      ..lineTo(3.9627, 4.9636)
+      ..lineTo(.9564, 4.9636)
+      ..arcToPoint(
+        const Offset(0, 9),
+        radius: const Radius.circular(9),
+        clockwise: false,
+      )
+      ..relativeCubicTo(0, 1.45, .3477, 2.8236, .9564, 4.0364)
+      ..relativeLineTo(3.0063, -2.3328)
+      ..close();
+    canvas.drawPath(yellowPath, Paint()..color = const Color(0xFFFBBC05));
+
+    final redPath = Path()
+      ..moveTo(9, 3.5791)
+      ..relativeCubicTo(1.3214, 0, 2.5077, .4545, 3.4423, 1.3459)
+      ..relativeLineTo(2.5813, -2.5814)
+      ..cubicTo(13.4632, .8918, 11.43, 0, 9, 0)
+      ..arcToPoint(
+        const Offset(.9564, 4.9636),
+        radius: const Radius.circular(9),
+        clockwise: false,
+      )
+      ..relativeLineTo(3.0063, 2.3328)
+      ..cubicTo(4.6714, 5.165, 6.6559, 3.5791, 9, 3.5791)
+      ..close();
+    canvas.drawPath(redPath, Paint()..color = const Color(0xFFEA4335));
+
+    canvas.restore();
+  }
+
+  @override
+  bool shouldRepaint(covariant _GoogleLogoPainter oldDelegate) => false;
 }
 
 class _LinkedInMark extends StatelessWidget {
