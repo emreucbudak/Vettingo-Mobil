@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../dashboard/presentation/pages/candidate_dashboard_page.dart';
+import '../../../hr/presentation/pages/hr_dashboard_page.dart';
 import '../../domain/entities/login_credentials.dart';
 import '../controllers/login_controller.dart';
 import 'dashboard_register_page.dart';
@@ -20,9 +21,11 @@ class DashboardLoginPage extends StatefulWidget {
 class _DashboardLoginPageState extends State<DashboardLoginPage> {
   Future<void> _submit() async {
     FocusScope.of(context).unfocus();
-    await Navigator.of(
-      context,
-    ).pushReplacementNamed(CandidateDashboardPage.routeName);
+    final routeName =
+        widget.controller.credentials.accountType == AccountType.employer
+        ? HrDashboardPage.routeName
+        : CandidateDashboardPage.routeName;
+    await Navigator.of(context).pushReplacementNamed(routeName);
   }
 
   void _showComingSoon(String label) {

@@ -9,6 +9,10 @@ import 'features/candidate_detail/presentation/pages/candidate_detail_page.dart'
 import 'features/cv_review/presentation/pages/cv_review_page.dart';
 import 'features/dashboard/presentation/pages/candidate_dashboard_page.dart';
 import 'features/dashboard/presentation/pages/employer_dashboard_page.dart';
+import 'features/hr/presentation/pages/hr_candidates_page.dart';
+import 'features/hr/presentation/pages/hr_dashboard_page.dart';
+import 'features/hr/presentation/pages/hr_jobs_page.dart';
+import 'features/hr/presentation/pages/hr_profile_page.dart';
 import 'features/job_search/presentation/pages/job_search_page.dart';
 import 'features/new_requisition/presentation/pages/new_requisition_page.dart';
 import 'features/talent_comparison/presentation/pages/talent_comparison_page.dart';
@@ -39,6 +43,16 @@ class VettingoApp extends StatelessWidget {
         EmployerDashboardPage.routeName: (context) => EmployerDashboardPage(
           controller: dependencies.createEmployerDashboardController(),
         ),
+        HrDashboardPage.routeName: (context) => HrDashboardPage(
+          controller: dependencies.createEmployerDashboardController(),
+        ),
+        HrJobsPage.routeName: (context) => HrJobsPage(
+          controller: dependencies.createEmployerDashboardController(),
+        ),
+        HrCandidatesPage.routeName: (context) => HrCandidatesPage(
+          controller: dependencies.createEmployerDashboardController(),
+        ),
+        HrProfilePage.routeName: (context) => const HrProfilePage(),
         TalentComparisonPage.routeName: (context) => TalentComparisonPage(
           controller: dependencies.createTalentComparisonController(),
         ),
