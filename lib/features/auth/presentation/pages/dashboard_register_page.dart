@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
-import '../../../dashboard/presentation/pages/employer_dashboard_page.dart';
+import '../../../hr/presentation/pages/hr_dashboard_page.dart';
 
 enum _RegisterAccountType { jobSeeker, employer }
 
@@ -63,7 +63,7 @@ class _DashboardRegisterPageState extends State<DashboardRegisterPage> {
 
   void _submit() {
     FocusScope.of(context).unfocus();
-    Navigator.of(context).pushReplacementNamed(EmployerDashboardPage.routeName);
+    Navigator.of(context).pushReplacementNamed(HrDashboardPage.routeName);
   }
 
   @override

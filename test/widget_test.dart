@@ -46,6 +46,20 @@ void main() {
     expect(find.text('Welcome back, Alex.'), findsOneWidget);
   });
 
+  testWidgets('employer login opens the separate HR dashboard', (tester) async {
+    await tester.pumpWidget(const VettingoApp());
+
+    await tester.tap(find.text('İşveren'));
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('dashboardSignInButton')));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('hrDashboardPage')), findsOneWidget);
+    expect(find.text('Merhaba, Elif'), findsOneWidget);
+    expect(find.text('Hızlı İşlemler'), findsOneWidget);
+    expect(find.byKey(const ValueKey('hrBottomBar')), findsOneWidget);
+  });
+
   testWidgets('candidate profile tab opens the account menu', (tester) async {
     await tester.pumpWidget(const VettingoApp());
 
@@ -129,7 +143,8 @@ void main() {
     await tester.tap(submitButton);
     await tester.pumpAndSettle();
 
-    expect(find.text('TOTAL APPLICATIONS'), findsOneWidget);
+    expect(find.byKey(const ValueKey('hrDashboardPage')), findsOneWidget);
+    expect(find.text('Merhaba, Elif'), findsOneWidget);
   });
 
   testWidgets('register legal links open scrollable documents', (tester) async {
