@@ -273,6 +273,11 @@ void _openCandidateDestination(
   CandidateNavigationItem destination,
   CandidateNavigationItem? current,
 ) {
+  if (destination == CandidateNavigationItem.profile) {
+    _showCandidateProfileMenu(context);
+    return;
+  }
+
   if (destination == current) return;
 
   final routeName = switch (destination) {
@@ -283,6 +288,176 @@ void _openCandidateDestination(
   };
 
   Navigator.of(context).pushReplacementNamed(routeName, arguments: destination);
+}
+
+Future<void> _showCandidateProfileMenu(BuildContext context) {
+  void closeAndShowComingSoon(BuildContext sheetContext, String label) {
+    Navigator.of(sheetContext).pop();
+    showComingSoon(context, label);
+  }
+
+  void openProfile(BuildContext sheetContext) {
+    Navigator.of(sheetContext).pop();
+    if (ModalRoute.of(context)?.settings.name == '/cv-review') return;
+    Navigator.of(context).pushReplacementNamed(
+      '/cv-review',
+      arguments: CandidateNavigationItem.profile,
+    );
+  }
+
+  void signOut(BuildContext sheetContext) {
+    Navigator.of(sheetContext).pop();
+    Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+  }
+
+  return showModalBottomSheet<void>(
+    context: context,
+    isScrollControlled: true,
+    useSafeArea: true,
+    backgroundColor: AppColors.surface,
+    showDragHandle: true,
+    builder: (sheetContext) => SingleChildScrollView(
+      child: Padding(
+        key: const ValueKey('candidateProfileMenu'),
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Row(
+              children: [
+                CircleAvatar(
+                  radius: 24,
+                  backgroundColor: AppColors.surfaceHighest,
+                  foregroundColor: AppColors.primary,
+                  child: Text(
+                    'A',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                  ),
+                ),
+                SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Alex',
+                        style: TextStyle(
+                          color: AppColors.primary,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      Text(
+                        'Aday Hesabı',
+                        style: TextStyle(
+                          color: AppColors.onSurfaceVariant,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            const Divider(height: 1),
+            const SizedBox(height: 8),
+            _CandidateProfileMenuTile(
+              key: const ValueKey('candidateProfileMenuProfile'),
+              icon: Icons.account_circle_outlined,
+              label: 'Profilim',
+              subtitle: 'Profil ve CV bilgilerini görüntüle',
+              onTap: () => openProfile(sheetContext),
+            ),
+            _CandidateProfileMenuTile(
+              icon: Icons.assignment_outlined,
+              label: 'Başvurularım',
+              subtitle: 'İş başvurularını takip et',
+              onTap: () => closeAndShowComingSoon(sheetContext, 'Başvurularım'),
+            ),
+            _CandidateProfileMenuTile(
+              icon: Icons.bookmark_border_rounded,
+              label: 'Kaydedilen İlanlar',
+              subtitle: 'Daha sonra bakmak için kaydettiklerin',
+              onTap: () =>
+                  closeAndShowComingSoon(sheetContext, 'Kaydedilen ilanlar'),
+            ),
+            _CandidateProfileMenuTile(
+              icon: Icons.settings_outlined,
+              label: 'Ayarlar',
+              subtitle: 'Hesap ve bildirim tercihleri',
+              onTap: () => closeAndShowComingSoon(sheetContext, 'Ayarlar'),
+            ),
+            _CandidateProfileMenuTile(
+              icon: Icons.help_outline_rounded,
+              label: 'Yardım Merkezi',
+              subtitle: 'Destek ve sık sorulan sorular',
+              onTap: () =>
+                  closeAndShowComingSoon(sheetContext, 'Yardım merkezi'),
+            ),
+            const Divider(height: 17),
+            _CandidateProfileMenuTile(
+              key: const ValueKey('candidateProfileMenuSignOut'),
+              icon: Icons.logout_rounded,
+              label: 'Çıkış Yap',
+              subtitle: 'Hesabından güvenli şekilde çık',
+              foregroundColor: const Color(0xFFBA1A1A),
+              onTap: () => signOut(sheetContext),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+class _CandidateProfileMenuTile extends StatelessWidget {
+  const _CandidateProfileMenuTile({
+    super.key,
+    required this.icon,
+    required this.label,
+    required this.subtitle,
+    required this.onTap,
+    this.foregroundColor = AppColors.onSurface,
+  });
+
+  final Color foregroundColor;
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+  final String subtitle;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 4),
+      leading: Container(
+        width: 40,
+        height: 40,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: foregroundColor.withValues(alpha: .08),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Icon(icon, color: foregroundColor),
+      ),
+      title: Text(
+        label,
+        style: TextStyle(
+          color: foregroundColor,
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+      subtitle: Text(
+        subtitle,
+        style: const TextStyle(color: AppColors.onSurfaceVariant, fontSize: 12),
+      ),
+      trailing: Icon(Icons.chevron_right_rounded, color: foregroundColor),
+      onTap: onTap,
+    );
+  }
 }
 
 void showComingSoon(BuildContext context, String label) {

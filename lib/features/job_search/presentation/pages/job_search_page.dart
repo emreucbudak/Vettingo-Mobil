@@ -67,12 +67,12 @@ class _JobSearchPageState extends State<JobSearchPage> {
                             children: [
                               const Expanded(
                                 child: Text(
-                                  'Recommended Matches',
+                                  'Önerilen Eşleşmeler',
                                   style: _sectionTitleStyle,
                                 ),
                               ),
                               Text(
-                                '${matches.length} results',
+                                '${matches.length} sonuç',
                                 style: const TextStyle(
                                   color: AppColors.primary,
                                   fontSize: 11,
@@ -204,10 +204,10 @@ class _SearchHeaderDelegate extends SliverPersistentHeaderDelegate {
   final VoidCallback onFilters;
 
   @override
-  double get minExtent => 112;
+  double get minExtent => 68;
 
   @override
-  double get maxExtent => 112;
+  double get maxExtent => 68;
 
   @override
   Widget build(
@@ -258,27 +258,6 @@ class _SearchHeaderDelegate extends SliverPersistentHeaderDelegate {
                       border: InputBorder.none,
                       contentPadding: const EdgeInsets.symmetric(vertical: 14),
                     ),
-                  ),
-                ),
-                const SizedBox(height: 6),
-                SizedBox(
-                  height: 34,
-                  child: ListView.separated(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: controller.content.quickFilters.length,
-                    separatorBuilder: (_, _) => const SizedBox(width: 8),
-                    itemBuilder: (context, index) {
-                      final filter = controller.content.quickFilters[index];
-                      final selected = controller.isFilterActive(filter);
-                      return FilterChip(
-                        key: ValueKey('quickFilter$index'),
-                        selected: selected,
-                        label: Text(filter),
-                        labelStyle: const TextStyle(fontSize: 11),
-                        visualDensity: VisualDensity.compact,
-                        onSelected: (_) => controller.toggleFilter(filter),
-                      );
-                    },
                   ),
                 ),
               ],
