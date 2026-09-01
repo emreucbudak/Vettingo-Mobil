@@ -1,10 +1,25 @@
 import 'package:flutter/foundation.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 
 import '../../domain/entities/login_credentials.dart';
 import '../../domain/usecases/sign_in.dart';
 
 class LoginController extends ChangeNotifier {
   LoginController(this._signIn);
+
+  static final _emailValidator = FormBuilderValidators.compose<String>([
+    FormBuilderValidators.required(
+      errorText: 'Please enter your email address',
+    ),
+    FormBuilderValidators.email(errorText: 'Please enter a valid email'),
+  ]);
+  static final _passwordValidator = FormBuilderValidators.compose<String>([
+    FormBuilderValidators.required(errorText: 'Please enter your password'),
+    FormBuilderValidators.minLength(
+      6,
+      errorText: 'Password must be at least 6 characters',
+    ),
+  ]);
 
   final SignIn _signIn;
   LoginCredentials _credentials = const LoginCredentials();
@@ -39,19 +54,9 @@ class LoginController extends ChangeNotifier {
     notifyListeners();
   }
 
-  String? validateEmail(String? value) {
-    final email = value?.trim() ?? '';
-    if (email.isEmpty) return 'Please enter your email address';
-    final emailPattern = RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$');
-    if (!emailPattern.hasMatch(email)) return 'Please enter a valid email';
-    return null;
-  }
+  String? validateEmail(String? value) => _emailValidator(value?.trim());
 
-  String? validatePassword(String? value) {
-    if (value == null || value.isEmpty) return 'Please enter your password';
-    if (value.length < 6) return 'Password must be at least 6 characters';
-    return null;
-  }
+  String? validatePassword(String? value) => _passwordValidator(value);
 
   Future<void> signIn() async {
     if (_isLoading) return;
