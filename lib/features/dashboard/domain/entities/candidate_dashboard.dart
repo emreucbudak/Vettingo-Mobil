@@ -4,6 +4,7 @@ class CandidateDashboard {
     required this.dateLabel,
     required this.summary,
     required this.applications,
+    required this.applicationHistory,
     required this.marketProfile,
     required this.recommendations,
   });
@@ -12,6 +13,7 @@ class CandidateDashboard {
   final String dateLabel;
   final String summary;
   final List<JobApplication> applications;
+  final List<JobApplication> applicationHistory;
   final MarketProfile marketProfile;
   final List<JobRecommendation> recommendations;
 }

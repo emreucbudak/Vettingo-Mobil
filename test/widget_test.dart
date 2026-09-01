@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vettingomobil/app.dart';
 import 'package:vettingomobil/core/di/app_dependencies.dart';
+import 'package:vettingomobil/core/widgets/talent_pulse_shell.dart';
 import 'package:vettingomobil/features/auth/domain/entities/login_credentials.dart';
 import 'package:vettingomobil/features/auth/presentation/pages/login_page.dart';
+import 'package:vettingomobil/features/dashboard/presentation/pages/candidate_applications_page.dart';
 
 void main() {
   testWidgets('app opens the redesigned dashboard login', (tester) async {
@@ -69,13 +71,60 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byKey(const ValueKey('candidateProfileMenu')), findsOneWidget);
+    expect(find.byType(CandidateTopBar), findsOneWidget);
+    expect(find.byType(CandidateBottomBar), findsOneWidget);
+    final menuRect = tester.getRect(
+      find.byKey(const ValueKey('candidateProfileMenu')),
+    );
+    final topBarRect = tester.getRect(find.byType(CandidateTopBar));
+    final bottomBarRect = tester.getRect(find.byType(CandidateBottomBar));
+    expect(menuRect.top, greaterThanOrEqualTo(topBarRect.bottom));
+    expect(menuRect.bottom, lessThanOrEqualTo(bottomBarRect.top));
     expect(find.text('Profilim'), findsOneWidget);
-    expect(find.text('Başvurularım'), findsOneWidget);
+    expect(find.text('Başvurularım'), findsNWidgets(2));
     expect(find.text('Kaydedilen İlanlar'), findsOneWidget);
     expect(find.text('Ayarlar'), findsOneWidget);
     expect(find.text('Yardım Merkezi'), findsOneWidget);
     expect(find.text('Çıkış Yap'), findsOneWidget);
   });
+
+  testWidgets(
+    'candidate applications tab lists applied jobs and filters by status',
+    (tester) async {
+      await tester.pumpWidget(const VettingoApp());
+
+      await tester.tap(find.byKey(const ValueKey('dashboardSignInButton')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('bottomNav1')));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(CandidateApplicationsPage), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('candidateApplicationsPage')),
+        findsOneWidget,
+      );
+      expect(find.byKey(const ValueKey('jobSearchField')), findsNothing);
+      expect(
+        find.byKey(const ValueKey('applicationFilterOngoing')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const ValueKey('applicationFilterRejected')),
+        findsOneWidget,
+      );
+      expect(find.text('Senior Frontend Engineer'), findsOneWidget);
+      expect(find.text('Staff UX Designer'), findsOneWidget);
+      expect(find.text('Product Designer'), findsNothing);
+
+      await tester.tap(find.byKey(const ValueKey('applicationFilterRejected')));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Senior Frontend Engineer'), findsNothing);
+      expect(find.text('Staff UX Designer'), findsNothing);
+      expect(find.text('Product Designer'), findsOneWidget);
+      expect(find.text('1 başvuru'), findsOneWidget);
+    },
+  );
 
   testWidgets('register link opens the mobile registration form', (
     tester,

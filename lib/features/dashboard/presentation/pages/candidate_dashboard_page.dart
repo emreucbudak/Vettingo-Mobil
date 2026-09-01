@@ -5,6 +5,7 @@ import '../../../../core/widgets/talent_pulse_shell.dart';
 import '../../../candidate_assessment/presentation/pages/candidate_assessment_page.dart';
 import '../../domain/entities/candidate_dashboard.dart';
 import '../controllers/candidate_dashboard_controller.dart';
+import 'candidate_applications_page.dart';
 
 class CandidateDashboardPage extends StatelessWidget {
   const CandidateDashboardPage({super.key, required this.controller});
@@ -17,7 +18,6 @@ class CandidateDashboardPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final dashboard = controller.dashboard;
     return CandidateScaffold(
-      avatarLabel: dashboard.userName.substring(0, 1).toUpperCase(),
       selectedItem: CandidateNavigationItem.home,
       body: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
@@ -48,7 +48,9 @@ class CandidateDashboardPage extends StatelessWidget {
                 _CandidateSectionHeader(
                   title: 'Active Applications',
                   action: 'View All',
-                  onAction: () => showComingSoon(context, 'All applications'),
+                  onAction: () => Navigator.of(
+                    context,
+                  ).pushNamed(CandidateApplicationsPage.routeName),
                 ),
                 const SizedBox(height: 10),
                 SizedBox(

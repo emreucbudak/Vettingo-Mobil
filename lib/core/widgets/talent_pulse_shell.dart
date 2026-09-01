@@ -11,6 +11,7 @@ class TalentPulseTopBar extends StatelessWidget implements PreferredSizeWidget {
     this.showAvatar = true,
     this.showNotifications = true,
     this.showTitle = true,
+    this.title = 'TalentPulse',
   });
 
   final String avatarLabel;
@@ -19,6 +20,7 @@ class TalentPulseTopBar extends StatelessWidget implements PreferredSizeWidget {
   final bool showAvatar;
   final bool showNotifications;
   final bool showTitle;
+  final String title;
 
   @override
   Size get preferredSize => const Size.fromHeight(64);
@@ -53,9 +55,9 @@ class TalentPulseTopBar extends StatelessWidget implements PreferredSizeWidget {
       titleSpacing: showAvatar ? NavigationToolbar.kMiddleSpacing : 16,
       centerTitle: centerTitle,
       title: showTitle
-          ? const Text(
-              'TalentPulse',
-              style: TextStyle(
+          ? Text(
+              title,
+              style: const TextStyle(
                 color: AppColors.primary,
                 fontSize: 20,
                 height: 1.4,
@@ -142,17 +144,24 @@ class TalentPulseBottomBar extends StatelessWidget {
                               : AppColors.onSurfaceVariant,
                         ),
                         const SizedBox(height: 2),
-                        Text(
-                          item.$3,
-                          style: TextStyle(
-                            color: selected
-                                ? AppColors.primary
-                                : AppColors.onSurfaceVariant,
-                            fontSize: 11,
-                            height: 1,
-                            fontWeight: selected
-                                ? FontWeight.w600
-                                : FontWeight.w500,
+                        SizedBox(
+                          width: 60,
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              item.$3,
+                              maxLines: 1,
+                              style: TextStyle(
+                                color: selected
+                                    ? AppColors.primary
+                                    : AppColors.onSurfaceVariant,
+                                fontSize: 11,
+                                height: 1,
+                                fontWeight: selected
+                                    ? FontWeight.w600
+                                    : FontWeight.w500,
+                              ),
+                            ),
                           ),
                         ),
                       ],
@@ -171,25 +180,17 @@ class TalentPulseBottomBar extends StatelessWidget {
 enum CandidateNavigationItem { home, jobs, search, profile }
 
 class CandidateTopBar extends StatelessWidget implements PreferredSizeWidget {
-  const CandidateTopBar({
-    super.key,
-    this.avatarLabel = 'A',
-    this.onNotifications,
-  });
-
-  final String avatarLabel;
-  final VoidCallback? onNotifications;
+  const CandidateTopBar({super.key});
 
   @override
   Size get preferredSize => const Size.fromHeight(64);
 
   @override
   Widget build(BuildContext context) {
-    return TalentPulseTopBar(
-      avatarLabel: avatarLabel,
-      onNotifications:
-          onNotifications ?? () => showComingSoon(context, 'Notifications'),
-      showTitle: false,
+    return const TalentPulseTopBar(
+      showAvatar: false,
+      showNotifications: false,
+      title: 'Vettingo',
     );
   }
 }
@@ -206,7 +207,7 @@ class CandidateBottomBar extends StatelessWidget {
 
   static const _items = <(IconData, IconData, String)>[
     (Icons.home_outlined, Icons.home_rounded, 'Ana Sayfa'),
-    (Icons.work_outline_rounded, Icons.work_rounded, 'İşler'),
+    (Icons.work_outline_rounded, Icons.work_rounded, 'Başvurularım'),
     (Icons.search_rounded, Icons.search_rounded, 'Arama'),
     (Icons.account_circle_outlined, Icons.account_circle_rounded, 'Profil'),
   ];
@@ -221,38 +222,87 @@ class CandidateBottomBar extends StatelessWidget {
   }
 }
 
-class CandidateScaffold extends StatelessWidget {
+class CandidateScaffold extends StatefulWidget {
   const CandidateScaffold({
     super.key,
     required this.body,
-    this.avatarLabel = 'A',
     this.bottomActions,
-    this.onNotifications,
     this.selectedItem,
   });
 
-  final String avatarLabel;
   final Widget body;
   final Widget? bottomActions;
-  final VoidCallback? onNotifications;
   final CandidateNavigationItem? selectedItem;
+
+  @override
+  State<CandidateScaffold> createState() => _CandidateScaffoldState();
+}
+
+class _CandidateScaffoldState extends State<CandidateScaffold> {
+  bool _profileMenuVisible = false;
+
+  void _handleNavigation(CandidateNavigationItem destination) {
+    if (destination == CandidateNavigationItem.profile) {
+      setState(() => _profileMenuVisible = !_profileMenuVisible);
+      return;
+    }
+
+    if (_profileMenuVisible) {
+      setState(() => _profileMenuVisible = false);
+    }
+
+    _openCandidateDestination(context, destination, widget.selectedItem);
+  }
+
+  void _openProfile() {
+    setState(() => _profileMenuVisible = false);
+    if (ModalRoute.of(context)?.settings.name == '/cv-review') return;
+    Navigator.of(context).pushReplacementNamed(
+      '/cv-review',
+      arguments: CandidateNavigationItem.profile,
+    );
+  }
+
+  void _closeAndShowComingSoon(String label) {
+    setState(() => _profileMenuVisible = false);
+    showComingSoon(context, label);
+  }
+
+  void _signOut() {
+    Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CandidateTopBar(
-        avatarLabel: avatarLabel,
-        onNotifications: onNotifications,
+      appBar: const CandidateTopBar(),
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 180),
+        child: _profileMenuVisible
+            ? _CandidateProfileMenu(
+                onProfile: _openProfile,
+                onApplications: () => _closeAndShowComingSoon('Başvurularım'),
+                onSavedJobs: () =>
+                    _closeAndShowComingSoon('Kaydedilen ilanlar'),
+                onSettings: () => _closeAndShowComingSoon('Ayarlar'),
+                onHelp: () => _closeAndShowComingSoon('Yardım merkezi'),
+                onSignOut: _signOut,
+              )
+            : KeyedSubtree(
+                key: const ValueKey('candidatePageBody'),
+                child: widget.body,
+              ),
       ),
-      body: body,
       bottomNavigationBar: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          ?bottomActions,
+          if (!_profileMenuVisible && widget.bottomActions != null)
+            widget.bottomActions!,
           CandidateBottomBar(
-            selectedItem: selectedItem,
-            onSelected: (item) =>
-                _openCandidateDestination(context, item, selectedItem),
+            selectedItem: _profileMenuVisible
+                ? CandidateNavigationItem.profile
+                : widget.selectedItem,
+            onSelected: _handleNavigation,
           ),
         ],
       ),
@@ -273,16 +323,11 @@ void _openCandidateDestination(
   CandidateNavigationItem destination,
   CandidateNavigationItem? current,
 ) {
-  if (destination == CandidateNavigationItem.profile) {
-    _showCandidateProfileMenu(context);
-    return;
-  }
-
   if (destination == current) return;
 
   final routeName = switch (destination) {
     CandidateNavigationItem.home => '/candidate-dashboard',
-    CandidateNavigationItem.jobs ||
+    CandidateNavigationItem.jobs => '/candidate-applications',
     CandidateNavigationItem.search => '/job-search',
     CandidateNavigationItem.profile => '/cv-review',
   };
@@ -290,126 +335,123 @@ void _openCandidateDestination(
   Navigator.of(context).pushReplacementNamed(routeName, arguments: destination);
 }
 
-Future<void> _showCandidateProfileMenu(BuildContext context) {
-  void closeAndShowComingSoon(BuildContext sheetContext, String label) {
-    Navigator.of(sheetContext).pop();
-    showComingSoon(context, label);
-  }
+class _CandidateProfileMenu extends StatelessWidget {
+  const _CandidateProfileMenu({
+    required this.onProfile,
+    required this.onApplications,
+    required this.onSavedJobs,
+    required this.onSettings,
+    required this.onHelp,
+    required this.onSignOut,
+  });
 
-  void openProfile(BuildContext sheetContext) {
-    Navigator.of(sheetContext).pop();
-    if (ModalRoute.of(context)?.settings.name == '/cv-review') return;
-    Navigator.of(context).pushReplacementNamed(
-      '/cv-review',
-      arguments: CandidateNavigationItem.profile,
-    );
-  }
+  final VoidCallback onApplications;
+  final VoidCallback onHelp;
+  final VoidCallback onProfile;
+  final VoidCallback onSavedJobs;
+  final VoidCallback onSettings;
+  final VoidCallback onSignOut;
 
-  void signOut(BuildContext sheetContext) {
-    Navigator.of(sheetContext).pop();
-    Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
-  }
-
-  return showModalBottomSheet<void>(
-    context: context,
-    isScrollControlled: true,
-    useSafeArea: true,
-    backgroundColor: AppColors.surface,
-    showDragHandle: true,
-    builder: (sheetContext) => SingleChildScrollView(
-      child: Padding(
-        key: const ValueKey('candidateProfileMenu'),
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Row(
-              children: [
-                CircleAvatar(
-                  radius: 24,
-                  backgroundColor: AppColors.surfaceHighest,
-                  foregroundColor: AppColors.primary,
-                  child: Text(
-                    'A',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-                  ),
-                ),
-                SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Alex',
-                        style: TextStyle(
-                          color: AppColors.primary,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                        ),
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      key: const ValueKey('candidateProfileMenu'),
+      color: AppColors.surface,
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 24, 16, 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Row(
+                children: [
+                  CircleAvatar(
+                    radius: 24,
+                    backgroundColor: AppColors.surfaceHighest,
+                    foregroundColor: AppColors.primary,
+                    child: Text(
+                      'A',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
                       ),
-                      Text(
-                        'Aday Hesabı',
-                        style: TextStyle(
-                          color: AppColors.onSurfaceVariant,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            const Divider(height: 1),
-            const SizedBox(height: 8),
-            _CandidateProfileMenuTile(
-              key: const ValueKey('candidateProfileMenuProfile'),
-              icon: Icons.account_circle_outlined,
-              label: 'Profilim',
-              subtitle: 'Profil ve CV bilgilerini görüntüle',
-              onTap: () => openProfile(sheetContext),
-            ),
-            _CandidateProfileMenuTile(
-              icon: Icons.assignment_outlined,
-              label: 'Başvurularım',
-              subtitle: 'İş başvurularını takip et',
-              onTap: () => closeAndShowComingSoon(sheetContext, 'Başvurularım'),
-            ),
-            _CandidateProfileMenuTile(
-              icon: Icons.bookmark_border_rounded,
-              label: 'Kaydedilen İlanlar',
-              subtitle: 'Daha sonra bakmak için kaydettiklerin',
-              onTap: () =>
-                  closeAndShowComingSoon(sheetContext, 'Kaydedilen ilanlar'),
-            ),
-            _CandidateProfileMenuTile(
-              icon: Icons.settings_outlined,
-              label: 'Ayarlar',
-              subtitle: 'Hesap ve bildirim tercihleri',
-              onTap: () => closeAndShowComingSoon(sheetContext, 'Ayarlar'),
-            ),
-            _CandidateProfileMenuTile(
-              icon: Icons.help_outline_rounded,
-              label: 'Yardım Merkezi',
-              subtitle: 'Destek ve sık sorulan sorular',
-              onTap: () =>
-                  closeAndShowComingSoon(sheetContext, 'Yardım merkezi'),
-            ),
-            const Divider(height: 17),
-            _CandidateProfileMenuTile(
-              key: const ValueKey('candidateProfileMenuSignOut'),
-              icon: Icons.logout_rounded,
-              label: 'Çıkış Yap',
-              subtitle: 'Hesabından güvenli şekilde çık',
-              foregroundColor: const Color(0xFFBA1A1A),
-              onTap: () => signOut(sheetContext),
-            ),
-          ],
+                  SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Alex',
+                          style: TextStyle(
+                            color: AppColors.primary,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        Text(
+                          'Aday Hesabı',
+                          style: TextStyle(
+                            color: AppColors.onSurfaceVariant,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              const Divider(height: 1),
+              const SizedBox(height: 8),
+              _CandidateProfileMenuTile(
+                key: const ValueKey('candidateProfileMenuProfile'),
+                icon: Icons.account_circle_outlined,
+                label: 'Profilim',
+                subtitle: 'Profil ve CV bilgilerini görüntüle',
+                onTap: onProfile,
+              ),
+              _CandidateProfileMenuTile(
+                icon: Icons.assignment_outlined,
+                label: 'Başvurularım',
+                subtitle: 'İş başvurularını takip et',
+                onTap: onApplications,
+              ),
+              _CandidateProfileMenuTile(
+                icon: Icons.bookmark_border_rounded,
+                label: 'Kaydedilen İlanlar',
+                subtitle: 'Daha sonra bakmak için kaydettiklerin',
+                onTap: onSavedJobs,
+              ),
+              _CandidateProfileMenuTile(
+                icon: Icons.settings_outlined,
+                label: 'Ayarlar',
+                subtitle: 'Hesap ve bildirim tercihleri',
+                onTap: onSettings,
+              ),
+              _CandidateProfileMenuTile(
+                icon: Icons.help_outline_rounded,
+                label: 'Yardım Merkezi',
+                subtitle: 'Destek ve sık sorulan sorular',
+                onTap: onHelp,
+              ),
+              const Divider(height: 17),
+              _CandidateProfileMenuTile(
+                key: const ValueKey('candidateProfileMenuSignOut'),
+                icon: Icons.logout_rounded,
+                label: 'Çıkış Yap',
+                subtitle: 'Hesabından güvenli şekilde çık',
+                foregroundColor: const Color(0xFFBA1A1A),
+                onTap: onSignOut,
+              ),
+            ],
+          ),
         ),
       ),
-    ),
-  );
+    );
+  }
 }
 
 class _CandidateProfileMenuTile extends StatelessWidget {
