@@ -14,6 +14,8 @@ void main() {
 
     expect(candidate.dashboard.userName, 'Alex');
     expect(candidate.dashboard.applications, hasLength(2));
+    expect(candidate.dashboard.applicationHistory, hasLength(3));
+    expect(candidate.dashboard.applicationHistory.last.status, 'Rejected');
     expect(candidate.dashboard.marketProfile.score, 85);
     expect(employer.dashboard.totalApplications, 1248);
     expect(employer.dashboard.topMatches.first.name, 'Sarah Jenkins');
@@ -42,9 +44,14 @@ void main() {
     expect(find.text('Senior Frontend Engineer'), findsOneWidget);
     expect(find.text('Your Market Profile'), findsOneWidget);
     expect(find.text('85'), findsOneWidget);
+    expect(find.text('Vettingo'), findsOneWidget);
+    expect(find.byIcon(Icons.notifications_outlined), findsNothing);
+    final topBarRect = tester.getRect(find.byType(CandidateTopBar));
+    final titleRect = tester.getRect(find.text('Vettingo'));
+    expect(titleRect.center.dx, closeTo(topBarRect.center.dx, .01));
     expect(find.text('TalentPulse'), findsNothing);
     expect(find.text('Ana Sayfa'), findsOneWidget);
-    expect(find.text('İşler'), findsOneWidget);
+    expect(find.text('Başvurularım'), findsOneWidget);
     expect(find.text('Arama'), findsOneWidget);
     expect(find.text('Profil'), findsOneWidget);
     expect(find.text('Apps'), findsNothing);

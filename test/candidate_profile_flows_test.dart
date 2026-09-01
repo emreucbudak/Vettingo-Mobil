@@ -65,9 +65,10 @@ void main() {
     expect(find.byType(CandidateScaffold), findsOneWidget);
     expect(find.byType(CandidateTopBar), findsOneWidget);
     expect(find.byType(CandidateBottomBar), findsOneWidget);
+    expect(find.text('Vettingo'), findsOneWidget);
     expect(find.text('TalentPulse'), findsNothing);
     expect(find.text('Ana Sayfa'), findsOneWidget);
-    expect(find.text('İşler'), findsOneWidget);
+    expect(find.text('Başvurularım'), findsOneWidget);
     expect(find.text('Arama'), findsOneWidget);
     expect(find.text('Profil'), findsOneWidget);
     expect(

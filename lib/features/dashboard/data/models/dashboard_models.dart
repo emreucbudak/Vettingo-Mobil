@@ -7,19 +7,8 @@ class CandidateDashboardModel {
   final Map<String, Object> json;
 
   CandidateDashboard toEntity() {
-    final applications = (json['applications']! as List<Map<String, Object>>)
-        .map(
-          (item) => JobApplication(
-            role: item['role']! as String,
-            company: item['company']! as String,
-            location: item['location']! as String,
-            status: item['status']! as String,
-            stageLabel: item['stageLabel']! as String,
-            progress: item['progress']! as double,
-            nextStep: item['nextStep']! as String,
-          ),
-        )
-        .toList(growable: false);
+    final applications = _applicationsFrom(json['applications']!);
+    final applicationHistory = _applicationsFrom(json['applicationHistory']!);
     final profile = json['marketProfile']! as Map<String, Object>;
     final recommendations =
         (json['recommendations']! as List<Map<String, Object>>)
@@ -38,6 +27,7 @@ class CandidateDashboardModel {
       dateLabel: json['dateLabel']! as String,
       summary: json['summary']! as String,
       applications: applications,
+      applicationHistory: applicationHistory,
       marketProfile: MarketProfile(
         score: profile['score']! as int,
         title: profile['title']! as String,
@@ -46,6 +36,22 @@ class CandidateDashboardModel {
       ),
       recommendations: recommendations,
     );
+  }
+
+  List<JobApplication> _applicationsFrom(Object value) {
+    return (value as List<Map<String, Object>>)
+        .map(
+          (item) => JobApplication(
+            role: item['role']! as String,
+            company: item['company']! as String,
+            location: item['location']! as String,
+            status: item['status']! as String,
+            stageLabel: item['stageLabel']! as String,
+            progress: item['progress']! as double,
+            nextStep: item['nextStep']! as String,
+          ),
+        )
+        .toList(growable: false);
   }
 }
 
