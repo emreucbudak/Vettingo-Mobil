@@ -46,6 +46,23 @@ void main() {
     expect(find.text('Welcome back, Alex.'), findsOneWidget);
   });
 
+  testWidgets('candidate profile tab opens the account menu', (tester) async {
+    await tester.pumpWidget(const VettingoApp());
+
+    await tester.tap(find.byKey(const ValueKey('dashboardSignInButton')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('bottomNav3')));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('candidateProfileMenu')), findsOneWidget);
+    expect(find.text('Profilim'), findsOneWidget);
+    expect(find.text('Başvurularım'), findsOneWidget);
+    expect(find.text('Kaydedilen İlanlar'), findsOneWidget);
+    expect(find.text('Ayarlar'), findsOneWidget);
+    expect(find.text('Yardım Merkezi'), findsOneWidget);
+    expect(find.text('Çıkış Yap'), findsOneWidget);
+  });
+
   testWidgets('register link opens the mobile registration form', (
     tester,
   ) async {

@@ -72,9 +72,12 @@ void main() {
     expect(find.text('Market Intelligence'), findsNothing);
     expect(find.text('Avg. Time to Fill'), findsNothing);
     expect(find.text('Comp Range'), findsNothing);
-    expect(find.text('Recommended Matches'), findsOneWidget);
+    expect(find.text('Önerilen Eşleşmeler'), findsOneWidget);
+    expect(find.text('3 sonuç'), findsOneWidget);
     expect(find.text('VP of Engineering'), findsOneWidget);
     expect(find.text('Director of Engineering'), findsOneWidget);
+    expect(find.byKey(const ValueKey('quickFilter0')), findsNothing);
+    expect(find.byKey(const ValueKey('jobFilterButton')), findsOneWidget);
     _expectCandidateShell();
 
     await tester.enterText(
