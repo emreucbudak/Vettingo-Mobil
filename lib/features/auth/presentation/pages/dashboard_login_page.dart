@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../dashboard/presentation/pages/candidate_dashboard_page.dart';
-import '../../../dashboard/presentation/pages/employer_dashboard_page.dart';
 import '../../domain/entities/login_credentials.dart';
 import '../controllers/login_controller.dart';
 import 'dashboard_register_page.dart';
@@ -19,18 +18,11 @@ class DashboardLoginPage extends StatefulWidget {
 }
 
 class _DashboardLoginPageState extends State<DashboardLoginPage> {
-  final _formKey = GlobalKey<FormState>();
-
   Future<void> _submit() async {
     FocusScope.of(context).unfocus();
-    if (!(_formKey.currentState?.validate() ?? false)) return;
-    await widget.controller.signIn();
-    if (!mounted) return;
-    final route =
-        widget.controller.credentials.accountType == AccountType.employer
-        ? EmployerDashboardPage.routeName
-        : CandidateDashboardPage.routeName;
-    await Navigator.of(context).pushReplacementNamed(route);
+    await Navigator.of(
+      context,
+    ).pushReplacementNamed(CandidateDashboardPage.routeName);
   }
 
   void _showComingSoon(String label) {
@@ -85,14 +77,12 @@ class _DashboardLoginPageState extends State<DashboardLoginPage> {
                     _AccountTypeSelector(controller: widget.controller),
                     const SizedBox(height: 24),
                     Form(
-                      key: _formKey,
                       child: Column(
                         children: [
                           TextFormField(
                             key: const ValueKey('dashboardEmailField'),
                             keyboardType: TextInputType.emailAddress,
                             textInputAction: TextInputAction.next,
-                            validator: widget.controller.validateEmail,
                             onChanged: widget.controller.setEmail,
                             decoration: _decoration(
                               'Email',
@@ -104,7 +94,6 @@ class _DashboardLoginPageState extends State<DashboardLoginPage> {
                             key: const ValueKey('dashboardPasswordField'),
                             obscureText: !widget.controller.isPasswordVisible,
                             textInputAction: TextInputAction.done,
-                            validator: widget.controller.validatePassword,
                             onChanged: widget.controller.setPassword,
                             onFieldSubmitted: (_) => _submit(),
                             decoration:
@@ -158,9 +147,7 @@ class _DashboardLoginPageState extends State<DashboardLoginPage> {
                             height: 48,
                             child: FilledButton(
                               key: const ValueKey('dashboardSignInButton'),
-                              onPressed: widget.controller.isLoading
-                                  ? null
-                                  : _submit,
+                              onPressed: _submit,
                               style: FilledButton.styleFrom(
                                 backgroundColor: AppColors.primary,
                                 foregroundColor: Colors.white,
@@ -172,15 +159,7 @@ class _DashboardLoginPageState extends State<DashboardLoginPage> {
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
-                              child: widget.controller.isLoading
-                                  ? const SizedBox.square(
-                                      dimension: 18,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        color: Colors.white,
-                                      ),
-                                    )
-                                  : const Text('Giriş Yap'),
+                              child: const Text('Giriş Yap'),
                             ),
                           ),
                         ],

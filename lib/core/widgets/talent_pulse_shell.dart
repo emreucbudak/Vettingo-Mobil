@@ -10,6 +10,7 @@ class TalentPulseTopBar extends StatelessWidget implements PreferredSizeWidget {
     this.onNotifications,
     this.showAvatar = true,
     this.showNotifications = true,
+    this.showTitle = true,
   });
 
   final String avatarLabel;
@@ -17,6 +18,7 @@ class TalentPulseTopBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onNotifications;
   final bool showAvatar;
   final bool showNotifications;
+  final bool showTitle;
 
   @override
   Size get preferredSize => const Size.fromHeight(64);
@@ -50,16 +52,18 @@ class TalentPulseTopBar extends StatelessWidget implements PreferredSizeWidget {
           : null,
       titleSpacing: showAvatar ? NavigationToolbar.kMiddleSpacing : 16,
       centerTitle: centerTitle,
-      title: const Text(
-        'TalentPulse',
-        style: TextStyle(
-          color: AppColors.primary,
-          fontSize: 20,
-          height: 1.4,
-          fontWeight: FontWeight.w600,
-          letterSpacing: -.2,
-        ),
-      ),
+      title: showTitle
+          ? const Text(
+              'TalentPulse',
+              style: TextStyle(
+                color: AppColors.primary,
+                fontSize: 20,
+                height: 1.4,
+                fontWeight: FontWeight.w600,
+                letterSpacing: -.2,
+              ),
+            )
+          : null,
       actions: showNotifications
           ? [
               IconButton(
@@ -78,13 +82,15 @@ class TalentPulseBottomBar extends StatelessWidget {
   const TalentPulseBottomBar({
     super.key,
     this.selectedIndex = 0,
+    this.items = _defaultItems,
     required this.onSelected,
   });
 
   final int selectedIndex;
+  final List<(IconData, IconData, String)> items;
   final ValueChanged<int> onSelected;
 
-  static const _items = <(IconData, IconData, String)>[
+  static const _defaultItems = <(IconData, IconData, String)>[
     (Icons.dashboard_outlined, Icons.dashboard_rounded, 'Home'),
     (Icons.description_outlined, Icons.description_rounded, 'Apps'),
     (Icons.search_rounded, Icons.search_rounded, 'Search'),
@@ -104,9 +110,9 @@ class TalentPulseBottomBar extends StatelessWidget {
           height: 72,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: List.generate(_items.length, (index) {
+            children: List.generate(items.length, (index) {
               final selected = index == selectedIndex;
-              final item = _items[index];
+              final item = items[index];
               return Semantics(
                 selected: selected,
                 button: true,

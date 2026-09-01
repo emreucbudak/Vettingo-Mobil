@@ -35,6 +35,16 @@ void main() {
     expect(find.text('Senior Frontend Engineer'), findsOneWidget);
     expect(find.text('Your Market Profile'), findsOneWidget);
     expect(find.text('85'), findsOneWidget);
+    expect(find.text('TalentPulse'), findsNothing);
+    expect(find.text('Ana Sayfa'), findsOneWidget);
+    expect(find.text('İşler'), findsOneWidget);
+    expect(find.text('Arama'), findsOneWidget);
+    expect(find.text('Profil'), findsOneWidget);
+    expect(find.text('Apps'), findsNothing);
+    expect(find.text('Home'), findsNothing);
+    expect(find.text('Jobs'), findsNothing);
+    expect(find.byIcon(Icons.home_rounded), findsOneWidget);
+    expect(find.byIcon(Icons.account_circle_outlined), findsOneWidget);
   });
 
   testWidgets('employer dashboard renders metrics and requisitions', (

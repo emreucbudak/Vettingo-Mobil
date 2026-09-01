@@ -22,6 +22,7 @@ class CandidateDashboardPage extends StatelessWidget {
       appBar: TalentPulseTopBar(
         avatarLabel: dashboard.userName.substring(0, 1).toUpperCase(),
         onNotifications: () => showComingSoon(context, 'Notifications'),
+        showTitle: false,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
@@ -115,20 +116,27 @@ class CandidateDashboardPage extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: TalentPulseBottomBar(
+        items: const [
+          (Icons.home_outlined, Icons.home_rounded, 'Ana Sayfa'),
+          (Icons.work_outline_rounded, Icons.work_rounded, 'İşler'),
+          (Icons.search_rounded, Icons.search_rounded, 'Arama'),
+          (
+            Icons.account_circle_outlined,
+            Icons.account_circle_rounded,
+            'Profil',
+          ),
+        ],
         onSelected: (index) {
           if (index == 1) {
-            Navigator.of(context).pushNamed(CvReviewPage.routeName);
+            Navigator.of(context).pushNamed(JobSearchPage.routeName);
             return;
           }
           if (index == 2) {
             Navigator.of(context).pushNamed(JobSearchPage.routeName);
             return;
           }
-          if (index != 0) {
-            showComingSoon(
-              context,
-              const ['Home', 'Apps', 'Search', 'Jobs'][index],
-            );
+          if (index == 3) {
+            Navigator.of(context).pushNamed(CvReviewPage.routeName);
           }
         },
       ),

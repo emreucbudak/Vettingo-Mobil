@@ -34,6 +34,18 @@ void main() {
     );
     expect(find.byKey(const ValueKey('dashboardGoogleButton')), findsOneWidget);
   });
+
+  testWidgets('login opens candidate dashboard without validation', (
+    tester,
+  ) async {
+    await tester.pumpWidget(const VettingoApp());
+
+    await tester.tap(find.byKey(const ValueKey('dashboardSignInButton')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Welcome back, Alex.'), findsOneWidget);
+  });
+
   testWidgets('register link opens the mobile registration form', (
     tester,
   ) async {
@@ -83,6 +95,24 @@ void main() {
     await tester.tap(loginLink);
     await tester.pumpAndSettle();
     expect(find.byKey(const ValueKey('dashboardSignInButton')), findsOneWidget);
+  });
+
+  testWidgets('register opens employer dashboard without validation', (
+    tester,
+  ) async {
+    await tester.pumpWidget(const VettingoApp());
+
+    final registerLink = find.byKey(const ValueKey('dashboardRegisterButton'));
+    await tester.ensureVisible(registerLink);
+    await tester.tap(registerLink);
+    await tester.pumpAndSettle();
+
+    final submitButton = find.byKey(const ValueKey('registerSubmitButton'));
+    await tester.ensureVisible(submitButton);
+    await tester.tap(submitButton);
+    await tester.pumpAndSettle();
+
+    expect(find.text('TOTAL APPLICATIONS'), findsOneWidget);
   });
 
   testWidgets('register legal links open scrollable documents', (tester) async {
