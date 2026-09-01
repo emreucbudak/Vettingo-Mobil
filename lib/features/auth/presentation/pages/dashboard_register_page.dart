@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../dashboard/presentation/pages/employer_dashboard_page.dart';
 
 enum _RegisterAccountType { jobSeeker, employer }
 
@@ -48,12 +49,9 @@ class DashboardRegisterPage extends StatefulWidget {
 }
 
 class _DashboardRegisterPageState extends State<DashboardRegisterPage> {
-  final _formKey = GlobalKey<FormState>();
-
   _RegisterAccountType _accountType = _RegisterAccountType.jobSeeker;
   bool _isPasswordVisible = false;
   bool _termsAccepted = false;
-  bool _showTermsError = false;
 
   Future<void> _showLegalDocument(_LegalDocument document) async {
     await showDialog<void>(
@@ -65,51 +63,7 @@ class _DashboardRegisterPageState extends State<DashboardRegisterPage> {
 
   void _submit() {
     FocusScope.of(context).unfocus();
-    final isFormValid = _formKey.currentState?.validate() ?? false;
-    setState(() => _showTermsError = !_termsAccepted);
-    if (!isFormValid || !_termsAccepted) return;
-
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(
-        const SnackBar(
-          content: Text('Kayıt işlemi yakında kullanıma sunulacak.'),
-        ),
-      );
-  }
-
-  String? _requiredField(String? value, String message) {
-    if (value == null || value.trim().isEmpty) return message;
-    return null;
-  }
-
-  String? _validateEmail(String? value) {
-    final requiredError = _requiredField(value, 'E-posta adresinizi girin.');
-    if (requiredError != null) return requiredError;
-    final email = value!.trim();
-    if (!RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$').hasMatch(email)) {
-      return 'Geçerli bir e-posta adresi girin.';
-    }
-    return null;
-  }
-
-  String? _validatePassword(String? value) {
-    final password = value ?? '';
-    if (password.isEmpty) return 'Şifrenizi girin.';
-    if (password.length < 6) return 'Şifre en az 6 karakter olmalıdır.';
-    if (!RegExp(r'[A-ZÇĞİÖŞÜ]').hasMatch(password)) {
-      return 'Şifre en az bir büyük harf içermelidir.';
-    }
-    if (!RegExp(r'[a-zçğıöşü]').hasMatch(password)) {
-      return 'Şifre en az bir küçük harf içermelidir.';
-    }
-    if (!RegExp(r'[0-9]').hasMatch(password)) {
-      return 'Şifre en az bir rakam içermelidir.';
-    }
-    if (!RegExp(r'[^A-Za-z0-9ÇĞİÖŞÜçğıöşü]').hasMatch(password)) {
-      return 'Şifre en az bir özel karakter içermelidir.';
-    }
-    return null;
+    Navigator.of(context).pushReplacementNamed(EmployerDashboardPage.routeName);
   }
 
   @override
@@ -152,8 +106,6 @@ class _DashboardRegisterPageState extends State<DashboardRegisterPage> {
                   ),
                   const SizedBox(height: 24),
                   Form(
-                    key: _formKey,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -164,8 +116,6 @@ class _DashboardRegisterPageState extends State<DashboardRegisterPage> {
                           icon: Icons.person_outline_rounded,
                           textInputAction: TextInputAction.next,
                           autofillHints: const [AutofillHints.givenName],
-                          validator: (value) =>
-                              _requiredField(value, 'Adınızı girin.'),
                         ),
                         const SizedBox(height: 16),
                         _RegisterField(
@@ -175,8 +125,6 @@ class _DashboardRegisterPageState extends State<DashboardRegisterPage> {
                           icon: Icons.account_box_outlined,
                           textInputAction: TextInputAction.next,
                           autofillHints: const [AutofillHints.familyName],
-                          validator: (value) =>
-                              _requiredField(value, 'Soyadınızı girin.'),
                         ),
                         const SizedBox(height: 16),
                         _RegisterField(
@@ -187,7 +135,6 @@ class _DashboardRegisterPageState extends State<DashboardRegisterPage> {
                           keyboardType: TextInputType.emailAddress,
                           textInputAction: TextInputAction.next,
                           autofillHints: const [AutofillHints.email],
-                          validator: _validateEmail,
                         ),
                         const SizedBox(height: 16),
                         _RegisterField(
@@ -201,7 +148,6 @@ class _DashboardRegisterPageState extends State<DashboardRegisterPage> {
                               ? TextInputAction.next
                               : TextInputAction.done,
                           autofillHints: const [AutofillHints.newPassword],
-                          validator: _validatePassword,
                           suffixIcon: IconButton(
                             tooltip: _isPasswordVisible
                                 ? 'Şifreyi gizle'
@@ -231,8 +177,6 @@ class _DashboardRegisterPageState extends State<DashboardRegisterPage> {
                             autofillHints: const [
                               AutofillHints.organizationName,
                             ],
-                            validator: (value) =>
-                                _requiredField(value, 'Şirket adını girin.'),
                             onFieldSubmitted: (_) => _submit(),
                           ),
                         ],
@@ -252,7 +196,6 @@ class _DashboardRegisterPageState extends State<DashboardRegisterPage> {
                                 ),
                                 onChanged: (value) => setState(() {
                                   _termsAccepted = value ?? false;
-                                  _showTermsError = false;
                                 }),
                               ),
                             ),
@@ -285,16 +228,6 @@ class _DashboardRegisterPageState extends State<DashboardRegisterPage> {
                             ),
                           ],
                         ),
-                        if (_showTermsError) ...[
-                          const SizedBox(height: 6),
-                          const Padding(
-                            padding: EdgeInsets.only(left: 34),
-                            child: Text(
-                              'Devam etmek için koşulları kabul edin.',
-                              style: TextStyle(color: Colors.red, fontSize: 12),
-                            ),
-                          ),
-                        ],
                         const SizedBox(height: 22),
                         SizedBox(
                           width: double.infinity,
@@ -501,7 +434,6 @@ class _RegisterField extends StatelessWidget {
     required this.label,
     required this.hint,
     required this.icon,
-    required this.validator,
     this.keyboardType,
     this.textInputAction,
     this.autofillHints,
@@ -514,7 +446,6 @@ class _RegisterField extends StatelessWidget {
   final String label;
   final String hint;
   final IconData icon;
-  final FormFieldValidator<String> validator;
   final TextInputType? keyboardType;
   final TextInputAction? textInputAction;
   final Iterable<String>? autofillHints;
@@ -547,7 +478,6 @@ class _RegisterField extends StatelessWidget {
           textInputAction: textInputAction,
           autofillHints: autofillHints,
           obscureText: obscureText,
-          validator: validator,
           onFieldSubmitted: onFieldSubmitted,
           decoration: InputDecoration(
             hintText: hint,
