@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vettingomobil/core/di/app_dependencies.dart';
+import 'package:vettingomobil/core/widgets/talent_pulse_shell.dart';
 import 'package:vettingomobil/features/dashboard/presentation/pages/candidate_dashboard_page.dart';
 import 'package:vettingomobil/features/dashboard/presentation/pages/employer_dashboard_page.dart';
 
@@ -31,6 +32,12 @@ void main() {
     );
 
     expect(find.text('Welcome back, Alex.'), findsOneWidget);
+    expect(
+      find.text('You have 2 upcoming interviews and 3 new recommended roles.'),
+      findsNothing,
+    );
+    final welcomeText = tester.widget<Text>(find.text('Welcome back, Alex.'));
+    expect(welcomeText.style?.fontSize, 24);
     expect(find.text('Active Applications'), findsOneWidget);
     expect(find.text('Senior Frontend Engineer'), findsOneWidget);
     expect(find.text('Your Market Profile'), findsOneWidget);
@@ -45,6 +52,9 @@ void main() {
     expect(find.text('Jobs'), findsNothing);
     expect(find.byIcon(Icons.home_rounded), findsOneWidget);
     expect(find.byIcon(Icons.account_circle_outlined), findsOneWidget);
+    expect(find.byType(CandidateScaffold), findsOneWidget);
+    expect(find.byType(CandidateTopBar), findsOneWidget);
+    expect(find.byType(CandidateBottomBar), findsOneWidget);
   });
 
   testWidgets('employer dashboard renders metrics and requisitions', (

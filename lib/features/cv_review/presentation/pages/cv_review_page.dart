@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/talent_pulse_shell.dart';
 import '../../domain/entities/candidate_cv_review.dart';
 import '../controllers/cv_review_controller.dart';
 
@@ -17,203 +18,184 @@ class CvReviewPage extends StatelessWidget {
       animation: controller,
       builder: (context, _) {
         final review = controller.review;
-        return Scaffold(
-          appBar: AppBar(
-            toolbarHeight: 64,
-            shape: const Border(
-              bottom: BorderSide(color: AppColors.outlineVariant),
-            ),
-            leading: IconButton(
-              tooltip: 'Close review',
-              onPressed: () => Navigator.of(context).maybePop(),
-              icon: const Icon(Icons.close_rounded),
-            ),
-            titleSpacing: 0,
-            title: const Text(
-              'Review Parsed Data',
-              style: TextStyle(
-                color: AppColors.primary,
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            actions: const [
-              Center(
-                child: Text(
-                  'Step 2 of 3',
-                  style: TextStyle(
-                    color: AppColors.onSurfaceVariant,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-              SizedBox(width: 16),
-            ],
-          ),
-          body: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
-            child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 720),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(999),
-                      child: const LinearProgressIndicator(
-                        value: 2 / 3,
-                        minHeight: 6,
-                        backgroundColor: AppColors.surfaceContainer,
-                        valueColor: AlwaysStoppedAnimation(AppColors.primary),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'Verify Candidate Info',
-                      style: TextStyle(
-                        color: AppColors.primary,
-                        fontSize: 20,
-                        height: 1.4,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    const Text(
-                      'Please review the information extracted from the CV. Tap any section to edit.',
-                      style: TextStyle(
-                        color: AppColors.onSurfaceVariant,
-                        fontSize: 14,
-                        height: 1.45,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    _ReviewCard(
-                      title: 'Summary',
-                      onEdit: () => _editSummary(context),
-                      child: Text(
-                        review.summary,
-                        style: const TextStyle(
-                          color: AppColors.onSurfaceVariant,
-                          fontSize: 14,
-                          height: 1.55,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    _ReviewCard(
-                      title: 'Core Skills',
-                      onEdit: () => _manageSkills(context),
-                      child: Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: [
-                          ...review.coreSkills.map(
-                            (skill) => Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: AppColors.surfaceHigh,
-                                borderRadius: BorderRadius.circular(4),
-                                border: Border.all(
-                                  color: AppColors.outlineVariant,
-                                ),
-                              ),
-                              child: Text(
-                                skill,
-                                style: const TextStyle(
-                                  color: AppColors.primary,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ),
-                          ActionChip(
-                            key: const ValueKey('addCvSkillButton'),
-                            avatar: const Icon(Icons.add_rounded, size: 16),
-                            label: const Text('Add Skill'),
-                            onPressed: () => _addSkill(context),
-                            side: const BorderSide(
-                              color: AppColors.outlineVariant,
-                              style: BorderStyle.solid,
-                            ),
-                            backgroundColor: AppColors.surface,
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    _ReviewCard(
-                      title: 'Experience',
-                      child: _ExperienceTimeline(
-                        experiences: review.experiences,
-                        onEdit: (index) => _editExperience(context, index),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    _ReviewCard(
-                      title: 'Education',
-                      onEdit: () => _editEducation(context),
+        return CandidateScaffold(
+          selectedItem: CandidateNavigationItem.profile,
+          body: Column(
+            children: [
+              _ReviewStatusBar(onClose: () => Navigator.of(context).maybePop()),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 720),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Text(
-                            review.education.degree,
-                            style: const TextStyle(
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(999),
+                            child: const LinearProgressIndicator(
+                              value: 2 / 3,
+                              minHeight: 6,
+                              backgroundColor: AppColors.surfaceContainer,
+                              valueColor: AlwaysStoppedAnimation(
+                                AppColors.primary,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          const Text(
+                            'Verify Candidate Info',
+                            style: TextStyle(
                               color: AppColors.primary,
-                              fontSize: 12,
+                              fontSize: 20,
+                              height: 1.4,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
                           const SizedBox(height: 4),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  review.education.institution,
-                                  style: const TextStyle(
-                                    color: AppColors.onSurfaceVariant,
-                                    fontSize: 14,
+                          const Text(
+                            'Please review the information extracted from the CV. Tap any section to edit.',
+                            style: TextStyle(
+                              color: AppColors.onSurfaceVariant,
+                              fontSize: 14,
+                              height: 1.45,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          _ReviewCard(
+                            title: 'Summary',
+                            onEdit: () => _editSummary(context),
+                            child: Text(
+                              review.summary,
+                              style: const TextStyle(
+                                color: AppColors.onSurfaceVariant,
+                                fontSize: 14,
+                                height: 1.55,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          _ReviewCard(
+                            title: 'Core Skills',
+                            onEdit: () => _manageSkills(context),
+                            child: Wrap(
+                              spacing: 8,
+                              runSpacing: 8,
+                              children: [
+                                ...review.coreSkills.map(
+                                  (skill) => Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 4,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.surfaceHigh,
+                                      borderRadius: BorderRadius.circular(4),
+                                      border: Border.all(
+                                        color: AppColors.outlineVariant,
+                                      ),
+                                    ),
+                                    child: Text(
+                                      skill,
+                                      style: const TextStyle(
+                                        color: AppColors.primary,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Text(
-                                review.education.period,
-                                style: const TextStyle(
-                                  color: AppColors.onSurfaceVariant,
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w500,
+                                ActionChip(
+                                  key: const ValueKey('addCvSkillButton'),
+                                  avatar: const Icon(
+                                    Icons.add_rounded,
+                                    size: 16,
+                                  ),
+                                  label: const Text('Add Skill'),
+                                  onPressed: () => _addSkill(context),
+                                  side: const BorderSide(
+                                    color: AppColors.outlineVariant,
+                                    style: BorderStyle.solid,
+                                  ),
+                                  backgroundColor: AppColors.surface,
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
+                          const SizedBox(height: 16),
+                          _ReviewCard(
+                            title: 'Experience',
+                            child: _ExperienceTimeline(
+                              experiences: review.experiences,
+                              onEdit: (index) =>
+                                  _editExperience(context, index),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          _ReviewCard(
+                            title: 'Education',
+                            onEdit: () => _editEducation(context),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  review.education.degree,
+                                  style: const TextStyle(
+                                    color: AppColors.primary,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        review.education.institution,
+                                        style: const TextStyle(
+                                          color: AppColors.onSurfaceVariant,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ),
+                                    Text(
+                                      review.education.period,
+                                      style: const TextStyle(
+                                        color: AppColors.onSurfaceVariant,
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          if (controller.completed) ...[
+                            const SizedBox(height: 16),
+                            const _StatusBanner(
+                              icon: Icons.check_circle_outline_rounded,
+                              message: 'Candidate profile is ready.',
+                              color: AppColors.success,
+                            ),
+                          ] else if (controller.reuploadRequested) ...[
+                            const SizedBox(height: 16),
+                            const _StatusBanner(
+                              icon: Icons.upload_file_rounded,
+                              message: 'CV re-upload flow requested.',
+                              color: AppColors.primary,
+                            ),
+                          ],
                         ],
                       ),
                     ),
-                    if (controller.completed) ...[
-                      const SizedBox(height: 16),
-                      const _StatusBanner(
-                        icon: Icons.check_circle_outline_rounded,
-                        message: 'Candidate profile is ready.',
-                        color: AppColors.success,
-                      ),
-                    ] else if (controller.reuploadRequested) ...[
-                      const SizedBox(height: 16),
-                      const _StatusBanner(
-                        icon: Icons.upload_file_rounded,
-                        message: 'CV re-upload flow requested.',
-                        color: AppColors.primary,
-                      ),
-                    ],
-                  ],
+                  ),
                 ),
               ),
-            ),
+            ],
           ),
-          bottomNavigationBar: _ReviewActions(
+          bottomActions: _ReviewActions(
             completed: controller.completed,
             onReupload: () {
               controller.requestReupload();
@@ -319,6 +301,51 @@ class CvReviewPage extends StatelessWidget {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(SnackBar(content: Text(message)));
+  }
+}
+
+class _ReviewStatusBar extends StatelessWidget {
+  const _ReviewStatusBar({required this.onClose});
+
+  final VoidCallback onClose;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 56,
+      padding: const EdgeInsets.only(right: 16),
+      decoration: const BoxDecoration(
+        color: AppColors.surface,
+        border: Border(bottom: BorderSide(color: AppColors.outlineVariant)),
+      ),
+      child: Row(
+        children: [
+          IconButton(
+            tooltip: 'Close review',
+            onPressed: onClose,
+            icon: const Icon(Icons.close_rounded),
+          ),
+          const Expanded(
+            child: Text(
+              'Review Parsed Data',
+              style: TextStyle(
+                color: AppColors.primary,
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          const Text(
+            'Step 2 of 3',
+            style: TextStyle(
+              color: AppColors.onSurfaceVariant,
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -510,6 +537,7 @@ class _ReviewActions extends StatelessWidget {
         border: Border(top: BorderSide(color: AppColors.outlineVariant)),
       ),
       child: SafeArea(
+        bottom: false,
         top: false,
         child: Padding(
           padding: const EdgeInsets.all(16),
