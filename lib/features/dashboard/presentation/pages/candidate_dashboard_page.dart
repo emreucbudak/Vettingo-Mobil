@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/talent_pulse_shell.dart';
 import '../../../candidate_assessment/presentation/pages/candidate_assessment_page.dart';
-import '../../../job_search/presentation/pages/job_search_page.dart';
-import '../../../cv_review/presentation/pages/cv_review_page.dart';
 import '../../domain/entities/candidate_dashboard.dart';
 import '../controllers/candidate_dashboard_controller.dart';
 
@@ -18,12 +16,9 @@ class CandidateDashboardPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dashboard = controller.dashboard;
-    return Scaffold(
-      appBar: TalentPulseTopBar(
-        avatarLabel: dashboard.userName.substring(0, 1).toUpperCase(),
-        onNotifications: () => showComingSoon(context, 'Notifications'),
-        showTitle: false,
-      ),
+    return CandidateScaffold(
+      avatarLabel: dashboard.userName.substring(0, 1).toUpperCase(),
+      selectedItem: CandidateNavigationItem.home,
       body: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
         child: Center(
@@ -44,18 +39,9 @@ class CandidateDashboardPage extends StatelessWidget {
                   'Welcome back, ${dashboard.userName}.',
                   style: const TextStyle(
                     color: AppColors.primary,
-                    fontSize: 20,
+                    fontSize: 24,
                     height: 1.4,
                     fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  dashboard.summary,
-                  style: const TextStyle(
-                    color: AppColors.onSurfaceVariant,
-                    fontSize: 14,
-                    height: 1.45,
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -114,31 +100,6 @@ class CandidateDashboardPage extends StatelessWidget {
             ),
           ),
         ),
-      ),
-      bottomNavigationBar: TalentPulseBottomBar(
-        items: const [
-          (Icons.home_outlined, Icons.home_rounded, 'Ana Sayfa'),
-          (Icons.work_outline_rounded, Icons.work_rounded, 'İşler'),
-          (Icons.search_rounded, Icons.search_rounded, 'Arama'),
-          (
-            Icons.account_circle_outlined,
-            Icons.account_circle_rounded,
-            'Profil',
-          ),
-        ],
-        onSelected: (index) {
-          if (index == 1) {
-            Navigator.of(context).pushNamed(JobSearchPage.routeName);
-            return;
-          }
-          if (index == 2) {
-            Navigator.of(context).pushNamed(JobSearchPage.routeName);
-            return;
-          }
-          if (index == 3) {
-            Navigator.of(context).pushNamed(CvReviewPage.routeName);
-          }
-        },
       ),
     );
   }

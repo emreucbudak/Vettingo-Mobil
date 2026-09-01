@@ -38,11 +38,12 @@ class _JobSearchPageState extends State<JobSearchPage> {
       builder: (context, _) {
         final controller = widget.controller;
         final matches = _matchesForCurrentState(controller);
-        return Scaffold(
-          appBar: TalentPulseTopBar(
-            avatarLabel: 'A',
-            onNotifications: () => showComingSoon(context, 'Notifications'),
-          ),
+        final selectedNavigationItem = candidateNavigationItemOf(
+          context,
+          fallback: CandidateNavigationItem.search,
+        );
+        return CandidateScaffold(
+          selectedItem: selectedNavigationItem,
           body: CustomScrollView(
             slivers: [
               SliverPersistentHeader(
@@ -62,15 +63,6 @@ class _JobSearchPageState extends State<JobSearchPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Text(
-                            'Market Intelligence',
-                            style: _sectionTitleStyle,
-                          ),
-                          const SizedBox(height: 8),
-                          _MarketIntelligenceCard(
-                            intelligence: controller.content.marketIntelligence,
-                          ),
-                          const SizedBox(height: 24),
                           Row(
                             children: [
                               const Expanded(
@@ -112,20 +104,6 @@ class _JobSearchPageState extends State<JobSearchPage> {
                 ),
               ),
             ],
-          ),
-          bottomNavigationBar: TalentPulseBottomBar(
-            selectedIndex: 2,
-            onSelected: (index) {
-              if (index == 2) return;
-              if (index == 0 && Navigator.of(context).canPop()) {
-                Navigator.of(context).pop();
-                return;
-              }
-              showComingSoon(
-                context,
-                const ['Home', 'Apps', 'Search', 'Jobs'][index],
-              );
-            },
           ),
         );
       },
@@ -313,125 +291,6 @@ class _SearchHeaderDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   bool shouldRebuild(covariant _SearchHeaderDelegate oldDelegate) => true;
-}
-
-class _MarketIntelligenceCard extends StatelessWidget {
-  const _MarketIntelligenceCard({required this.intelligence});
-
-  final MarketIntelligence intelligence;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppColors.outlineVariant),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            children: [
-              const Icon(
-                Icons.trending_up_rounded,
-                color: AppColors.success,
-                size: 18,
-              ),
-              const SizedBox(width: 4),
-              Expanded(
-                child: Text(
-                  intelligence.demandLabel.toUpperCase(),
-                  style: const TextStyle(
-                    color: AppColors.success,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: .6,
-                  ),
-                ),
-              ),
-              Text(
-                intelligence.periodLabel,
-                style: const TextStyle(
-                  color: AppColors.onSurfaceVariant,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(
-            intelligence.summary,
-            style: const TextStyle(
-              color: AppColors.onSurface,
-              fontSize: 14,
-              height: 1.45,
-            ),
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: _MarketMetric(
-                  label: 'Avg. Time to Fill',
-                  value: intelligence.averageTimeToFill,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: _MarketMetric(
-                  label: 'Comp Range',
-                  value: intelligence.compensationRange,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _MarketMetric extends StatelessWidget {
-  const _MarketMetric({required this.label, required this.value});
-
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color: AppColors.surfaceLow,
-        borderRadius: BorderRadius.circular(6),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: const TextStyle(
-              color: AppColors.onSurfaceVariant,
-              fontSize: 11,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            value,
-            style: const TextStyle(
-              color: AppColors.primary,
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
 
 class _JobMatchCard extends StatelessWidget {

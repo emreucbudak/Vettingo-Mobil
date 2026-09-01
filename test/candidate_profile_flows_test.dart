@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vettingomobil/core/di/app_dependencies.dart';
+import 'package:vettingomobil/core/widgets/talent_pulse_shell.dart';
 import 'package:vettingomobil/features/candidate_detail/domain/entities/candidate_detail.dart';
 import 'package:vettingomobil/features/candidate_detail/presentation/pages/candidate_detail_page.dart';
 import 'package:vettingomobil/features/cv_review/presentation/pages/cv_review_page.dart';
@@ -61,8 +62,22 @@ void main() {
     expect(find.text('Verify Candidate Info'), findsOneWidget);
     expect(find.text('React.js'), findsOneWidget);
     expect(find.text('Lead Developer'), findsOneWidget);
+    expect(find.byType(CandidateScaffold), findsOneWidget);
+    expect(find.byType(CandidateTopBar), findsOneWidget);
+    expect(find.byType(CandidateBottomBar), findsOneWidget);
+    expect(find.text('TalentPulse'), findsNothing);
+    expect(find.text('Ana Sayfa'), findsOneWidget);
+    expect(find.text('İşler'), findsOneWidget);
+    expect(find.text('Arama'), findsOneWidget);
+    expect(find.text('Profil'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('continueToProfileButton')),
+      findsOneWidget,
+    );
 
-    await tester.tap(find.byKey(const ValueKey('addCvSkillButton')));
+    final addSkillButton = find.byKey(const ValueKey('addCvSkillButton'));
+    await tester.ensureVisible(addSkillButton);
+    await tester.tap(addSkillButton);
     await tester.pumpAndSettle();
     await tester.enterText(
       find.byKey(const ValueKey('cvTextEditor')),

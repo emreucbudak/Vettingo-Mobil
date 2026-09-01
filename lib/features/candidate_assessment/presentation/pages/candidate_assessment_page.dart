@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/talent_pulse_shell.dart';
 import '../../domain/entities/candidate_assessment.dart';
 import '../controllers/candidate_assessment_controller.dart';
 
@@ -18,96 +19,103 @@ class CandidateAssessmentPage extends StatelessWidget {
       animation: controller,
       builder: (context, _) {
         final question = controller.currentQuestion;
-        return Scaffold(
-          appBar: _AssessmentAppBar(
-            timeLabel: controller.assessment.remainingTimeLabel,
-            onClose: () => Navigator.of(context).maybePop(),
-            onFinish: () => _confirmFinish(context),
-          ),
-          body: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(16, 24, 16, 32),
-            child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 720),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _QuestionHeader(
-                      category: question.category,
-                      index: controller.currentIndex,
-                      total: controller.assessment.questions.length,
-                      difficulty: question.difficulty,
-                    ),
-                    const SizedBox(height: 24),
-                    Text(
-                      question.prompt,
-                      style: const TextStyle(
-                        color: AppColors.onSurface,
-                        fontSize: 16,
-                        height: 1.5,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    _CodeBlock(question: question),
-                    const SizedBox(height: 24),
-                    const Text(
-                      'SELECT ONE OPTION',
-                      style: TextStyle(
-                        color: AppColors.onSurfaceVariant,
-                        fontSize: 12,
-                        height: 1.35,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: .6,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    ...question.options.indexed.map((entry) {
-                      final option = entry.$2;
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
-                        child: _AnswerOption(
-                          key: ValueKey('assessmentOption${entry.$1}'),
-                          option: option,
-                          selected: controller.currentAnswer == option.id,
-                          enabled: !controller.isFinished,
-                          onSelected: () => controller.selectAnswer(option.id),
-                        ),
-                      );
-                    }),
-                    if (controller.isFinished) ...[
-                      const SizedBox(height: 8),
-                      Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: AppColors.successSurface,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Row(
-                          children: [
-                            Icon(
-                              Icons.check_circle_outline_rounded,
-                              color: AppColors.success,
+        return CandidateScaffold(
+          body: Column(
+            children: [
+              _AssessmentStatusBar(
+                timeLabel: controller.assessment.remainingTimeLabel,
+                onClose: () => Navigator.of(context).maybePop(),
+                onFinish: () => _confirmFinish(context),
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(16, 24, 16, 32),
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 720),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          _QuestionHeader(
+                            category: question.category,
+                            index: controller.currentIndex,
+                            total: controller.assessment.questions.length,
+                            difficulty: question.difficulty,
+                          ),
+                          const SizedBox(height: 24),
+                          Text(
+                            question.prompt,
+                            style: const TextStyle(
+                              color: AppColors.onSurface,
+                              fontSize: 16,
+                              height: 1.5,
                             ),
-                            SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                'Assessment submitted successfully.',
-                                style: TextStyle(
-                                  color: AppColors.onSurface,
-                                  fontWeight: FontWeight.w600,
-                                ),
+                          ),
+                          const SizedBox(height: 16),
+                          _CodeBlock(question: question),
+                          const SizedBox(height: 24),
+                          const Text(
+                            'SELECT ONE OPTION',
+                            style: TextStyle(
+                              color: AppColors.onSurfaceVariant,
+                              fontSize: 12,
+                              height: 1.35,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: .6,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          ...question.options.indexed.map((entry) {
+                            final option = entry.$2;
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 8),
+                              child: _AnswerOption(
+                                key: ValueKey('assessmentOption${entry.$1}'),
+                                option: option,
+                                selected: controller.currentAnswer == option.id,
+                                enabled: !controller.isFinished,
+                                onSelected: () =>
+                                    controller.selectAnswer(option.id),
+                              ),
+                            );
+                          }),
+                          if (controller.isFinished) ...[
+                            const SizedBox(height: 8),
+                            Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: AppColors.successSurface,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: const Row(
+                                children: [
+                                  Icon(
+                                    Icons.check_circle_outline_rounded,
+                                    color: AppColors.success,
+                                  ),
+                                  SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      'Assessment submitted successfully.',
+                                      style: TextStyle(
+                                        color: AppColors.onSurface,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
-                        ),
+                        ],
                       ),
-                    ],
-                  ],
+                    ),
+                  ),
                 ),
               ),
-            ),
+            ],
           ),
-          bottomNavigationBar: _AssessmentNavigation(
+          bottomActions: _AssessmentNavigation(
             canGoPrevious: controller.canGoPrevious,
             canGoNext: controller.canGoNext,
             isFinished: controller.isFinished,
@@ -249,8 +257,8 @@ class CandidateAssessmentPage extends StatelessWidget {
   }
 }
 
-class _AssessmentAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const _AssessmentAppBar({
+class _AssessmentStatusBar extends StatelessWidget {
+  const _AssessmentStatusBar({
     required this.timeLabel,
     required this.onClose,
     required this.onFinish,
@@ -261,62 +269,65 @@ class _AssessmentAppBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback onFinish;
 
   @override
-  Size get preferredSize => const Size.fromHeight(64);
-
-  @override
   Widget build(BuildContext context) {
-    return AppBar(
-      toolbarHeight: 64,
-      shape: const Border(bottom: BorderSide(color: AppColors.outlineVariant)),
-      leading: IconButton(
-        tooltip: 'Close assessment',
-        onPressed: onClose,
-        icon: const Icon(Icons.close_rounded),
+    return Container(
+      height: 56,
+      decoration: const BoxDecoration(
+        color: AppColors.surface,
+        border: Border(bottom: BorderSide(color: AppColors.outlineVariant)),
       ),
-      titleSpacing: 0,
-      title: const Text(
-        'TalentPulse',
-        style: TextStyle(
-          color: AppColors.primary,
-          fontSize: 20,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-      actions: [
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          decoration: BoxDecoration(
-            color: const Color(0xFFFFDAD6),
-            borderRadius: BorderRadius.circular(4),
+      child: Row(
+        children: [
+          IconButton(
+            tooltip: 'Close assessment',
+            onPressed: onClose,
+            icon: const Icon(Icons.close_rounded),
           ),
-          child: Row(
-            children: [
-              const Icon(
-                Icons.timer_outlined,
-                color: Color(0xFFBA1A1A),
-                size: 20,
+          const Expanded(
+            child: Text(
+              'Assessment',
+              style: TextStyle(
+                color: AppColors.primary,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
               ),
-              const SizedBox(width: 4),
-              Text(
-                timeLabel,
-                style: const TextStyle(
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFFDAD6),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.timer_outlined,
                   color: Color(0xFFBA1A1A),
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
+                  size: 20,
                 ),
-              ),
-            ],
+                const SizedBox(width: 4),
+                Text(
+                  timeLabel,
+                  style: const TextStyle(
+                    color: Color(0xFFBA1A1A),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-        TextButton(
-          onPressed: onFinish,
-          child: const Text(
-            'FINISH',
-            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+          TextButton(
+            onPressed: onFinish,
+            child: const Text(
+              'FINISH',
+              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+            ),
           ),
-        ),
-        const SizedBox(width: 4),
-      ],
+          const SizedBox(width: 4),
+        ],
+      ),
     );
   }
 }
@@ -557,6 +568,7 @@ class _AssessmentNavigation extends StatelessWidget {
         ],
       ),
       child: SafeArea(
+        bottom: false,
         top: false,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

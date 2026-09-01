@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vettingomobil/core/di/app_dependencies.dart';
+import 'package:vettingomobil/core/widgets/talent_pulse_shell.dart';
 import 'package:vettingomobil/features/candidate_assessment/presentation/pages/candidate_assessment_page.dart';
 import 'package:vettingomobil/features/job_search/presentation/pages/job_search_page.dart';
 import 'package:vettingomobil/features/new_requisition/domain/entities/requisition.dart';
@@ -50,6 +51,8 @@ void main() {
     expect(find.text('Question 4 of 20'), findsOneWidget);
     expect(find.text('UserProfile.jsx'), findsOneWidget);
     expect(find.text('42:15'), findsOneWidget);
+    _expectCandidateShell();
+    expect(find.byKey(const ValueKey('assessmentNextButton')), findsOneWidget);
 
     await tester.tap(find.byKey(const ValueKey('assessmentOption0')));
     await tester.pump();
@@ -66,9 +69,13 @@ void main() {
       MaterialApp(home: JobSearchPage(controller: controller)),
     );
 
-    expect(find.text('Market Intelligence'), findsOneWidget);
+    expect(find.text('Market Intelligence'), findsNothing);
+    expect(find.text('Avg. Time to Fill'), findsNothing);
+    expect(find.text('Comp Range'), findsNothing);
+    expect(find.text('Recommended Matches'), findsOneWidget);
     expect(find.text('VP of Engineering'), findsOneWidget);
     expect(find.text('Director of Engineering'), findsOneWidget);
+    _expectCandidateShell();
 
     await tester.enterText(
       find.byKey(const ValueKey('jobSearchField')),
@@ -106,6 +113,17 @@ void main() {
     await tester.pump();
     expect(find.text('Enter a job title to continue.'), findsOneWidget);
   });
+}
+
+void _expectCandidateShell() {
+  expect(find.byType(CandidateScaffold), findsOneWidget);
+  expect(find.byType(CandidateTopBar), findsOneWidget);
+  expect(find.byType(CandidateBottomBar), findsOneWidget);
+  expect(find.text('TalentPulse'), findsNothing);
+  expect(find.text('Ana Sayfa'), findsOneWidget);
+  expect(find.text('İşler'), findsOneWidget);
+  expect(find.text('Arama'), findsOneWidget);
+  expect(find.text('Profil'), findsOneWidget);
 }
 
 Future<void> _setPhoneSize(WidgetTester tester) async {
