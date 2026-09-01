@@ -123,48 +123,54 @@ class TalentPulseBottomBar extends StatelessWidget {
                   key: ValueKey('bottomNav$index'),
                   borderRadius: BorderRadius.circular(999),
                   onTap: () => onSelected(index),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 180),
+                  child: SizedBox(
                     width: 64,
-                    height: 56,
-                    decoration: BoxDecoration(
-                      color: selected
-                          ? AppColors.surfaceHighest
-                          : Colors.transparent,
-                      borderRadius: BorderRadius.circular(999),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          selected ? item.$2 : item.$1,
-                          size: 22,
+                    height: 64,
+                    child: Center(
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 180),
+                        width: selected ? 56 : 64,
+                        height: selected ? 60 : 56,
+                        decoration: BoxDecoration(
                           color: selected
-                              ? AppColors.primary
-                              : AppColors.onSurfaceVariant,
+                              ? AppColors.surfaceHighest
+                              : Colors.transparent,
+                          borderRadius: BorderRadius.circular(999),
                         ),
-                        const SizedBox(height: 2),
-                        SizedBox(
-                          width: 60,
-                          child: FittedBox(
-                            fit: BoxFit.scaleDown,
-                            child: Text(
-                              item.$3,
-                              maxLines: 1,
-                              style: TextStyle(
-                                color: selected
-                                    ? AppColors.primary
-                                    : AppColors.onSurfaceVariant,
-                                fontSize: 11,
-                                height: 1,
-                                fontWeight: selected
-                                    ? FontWeight.w600
-                                    : FontWeight.w500,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              selected ? item.$2 : item.$1,
+                              size: 22,
+                              color: selected
+                                  ? AppColors.primary
+                                  : AppColors.onSurfaceVariant,
+                            ),
+                            const SizedBox(height: 2),
+                            SizedBox(
+                              width: selected ? 52 : 60,
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  item.$3,
+                                  maxLines: 1,
+                                  style: TextStyle(
+                                    color: selected
+                                        ? AppColors.primary
+                                        : AppColors.onSurfaceVariant,
+                                    fontSize: 11,
+                                    height: 1,
+                                    fontWeight: selected
+                                        ? FontWeight.w600
+                                        : FontWeight.w500,
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
                   ),
                 ),
@@ -281,11 +287,14 @@ class _CandidateScaffoldState extends State<CandidateScaffold> {
         child: _profileMenuVisible
             ? _CandidateProfileMenu(
                 onProfile: _openProfile,
-                onApplications: () => _closeAndShowComingSoon('Başvurularım'),
                 onSavedJobs: () =>
                     _closeAndShowComingSoon('Kaydedilen ilanlar'),
-                onSettings: () => _closeAndShowComingSoon('Ayarlar'),
+                onInterviews: () => _closeAndShowComingSoon('Mülakatlarım'),
+                onMessages: () => _closeAndShowComingSoon('Mesajlarım'),
+                onMenuNotifications: () =>
+                    _closeAndShowComingSoon('Bildirimler'),
                 onHelp: () => _closeAndShowComingSoon('Yardım merkezi'),
+                onSettings: () => _closeAndShowComingSoon('Ayarlar'),
                 onSignOut: _signOut,
               )
             : KeyedSubtree(
@@ -338,15 +347,19 @@ void _openCandidateDestination(
 class _CandidateProfileMenu extends StatelessWidget {
   const _CandidateProfileMenu({
     required this.onProfile,
-    required this.onApplications,
     required this.onSavedJobs,
-    required this.onSettings,
+    required this.onInterviews,
+    required this.onMessages,
+    required this.onMenuNotifications,
     required this.onHelp,
+    required this.onSettings,
     required this.onSignOut,
   });
 
-  final VoidCallback onApplications;
   final VoidCallback onHelp;
+  final VoidCallback onInterviews;
+  final VoidCallback onMenuNotifications;
+  final VoidCallback onMessages;
   final VoidCallback onProfile;
   final VoidCallback onSavedJobs;
   final VoidCallback onSettings;
@@ -354,99 +367,105 @@ class _CandidateProfileMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
+    return SizedBox.expand(
       key: const ValueKey('candidateProfileMenu'),
-      color: AppColors.surface,
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 24, 16, 24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Row(
-                children: [
-                  CircleAvatar(
-                    radius: 24,
-                    backgroundColor: AppColors.surfaceHighest,
-                    foregroundColor: AppColors.primary,
-                    child: Text(
-                      'A',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
+      child: Material(
+        color: AppColors.surface,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 24, 16, 24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 24,
+                      backgroundColor: AppColors.surfaceHighest,
+                      foregroundColor: AppColors.primary,
+                      child: Text(
+                        'A',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Alex',
-                          style: TextStyle(
-                            color: AppColors.primary,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Alex',
+                            style: TextStyle(
+                              color: AppColors.primary,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
-                        ),
-                        Text(
-                          'Aday Hesabı',
-                          style: TextStyle(
-                            color: AppColors.onSurfaceVariant,
-                            fontSize: 12,
+                          Text(
+                            'Aday Hesabı',
+                            style: TextStyle(
+                              color: AppColors.onSurfaceVariant,
+                              fontSize: 12,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              const Divider(height: 1),
-              const SizedBox(height: 8),
-              _CandidateProfileMenuTile(
-                key: const ValueKey('candidateProfileMenuProfile'),
-                icon: Icons.account_circle_outlined,
-                label: 'Profilim',
-                subtitle: 'Profil ve CV bilgilerini görüntüle',
-                onTap: onProfile,
-              ),
-              _CandidateProfileMenuTile(
-                icon: Icons.assignment_outlined,
-                label: 'Başvurularım',
-                subtitle: 'İş başvurularını takip et',
-                onTap: onApplications,
-              ),
-              _CandidateProfileMenuTile(
-                icon: Icons.bookmark_border_rounded,
-                label: 'Kaydedilen İlanlar',
-                subtitle: 'Daha sonra bakmak için kaydettiklerin',
-                onTap: onSavedJobs,
-              ),
-              _CandidateProfileMenuTile(
-                icon: Icons.settings_outlined,
-                label: 'Ayarlar',
-                subtitle: 'Hesap ve bildirim tercihleri',
-                onTap: onSettings,
-              ),
-              _CandidateProfileMenuTile(
-                icon: Icons.help_outline_rounded,
-                label: 'Yardım Merkezi',
-                subtitle: 'Destek ve sık sorulan sorular',
-                onTap: onHelp,
-              ),
-              const Divider(height: 17),
-              _CandidateProfileMenuTile(
-                key: const ValueKey('candidateProfileMenuSignOut'),
-                icon: Icons.logout_rounded,
-                label: 'Çıkış Yap',
-                subtitle: 'Hesabından güvenli şekilde çık',
-                foregroundColor: const Color(0xFFBA1A1A),
-                onTap: onSignOut,
-              ),
-            ],
+                  ],
+                ),
+                const SizedBox(height: 36),
+                const Divider(height: 1),
+                const SizedBox(height: 8),
+                _CandidateProfileMenuTile(
+                  key: const ValueKey('candidateProfileMenuProfile'),
+                  icon: Icons.account_circle_outlined,
+                  label: 'Profilim',
+                  onTap: onProfile,
+                ),
+                _CandidateProfileMenuTile(
+                  icon: Icons.bookmark_border_rounded,
+                  label: 'Kaydedilen İlanlar',
+                  onTap: onSavedJobs,
+                ),
+                _CandidateProfileMenuTile(
+                  icon: Icons.event_available_outlined,
+                  label: 'Mülakatlarım',
+                  onTap: onInterviews,
+                ),
+                _CandidateProfileMenuTile(
+                  icon: Icons.chat_bubble_outline_rounded,
+                  label: 'Mesajlarım',
+                  onTap: onMessages,
+                ),
+                _CandidateProfileMenuTile(
+                  icon: Icons.notifications_none_rounded,
+                  label: 'Bildirimler',
+                  onTap: onMenuNotifications,
+                ),
+                _CandidateProfileMenuTile(
+                  icon: Icons.help_outline_rounded,
+                  label: 'Yardım Merkezi',
+                  onTap: onHelp,
+                ),
+                _CandidateProfileMenuTile(
+                  icon: Icons.settings_outlined,
+                  label: 'Ayarlar',
+                  onTap: onSettings,
+                ),
+                const Divider(height: 17),
+                _CandidateProfileMenuTile(
+                  key: const ValueKey('candidateProfileMenuSignOut'),
+                  icon: Icons.logout_rounded,
+                  label: 'Çıkış Yap',
+                  foregroundColor: const Color(0xFFBA1A1A),
+                  onTap: onSignOut,
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -459,7 +478,6 @@ class _CandidateProfileMenuTile extends StatelessWidget {
     super.key,
     required this.icon,
     required this.label,
-    required this.subtitle,
     required this.onTap,
     this.foregroundColor = AppColors.onSurface,
   });
@@ -468,12 +486,12 @@ class _CandidateProfileMenuTile extends StatelessWidget {
   final IconData icon;
   final String label;
   final VoidCallback onTap;
-  final String subtitle;
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 4),
+      minVerticalPadding: 22,
       leading: Container(
         width: 40,
         height: 40,
@@ -491,10 +509,6 @@ class _CandidateProfileMenuTile extends StatelessWidget {
           fontSize: 14,
           fontWeight: FontWeight.w600,
         ),
-      ),
-      subtitle: Text(
-        subtitle,
-        style: const TextStyle(color: AppColors.onSurfaceVariant, fontSize: 12),
       ),
       trailing: Icon(Icons.chevron_right_rounded, color: foregroundColor),
       onTap: onTap,

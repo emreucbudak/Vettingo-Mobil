@@ -43,6 +43,7 @@ void main() {
     expect(find.text('Active Applications'), findsOneWidget);
     expect(find.text('Senior Frontend Engineer'), findsOneWidget);
     expect(find.text('Your Market Profile'), findsOneWidget);
+    expect(find.byIcon(Icons.auto_awesome_rounded), findsNothing);
     expect(find.text('85'), findsOneWidget);
     expect(find.text('Vettingo'), findsOneWidget);
     expect(find.byIcon(Icons.notifications_outlined), findsNothing);
