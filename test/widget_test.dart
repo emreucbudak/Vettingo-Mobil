@@ -81,11 +81,20 @@ void main() {
     expect(menuRect.top, greaterThanOrEqualTo(topBarRect.bottom));
     expect(menuRect.bottom, lessThanOrEqualTo(bottomBarRect.top));
     expect(find.text('Profilim'), findsOneWidget);
-    expect(find.text('Başvurularım'), findsNWidgets(2));
+    expect(find.text('Başvurularım'), findsOneWidget);
     expect(find.text('Kaydedilen İlanlar'), findsOneWidget);
-    expect(find.text('Ayarlar'), findsOneWidget);
+    expect(find.text('Mülakatlarım'), findsOneWidget);
+    expect(find.text('Mesajlarım'), findsOneWidget);
+    expect(find.text('Bildirimler'), findsOneWidget);
     expect(find.text('Yardım Merkezi'), findsOneWidget);
+    expect(find.text('Ayarlar'), findsOneWidget);
     expect(find.text('Çıkış Yap'), findsOneWidget);
+    expect(find.text('Profil ve CV bilgilerini görüntüle'), findsNothing);
+    expect(find.text('İş başvurularını takip et'), findsNothing);
+    expect(find.text('Daha sonra bakmak için kaydettiklerin'), findsNothing);
+    expect(find.text('Hesap ve bildirim tercihleri'), findsNothing);
+    expect(find.text('Destek ve sık sorulan sorular'), findsNothing);
+    expect(find.text('Hesabından güvenli şekilde çık'), findsNothing);
   });
 
   testWidgets(

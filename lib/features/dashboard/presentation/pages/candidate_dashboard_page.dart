@@ -73,21 +73,7 @@ class CandidateDashboardPage extends StatelessWidget {
                 const SizedBox(height: 10),
                 _MarketProfileCard(profile: dashboard.marketProfile),
                 const SizedBox(height: 24),
-                const Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        'Recommended Matches',
-                        style: _sectionTitleStyle,
-                      ),
-                    ),
-                    Icon(
-                      Icons.auto_awesome_rounded,
-                      color: AppColors.primary,
-                      size: 20,
-                    ),
-                  ],
-                ),
+                const Text('Recommended Matches', style: _sectionTitleStyle),
                 const SizedBox(height: 10),
                 ...dashboard.recommendations.map(
                   (recommendation) => Padding(
