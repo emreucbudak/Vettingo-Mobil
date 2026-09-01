@@ -19,8 +19,13 @@ class DashboardLoginPage extends StatefulWidget {
 }
 
 class _DashboardLoginPageState extends State<DashboardLoginPage> {
+  final _formKey = GlobalKey<FormState>();
+
   Future<void> _submit() async {
     FocusScope.of(context).unfocus();
+    if (!(_formKey.currentState?.validate() ?? false)) return;
+    await widget.controller.signIn();
+    if (!mounted) return;
     final routeName =
         widget.controller.credentials.accountType == AccountType.employer
         ? HrDashboardPage.routeName
@@ -80,12 +85,14 @@ class _DashboardLoginPageState extends State<DashboardLoginPage> {
                     _AccountTypeSelector(controller: widget.controller),
                     const SizedBox(height: 24),
                     Form(
+                      key: _formKey,
                       child: Column(
                         children: [
                           TextFormField(
                             key: const ValueKey('dashboardEmailField'),
                             keyboardType: TextInputType.emailAddress,
                             textInputAction: TextInputAction.next,
+                            validator: widget.controller.validateEmail,
                             onChanged: widget.controller.setEmail,
                             decoration: _decoration(
                               'Email',
@@ -97,6 +104,7 @@ class _DashboardLoginPageState extends State<DashboardLoginPage> {
                             key: const ValueKey('dashboardPasswordField'),
                             obscureText: !widget.controller.isPasswordVisible,
                             textInputAction: TextInputAction.done,
+                            validator: widget.controller.validatePassword,
                             onChanged: widget.controller.setPassword,
                             onFieldSubmitted: (_) => _submit(),
                             decoration:
@@ -150,7 +158,9 @@ class _DashboardLoginPageState extends State<DashboardLoginPage> {
                             height: 48,
                             child: FilledButton(
                               key: const ValueKey('dashboardSignInButton'),
-                              onPressed: _submit,
+                              onPressed: widget.controller.isLoading
+                                  ? null
+                                  : _submit,
                               style: FilledButton.styleFrom(
                                 backgroundColor: AppColors.primary,
                                 foregroundColor: Colors.white,
@@ -162,7 +172,15 @@ class _DashboardLoginPageState extends State<DashboardLoginPage> {
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
-                              child: const Text('Giriş Yap'),
+                              child: widget.controller.isLoading
+                                  ? const SizedBox.square(
+                                      dimension: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: Colors.white,
+                                      ),
+                                    )
+                                  : const Text('Giriş Yap'),
                             ),
                           ),
                         ],

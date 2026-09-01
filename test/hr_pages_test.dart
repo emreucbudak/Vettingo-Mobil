@@ -13,8 +13,7 @@ void main() {
 
     await tester.tap(find.text('İşveren'));
     await tester.pump();
-    await tester.tap(find.byKey(const ValueKey('dashboardSignInButton')));
-    await tester.pumpAndSettle();
+    await _submitValidEmployerLogin(tester);
 
     expect(find.byKey(const ValueKey('hrDashboardPage')), findsOneWidget);
     expect(find.byType(HrScaffold), findsOneWidget);
@@ -64,8 +63,7 @@ void main() {
 
     await tester.tap(find.text('İşveren'));
     await tester.pump();
-    await tester.tap(find.byKey(const ValueKey('dashboardSignInButton')));
-    await tester.pumpAndSettle();
+    await _submitValidEmployerLogin(tester);
     await tester.tap(find.byKey(const ValueKey('hrBottomNav1')));
     await tester.pumpAndSettle();
 
@@ -87,6 +85,19 @@ void main() {
     expect(find.text('Zeynep Kaya'), findsOneWidget);
     expect(find.text('Sarah Jenkins'), findsNothing);
   });
+}
+
+Future<void> _submitValidEmployerLogin(WidgetTester tester) async {
+  await tester.enterText(
+    find.byKey(const ValueKey('dashboardEmailField')),
+    'employer@example.com',
+  );
+  await tester.enterText(
+    find.byKey(const ValueKey('dashboardPasswordField')),
+    'password123',
+  );
+  await tester.tap(find.byKey(const ValueKey('dashboardSignInButton')));
+  await tester.pumpAndSettle();
 }
 
 Future<void> _setPhoneSize(WidgetTester tester) async {

@@ -37,11 +37,34 @@ void main() {
     expect(find.byKey(const ValueKey('dashboardGoogleButton')), findsOneWidget);
   });
 
-  testWidgets('login opens candidate dashboard without validation', (
+  testWidgets('candidate login validates before opening the dashboard', (
     tester,
   ) async {
     await tester.pumpWidget(const VettingoApp());
 
+    await tester.tap(find.byKey(const ValueKey('dashboardSignInButton')));
+    await tester.pump();
+
+    expect(find.text('Please enter your email address'), findsOneWidget);
+    expect(find.text('Please enter your password'), findsOneWidget);
+    expect(find.text('Welcome back, Alex.'), findsNothing);
+
+    await tester.enterText(
+      find.byKey(const ValueKey('dashboardEmailField')),
+      'geçersiz-email',
+    );
+    await tester.enterText(
+      find.byKey(const ValueKey('dashboardPasswordField')),
+      '123',
+    );
+    await tester.tap(find.byKey(const ValueKey('dashboardSignInButton')));
+    await tester.pump();
+
+    expect(find.text('Please enter a valid email'), findsOneWidget);
+    expect(find.text('Password must be at least 6 characters'), findsOneWidget);
+    expect(find.text('Welcome back, Alex.'), findsNothing);
+
+    await _enterValidDashboardCredentials(tester);
     await tester.tap(find.byKey(const ValueKey('dashboardSignInButton')));
     await tester.pumpAndSettle();
 
@@ -53,8 +76,7 @@ void main() {
 
     await tester.tap(find.text('İşveren'));
     await tester.pump();
-    await tester.tap(find.byKey(const ValueKey('dashboardSignInButton')));
-    await tester.pumpAndSettle();
+    await _submitValidDashboardLogin(tester);
 
     expect(find.byKey(const ValueKey('hrDashboardPage')), findsOneWidget);
     expect(find.text('Merhaba, Elif'), findsOneWidget);
@@ -65,8 +87,7 @@ void main() {
   testWidgets('candidate profile tab opens the account menu', (tester) async {
     await tester.pumpWidget(const VettingoApp());
 
-    await tester.tap(find.byKey(const ValueKey('dashboardSignInButton')));
-    await tester.pumpAndSettle();
+    await _submitValidDashboardLogin(tester);
     await tester.tap(find.byKey(const ValueKey('bottomNav3')));
     await tester.pumpAndSettle();
 
@@ -102,8 +123,7 @@ void main() {
     (tester) async {
       await tester.pumpWidget(const VettingoApp());
 
-      await tester.tap(find.byKey(const ValueKey('dashboardSignInButton')));
-      await tester.pumpAndSettle();
+      await _submitValidDashboardLogin(tester);
       await tester.tap(find.byKey(const ValueKey('bottomNav1')));
       await tester.pumpAndSettle();
 
@@ -257,4 +277,21 @@ void main() {
     await tester.pump();
     expect(controller.credentials.rememberMe, isTrue);
   });
+}
+
+Future<void> _enterValidDashboardCredentials(WidgetTester tester) async {
+  await tester.enterText(
+    find.byKey(const ValueKey('dashboardEmailField')),
+    'alex@example.com',
+  );
+  await tester.enterText(
+    find.byKey(const ValueKey('dashboardPasswordField')),
+    'password123',
+  );
+}
+
+Future<void> _submitValidDashboardLogin(WidgetTester tester) async {
+  await _enterValidDashboardCredentials(tester);
+  await tester.tap(find.byKey(const ValueKey('dashboardSignInButton')));
+  await tester.pumpAndSettle();
 }
