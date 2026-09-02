@@ -18,6 +18,17 @@ void main() {
     expect(find.byKey(const ValueKey('hrDashboardPage')), findsOneWidget);
     expect(find.byType(HrScaffold), findsOneWidget);
     expect(find.byType(CandidateScaffold), findsNothing);
+    expect(find.text('Vettingo'), findsOneWidget);
+    expect(find.text('V'), findsNothing);
+    expect(find.text('EY'), findsNothing);
+    expect(find.text('İK Çalışma Alanı'), findsNothing);
+    expect(find.byKey(const ValueKey('hrNotificationsButton')), findsNothing);
+    expect(find.byIcon(Icons.notifications_outlined), findsNothing);
+    final topBarRect = tester.getRect(find.byType(HrTopBar));
+    final titleRect = tester.getRect(find.text('Vettingo'));
+    expect(titleRect.center.dx, closeTo(topBarRect.center.dx, .01));
+    expect(find.byIcon(Icons.home_rounded), findsOneWidget);
+    expect(find.byIcon(Icons.dashboard_rounded), findsNothing);
     expect(find.text('Açık Pozisyon'), findsOneWidget);
     expect(find.text('Yaklaşan Mülakatlar'), findsOneWidget);
 
