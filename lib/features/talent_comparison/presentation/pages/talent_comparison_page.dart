@@ -209,6 +209,8 @@ class _TalentComparisonPageState extends State<TalentComparisonPage> {
           bottomNavigationBar: _ComparisonBottomBar(
             onUnavailable: (label) =>
                 _showMessage('$label yakında kullanıma açılacak.'),
+            onProfile: () =>
+                Navigator.of(context).pushReplacementNamed('/employer-profile'),
           ),
         );
       },
@@ -708,9 +710,13 @@ class _ActionArea extends StatelessWidget {
 }
 
 class _ComparisonBottomBar extends StatelessWidget {
-  const _ComparisonBottomBar({required this.onUnavailable});
+  const _ComparisonBottomBar({
+    required this.onUnavailable,
+    required this.onProfile,
+  });
 
   final ValueChanged<String> onUnavailable;
+  final VoidCallback onProfile;
 
   @override
   Widget build(BuildContext context) {
@@ -734,19 +740,19 @@ class _ComparisonBottomBar extends StatelessWidget {
                 onTap: () => onUnavailable('Ana Sayfa'),
               ),
               _BottomItem(
-                icon: Icons.description_outlined,
+                icon: Icons.description_rounded,
                 label: 'Başvurular',
-                onTap: () => onUnavailable('Başvurular'),
+                selected: true,
               ),
               _BottomItem(
                 icon: Icons.search_rounded,
                 label: 'Arama',
                 onTap: () => onUnavailable('Arama'),
               ),
-              const _BottomItem(
-                icon: Icons.work_rounded,
-                label: 'İlanlar',
-                selected: true,
+              _BottomItem(
+                icon: Icons.person_outline_rounded,
+                label: 'Profil',
+                onTap: onProfile,
               ),
             ],
           ),
