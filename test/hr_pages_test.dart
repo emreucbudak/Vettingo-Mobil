@@ -31,6 +31,16 @@ void main() {
     expect(find.byIcon(Icons.dashboard_rounded), findsNothing);
     expect(find.text('Açık Pozisyon'), findsOneWidget);
     expect(find.text('Yaklaşan Mülakatlar'), findsOneWidget);
+    expect(
+      find.text('İşe alım süreçlerinde bugün neler olduğuna göz at.'),
+      findsNothing,
+    );
+    expect(find.text('Sık kullandığın işlemlere hızlıca ulaş.'), findsNothing);
+    expect(find.text('Bugün planlanmış 2 görüşme var.'), findsNothing);
+    expect(
+      find.text('Yapay zekâ eşleşme puanı en yüksek adaylar.'),
+      findsNothing,
+    );
 
     await tester.tap(find.byKey(const ValueKey('hrBottomNav1')));
     await tester.pumpAndSettle();

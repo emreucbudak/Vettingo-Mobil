@@ -4,7 +4,6 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../candidate_detail/presentation/pages/candidate_detail_page.dart';
 import '../../../dashboard/domain/entities/employer_dashboard.dart';
 import '../../../dashboard/presentation/controllers/employer_dashboard_controller.dart';
-import '../../../new_requisition/presentation/pages/new_requisition_page.dart';
 import '../widgets/hr_shell.dart';
 
 class HrDashboardPage extends StatelessWidget {
@@ -28,44 +27,9 @@ class HrDashboardPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const _WelcomeHeader(),
-                const SizedBox(height: 20),
                 _MetricsGrid(dashboard: dashboard),
                 const SizedBox(height: 24),
-                _SectionHeader(
-                  title: 'Hızlı İşlemler',
-                  subtitle: 'Sık kullandığın işlemlere hızlıca ulaş.',
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _QuickActionCard(
-                        key: const ValueKey('hrCreateJobAction'),
-                        icon: Icons.add_business_outlined,
-                        label: 'Yeni İlan',
-                        onTap: () => Navigator.of(
-                          context,
-                        ).pushNamed(NewRequisitionPage.routeName),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: _QuickActionCard(
-                        icon: Icons.person_search_outlined,
-                        label: 'Aday Bul',
-                        onTap: () => Navigator.of(
-                          context,
-                        ).pushReplacementNamed('/hr-candidates'),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 24),
-                const _SectionHeader(
-                  title: 'Yaklaşan Mülakatlar',
-                  subtitle: 'Bugün planlanmış 2 görüşme var.',
-                ),
+                const _SectionHeader(title: 'Yaklaşan Mülakatlar'),
                 const SizedBox(height: 12),
                 const _InterviewCard(
                   time: '10:30',
@@ -83,7 +47,6 @@ class HrDashboardPage extends StatelessWidget {
                 const SizedBox(height: 24),
                 _SectionHeader(
                   title: 'Öne Çıkan Adaylar',
-                  subtitle: 'Yapay zekâ eşleşme puanı en yüksek adaylar.',
                   actionLabel: 'Tümünü Gör',
                   onAction: () => Navigator.of(
                     context,
@@ -116,38 +79,6 @@ class HrDashboardPage extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-class _WelcomeHeader extends StatelessWidget {
-  const _WelcomeHeader();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Merhaba, Elif',
-          style: TextStyle(
-            color: AppColors.primary,
-            fontSize: 26,
-            height: 1.2,
-            fontWeight: FontWeight.w700,
-            letterSpacing: -.4,
-          ),
-        ),
-        SizedBox(height: 6),
-        Text(
-          'İşe alım süreçlerinde bugün neler olduğuna göz at.',
-          style: TextStyle(
-            color: AppColors.onSurfaceVariant,
-            fontSize: 14,
-            height: 1.45,
-          ),
-        ),
-      ],
     );
   }
 }
@@ -265,16 +196,10 @@ class _MetricCard extends StatelessWidget {
 }
 
 class _SectionHeader extends StatelessWidget {
-  const _SectionHeader({
-    required this.title,
-    required this.subtitle,
-    this.actionLabel,
-    this.onAction,
-  });
+  const _SectionHeader({required this.title, this.actionLabel, this.onAction});
 
   final String? actionLabel;
   final VoidCallback? onAction;
-  final String subtitle;
   final String title;
 
   @override
@@ -283,28 +208,14 @@ class _SectionHeader extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  color: AppColors.onSurface,
-                  fontSize: 18,
-                  height: 1.3,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              const SizedBox(height: 3),
-              Text(
-                subtitle,
-                style: const TextStyle(
-                  color: AppColors.onSurfaceVariant,
-                  fontSize: 12,
-                  height: 1.35,
-                ),
-              ),
-            ],
+          child: Text(
+            title,
+            style: const TextStyle(
+              color: AppColors.onSurface,
+              fontSize: 18,
+              height: 1.3,
+              fontWeight: FontWeight.w700,
+            ),
           ),
         ),
         if (actionLabel != null)
@@ -322,55 +233,6 @@ class _SectionHeader extends StatelessWidget {
             child: Text(actionLabel!),
           ),
       ],
-    );
-  }
-}
-
-class _QuickActionCard extends StatelessWidget {
-  const _QuickActionCard({
-    super.key,
-    required this.icon,
-    required this.label,
-    required this.onTap,
-  });
-
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: AppColors.primary,
-      borderRadius: BorderRadius.circular(12),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(12),
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 15),
-          child: Row(
-            children: [
-              Icon(icon, color: Colors.white, size: 21),
-              const SizedBox(width: 9),
-              Expanded(
-                child: Text(
-                  label,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-              const Icon(
-                Icons.arrow_forward_rounded,
-                color: Colors.white70,
-                size: 17,
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }
