@@ -219,7 +219,7 @@ void main() {
     expect(find.byKey(const ValueKey('dashboardSignInButton')), findsOneWidget);
   });
 
-  testWidgets('register opens employer dashboard without validation', (
+  testWidgets('register validates before opening employer dashboard', (
     tester,
   ) async {
     await tester.pumpWidget(const VettingoApp());
@@ -228,14 +228,53 @@ void main() {
     await tester.ensureVisible(registerLink);
     await tester.tap(registerLink);
     await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('registerEmployerButton')));
+    await tester.pumpAndSettle();
 
     final submitButton = find.byKey(const ValueKey('registerSubmitButton'));
+    await tester.ensureVisible(submitButton);
+    await tester.tap(submitButton);
+    await tester.pump();
+
+    expect(find.byKey(const ValueKey('dashboardRegisterPage')), findsOneWidget);
+    expect(find.byKey(const ValueKey('hrDashboardPage')), findsNothing);
+    expect(find.text('Ad alanı zorunludur.'), findsOneWidget);
+    expect(find.text('Soyad alanı zorunludur.'), findsOneWidget);
+    expect(find.text('E-posta adresi zorunludur.'), findsOneWidget);
+    expect(find.text('Şifre alanı zorunludur.'), findsOneWidget);
+    expect(find.text('Şirket adı zorunludur.'), findsOneWidget);
+    expect(find.text('Devam etmek için koşulları kabul edin.'), findsOneWidget);
+
+    await tester.enterText(
+      find.byKey(const ValueKey('registerNameField')),
+      'Elif',
+    );
+    await tester.enterText(
+      find.byKey(const ValueKey('registerSurnameField')),
+      'Yılmaz',
+    );
+    await tester.enterText(
+      find.byKey(const ValueKey('registerEmailField')),
+      'elif@example.com',
+    );
+    await tester.enterText(
+      find.byKey(const ValueKey('registerPasswordField')),
+      'password123',
+    );
+    await tester.enterText(
+      find.byKey(const ValueKey('registerCompanyField')),
+      'Acme Teknoloji',
+    );
+    final termsCheckbox = find.byKey(const ValueKey('registerTermsCheckbox'));
+    await tester.ensureVisible(termsCheckbox);
+    await tester.tap(termsCheckbox);
+    await tester.pump();
+
     await tester.ensureVisible(submitButton);
     await tester.tap(submitButton);
     await tester.pumpAndSettle();
 
     expect(find.byKey(const ValueKey('hrDashboardPage')), findsOneWidget);
-    expect(find.text('Merhaba, Elif'), findsNothing);
   });
 
   testWidgets('register legal links open scrollable documents', (tester) async {
