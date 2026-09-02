@@ -45,55 +45,6 @@ class _HrCandidatesPageState extends State<HrCandidatesPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          const Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Adaylar',
-                                  style: TextStyle(
-                                    color: AppColors.primary,
-                                    fontSize: 26,
-                                    height: 1.2,
-                                    fontWeight: FontWeight.w700,
-                                    letterSpacing: -.4,
-                                  ),
-                                ),
-                                SizedBox(height: 5),
-                                Text(
-                                  'Başvuruları değerlendir ve süreci ilerlet.',
-                                  style: TextStyle(
-                                    color: AppColors.onSurfaceVariant,
-                                    fontSize: 13,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 7,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppColors.surfaceHighest,
-                              borderRadius: BorderRadius.circular(999),
-                            ),
-                            child: Text(
-                              '${candidates.length} aday',
-                              style: const TextStyle(
-                                color: AppColors.primary,
-                                fontSize: 11,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 18),
                       TextField(
                         key: const ValueKey('hrCandidateSearchField'),
                         controller: _searchController,

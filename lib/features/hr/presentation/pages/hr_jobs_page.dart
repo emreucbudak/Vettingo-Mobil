@@ -59,38 +59,6 @@ class _HrJobsPageState extends State<HrJobsPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          const Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'İş İlanları',
-                                  style: TextStyle(
-                                    color: AppColors.primary,
-                                    fontSize: 26,
-                                    height: 1.2,
-                                    fontWeight: FontWeight.w700,
-                                    letterSpacing: -.4,
-                                  ),
-                                ),
-                                SizedBox(height: 5),
-                                Text(
-                                  'Açık pozisyonları ve aday akışını yönet.',
-                                  style: TextStyle(
-                                    color: AppColors.onSurfaceVariant,
-                                    fontSize: 13,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          _CountPill(count: jobs.length),
-                        ],
-                      ),
-                      const SizedBox(height: 18),
                       TextField(
                         key: const ValueKey('hrJobSearchField'),
                         controller: _searchController,
@@ -213,31 +181,6 @@ class _HrJobsPageState extends State<HrJobsPage> {
       _JobFilter.sourcing => 'Aday Aranıyor',
       _JobFilter.interviewing => 'Mülakat',
     };
-  }
-}
-
-class _CountPill extends StatelessWidget {
-  const _CountPill({required this.count});
-
-  final int count;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-      decoration: BoxDecoration(
-        color: AppColors.surfaceHighest,
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Text(
-        '$count ilan',
-        style: const TextStyle(
-          color: AppColors.primary,
-          fontSize: 11,
-          fontWeight: FontWeight.w700,
-        ),
-      ),
-    );
   }
 }
 
