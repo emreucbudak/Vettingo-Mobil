@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../new_requisition/presentation/pages/new_requisition_page.dart';
+import '../../../employer/presentation/pages/employer_jobs_page.dart';
 import '../../domain/entities/talent_comparison.dart';
 import '../controllers/talent_comparison_controller.dart';
 
@@ -210,8 +210,9 @@ class _TalentComparisonPageState extends State<TalentComparisonPage> {
           bottomNavigationBar: _ComparisonBottomBar(
             onUnavailable: (label) =>
                 _showMessage('$label yakında kullanıma açılacak.'),
-            onJobs: () =>
-                Navigator.of(context).pushNamed(NewRequisitionPage.routeName),
+            onJobs: () => Navigator.of(
+              context,
+            ).pushReplacementNamed(EmployerJobsPage.routeName),
             onProfile: () =>
                 Navigator.of(context).pushReplacementNamed('/employer-profile'),
           ),
