@@ -5,6 +5,7 @@ import 'package:vettingomobil/core/theme/app_colors.dart';
 import 'package:vettingomobil/core/widgets/talent_pulse_shell.dart';
 import 'package:vettingomobil/features/dashboard/presentation/pages/employer_dashboard_page.dart';
 import 'package:vettingomobil/features/employer/presentation/pages/employer_profile_page.dart';
+import 'package:vettingomobil/features/new_requisition/presentation/pages/new_requisition_page.dart';
 
 void main() {
   const dependencies = AppDependencies();
@@ -24,12 +25,22 @@ void main() {
           ),
           EmployerProfilePage.routeName: (context) =>
               const EmployerProfilePage(),
+          NewRequisitionPage.routeName: (context) => NewRequisitionPage(
+            controller: dependencies.createNewRequisitionController(),
+          ),
         },
       ),
     );
 
     expect(find.text('Profil'), findsOneWidget);
-    expect(find.text('İlanlar'), findsNothing);
+    expect(find.text('İlanlar'), findsOneWidget);
+    expect(find.text('Başvurular'), findsOneWidget);
+    expect(find.text('Arama'), findsNothing);
+    expect(
+      tester.getCenter(find.text('İlanlar')).dx,
+      lessThan(tester.getCenter(find.text('Başvurular')).dx),
+    );
+    expect(find.byIcon(Icons.search_rounded), findsNothing);
     expect(find.byIcon(Icons.person_outline_rounded), findsOneWidget);
 
     await tester.tap(find.byKey(const ValueKey('bottomNav3')));
@@ -76,6 +87,10 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('bottomNav0')));
     await tester.pumpAndSettle();
     expect(find.text('TOTAL APPLICATIONS'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('bottomNav1')));
+    await tester.pumpAndSettle();
+    expect(find.byType(NewRequisitionPage), findsOneWidget);
   });
 }
 
