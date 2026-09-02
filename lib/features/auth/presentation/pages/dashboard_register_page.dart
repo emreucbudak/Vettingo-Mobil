@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../hr/presentation/pages/hr_dashboard_page.dart';
+import '../validators/register_validators.dart';
 
 enum _RegisterAccountType { jobSeeker, employer }
 
@@ -49,6 +50,7 @@ class DashboardRegisterPage extends StatefulWidget {
 }
 
 class _DashboardRegisterPageState extends State<DashboardRegisterPage> {
+  final _formKey = GlobalKey<FormState>();
   _RegisterAccountType _accountType = _RegisterAccountType.jobSeeker;
   bool _isPasswordVisible = false;
   bool _termsAccepted = false;
@@ -63,6 +65,7 @@ class _DashboardRegisterPageState extends State<DashboardRegisterPage> {
 
   void _submit() {
     FocusScope.of(context).unfocus();
+    if (!(_formKey.currentState?.validate() ?? false)) return;
     Navigator.of(context).pushReplacementNamed(HrDashboardPage.routeName);
   }
 
@@ -106,6 +109,7 @@ class _DashboardRegisterPageState extends State<DashboardRegisterPage> {
                   ),
                   const SizedBox(height: 24),
                   Form(
+                    key: _formKey,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -116,6 +120,7 @@ class _DashboardRegisterPageState extends State<DashboardRegisterPage> {
                           icon: Icons.person_outline_rounded,
                           textInputAction: TextInputAction.next,
                           autofillHints: const [AutofillHints.givenName],
+                          validator: RegisterValidators.name,
                         ),
                         const SizedBox(height: 16),
                         _RegisterField(
@@ -125,6 +130,7 @@ class _DashboardRegisterPageState extends State<DashboardRegisterPage> {
                           icon: Icons.account_box_outlined,
                           textInputAction: TextInputAction.next,
                           autofillHints: const [AutofillHints.familyName],
+                          validator: RegisterValidators.surname,
                         ),
                         const SizedBox(height: 16),
                         _RegisterField(
@@ -135,6 +141,7 @@ class _DashboardRegisterPageState extends State<DashboardRegisterPage> {
                           keyboardType: TextInputType.emailAddress,
                           textInputAction: TextInputAction.next,
                           autofillHints: const [AutofillHints.email],
+                          validator: RegisterValidators.email,
                         ),
                         const SizedBox(height: 16),
                         _RegisterField(
@@ -148,6 +155,7 @@ class _DashboardRegisterPageState extends State<DashboardRegisterPage> {
                               ? TextInputAction.next
                               : TextInputAction.done,
                           autofillHints: const [AutofillHints.newPassword],
+                          validator: RegisterValidators.password,
                           suffixIcon: IconButton(
                             tooltip: _isPasswordVisible
                                 ? 'Şifreyi gizle'
@@ -177,56 +185,98 @@ class _DashboardRegisterPageState extends State<DashboardRegisterPage> {
                             autofillHints: const [
                               AutofillHints.organizationName,
                             ],
+                            validator: RegisterValidators.company,
                             onFieldSubmitted: (_) => _submit(),
                           ),
                         ],
                         const SizedBox(height: 18),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: Checkbox(
-                                key: const ValueKey('registerTermsCheckbox'),
-                                value: _termsAccepted,
-                                activeColor: AppColors.primary,
-                                side: const BorderSide(
-                                  color: AppColors.outline,
-                                ),
-                                onChanged: (value) => setState(() {
-                                  _termsAccepted = value ?? false;
-                                }),
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: Wrap(
-                                crossAxisAlignment: WrapCrossAlignment.center,
+                        FormField<bool>(
+                          key: const ValueKey('registerTermsField'),
+                          initialValue: _termsAccepted,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          validator: RegisterValidators.termsAccepted,
+                          builder: (field) => Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  _LegalLinkButton(
-                                    key: const ValueKey('registerTermsLink'),
-                                    label: 'Kullanım koşullarını',
-                                    onPressed: () => _showLegalDocument(
-                                      _LegalDocument.terms,
+                                  SizedBox(
+                                    width: 24,
+                                    height: 24,
+                                    child: Checkbox(
+                                      key: const ValueKey(
+                                        'registerTermsCheckbox',
+                                      ),
+                                      value: field.value ?? false,
+                                      activeColor: AppColors.primary,
+                                      side: const BorderSide(
+                                        color: AppColors.outline,
+                                      ),
+                                      onChanged: (value) {
+                                        final accepted = value ?? false;
+                                        setState(
+                                          () => _termsAccepted = accepted,
+                                        );
+                                        field.didChange(accepted);
+                                      },
                                     ),
                                   ),
-                                  const Text(' ve ', style: _legalTextStyle),
-                                  _LegalLinkButton(
-                                    key: const ValueKey('registerPrivacyLink'),
-                                    label: 'gizlilik politikasını',
-                                    onPressed: () => _showLegalDocument(
-                                      _LegalDocument.privacy,
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Wrap(
+                                      crossAxisAlignment:
+                                          WrapCrossAlignment.center,
+                                      children: [
+                                        _LegalLinkButton(
+                                          key: const ValueKey(
+                                            'registerTermsLink',
+                                          ),
+                                          label: 'Kullanım koşullarını',
+                                          onPressed: () => _showLegalDocument(
+                                            _LegalDocument.terms,
+                                          ),
+                                        ),
+                                        const Text(
+                                          ' ve ',
+                                          style: _legalTextStyle,
+                                        ),
+                                        _LegalLinkButton(
+                                          key: const ValueKey(
+                                            'registerPrivacyLink',
+                                          ),
+                                          label: 'gizlilik politikasını',
+                                          onPressed: () => _showLegalDocument(
+                                            _LegalDocument.privacy,
+                                          ),
+                                        ),
+                                        const Text(
+                                          ' kabul ediyorum.',
+                                          style: _legalTextStyle,
+                                        ),
+                                      ],
                                     ),
-                                  ),
-                                  const Text(
-                                    ' kabul ediyorum.',
-                                    style: _legalTextStyle,
                                   ),
                                 ],
                               ),
-                            ),
-                          ],
+                              if (field.hasError)
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 34,
+                                    top: 6,
+                                  ),
+                                  child: Text(
+                                    field.errorText!,
+                                    style: TextStyle(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.error,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
                         ),
                         const SizedBox(height: 22),
                         SizedBox(
@@ -440,6 +490,7 @@ class _RegisterField extends StatelessWidget {
     this.obscureText = false,
     this.suffixIcon,
     this.onFieldSubmitted,
+    required this.validator,
   });
 
   final Key fieldKey;
@@ -452,6 +503,7 @@ class _RegisterField extends StatelessWidget {
   final bool obscureText;
   final Widget? suffixIcon;
   final ValueChanged<String>? onFieldSubmitted;
+  final FormFieldValidator<String> validator;
 
   @override
   Widget build(BuildContext context) {
@@ -479,6 +531,7 @@ class _RegisterField extends StatelessWidget {
           autofillHints: autofillHints,
           obscureText: obscureText,
           onFieldSubmitted: onFieldSubmitted,
+          validator: validator,
           decoration: InputDecoration(
             hintText: hint,
             prefixIcon: Icon(icon, size: 20),
