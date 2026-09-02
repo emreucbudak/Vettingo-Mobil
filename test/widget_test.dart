@@ -79,8 +79,9 @@ void main() {
     await _submitValidDashboardLogin(tester);
 
     expect(find.byKey(const ValueKey('hrDashboardPage')), findsOneWidget);
-    expect(find.text('Merhaba, Elif'), findsOneWidget);
-    expect(find.text('Hızlı İşlemler'), findsOneWidget);
+    expect(find.text('Merhaba, Elif'), findsNothing);
+    expect(find.text('Hızlı İşlemler'), findsNothing);
+    expect(find.byKey(const ValueKey('hrCreateJobAction')), findsNothing);
     expect(find.byKey(const ValueKey('hrBottomBar')), findsOneWidget);
   });
 
@@ -222,7 +223,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byKey(const ValueKey('hrDashboardPage')), findsOneWidget);
-    expect(find.text('Merhaba, Elif'), findsOneWidget);
+    expect(find.text('Merhaba, Elif'), findsNothing);
   });
 
   testWidgets('register legal links open scrollable documents', (tester) async {
