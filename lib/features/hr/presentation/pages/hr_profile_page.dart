@@ -21,14 +21,7 @@ class HrProfilePage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                _ProfileHeader(
-                  onEdit: () => showHrMessage(
-                    context,
-                    'Profil düzenleme ekranı yakında hazır olacak.',
-                  ),
-                ),
-                const SizedBox(height: 12),
-                const _WorkspaceCard(),
+                const _ProfileHeader(),
                 const SizedBox(height: 24),
                 const _GroupLabel('Çalışma Alanı'),
                 const SizedBox(height: 8),
@@ -38,7 +31,6 @@ class HrProfilePage extends StatelessWidget {
                       key: const ValueKey('hrCompanyProfileTile'),
                       icon: Icons.apartment_outlined,
                       label: 'Şirket Profili',
-                      subtitle: 'Şirket bilgileri ve marka ayarları',
                       onTap: () => showHrMessage(
                         context,
                         'Şirket profili yakında kullanıma açılacak.',
@@ -47,7 +39,6 @@ class HrProfilePage extends StatelessWidget {
                     _SettingsTile(
                       icon: Icons.group_outlined,
                       label: 'Ekip ve Yetkiler',
-                      subtitle: 'İK ekibini ve erişim rollerini yönet',
                       onTap: () => showHrMessage(
                         context,
                         'Ekip yönetimi yakında kullanıma açılacak.',
@@ -56,7 +47,6 @@ class HrProfilePage extends StatelessWidget {
                     _SettingsTile(
                       icon: Icons.tune_rounded,
                       label: 'İşe Alım Tercihleri',
-                      subtitle: 'Aday akışı ve değerlendirme ayarları',
                       onTap: () => showHrMessage(
                         context,
                         'İşe alım tercihleri yakında kullanıma açılacak.',
@@ -71,9 +61,17 @@ class HrProfilePage extends StatelessWidget {
                 _SettingsGroup(
                   children: [
                     _SettingsTile(
+                      key: const ValueKey('hrProfileSettingsTile'),
+                      icon: Icons.person_outline_rounded,
+                      label: 'Profil',
+                      onTap: () => showHrMessage(
+                        context,
+                        'Profil ayarları yakında kullanıma açılacak.',
+                      ),
+                    ),
+                    _SettingsTile(
                       icon: Icons.notifications_outlined,
                       label: 'Bildirimler',
-                      subtitle: 'E-posta ve mobil bildirim tercihleri',
                       onTap: () => showHrMessage(
                         context,
                         'Bildirim ayarları yakında kullanıma açılacak.',
@@ -82,7 +80,6 @@ class HrProfilePage extends StatelessWidget {
                     _SettingsTile(
                       icon: Icons.lock_outline_rounded,
                       label: 'Güvenlik',
-                      subtitle: 'Şifre ve oturum güvenliği',
                       onTap: () => showHrMessage(
                         context,
                         'Güvenlik ayarları yakında kullanıma açılacak.',
@@ -91,7 +88,6 @@ class HrProfilePage extends StatelessWidget {
                     _SettingsTile(
                       icon: Icons.help_outline_rounded,
                       label: 'Yardım Merkezi',
-                      subtitle: 'Destek ve sık sorulan sorular',
                       onTap: () => showHrMessage(
                         context,
                         'Yardım merkezi yakında kullanıma açılacak.',
@@ -131,9 +127,7 @@ class HrProfilePage extends StatelessWidget {
 }
 
 class _ProfileHeader extends StatelessWidget {
-  const _ProfileHeader({required this.onEdit});
-
-  final VoidCallback onEdit;
+  const _ProfileHeader();
 
   @override
   Widget build(BuildContext context) {
@@ -186,85 +180,6 @@ class _ProfileHeader extends StatelessWidget {
               ],
             ),
           ),
-          IconButton(
-            tooltip: 'Profili düzenle',
-            onPressed: onEdit,
-            style: IconButton.styleFrom(
-              foregroundColor: Colors.white,
-              backgroundColor: Colors.white.withValues(alpha: .12),
-            ),
-            icon: const Icon(Icons.edit_outlined, size: 19),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _WorkspaceCard extends StatelessWidget {
-  const _WorkspaceCard();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.outlineVariant),
-      ),
-      child: const Row(
-        children: [
-          CircleAvatar(
-            radius: 21,
-            backgroundColor: AppColors.surfaceHighest,
-            foregroundColor: AppColors.primary,
-            child: Icon(Icons.apartment_rounded, size: 21),
-          ),
-          SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Acme Teknoloji',
-                  style: TextStyle(
-                    color: AppColors.onSurface,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                SizedBox(height: 3),
-                Text(
-                  'Kurumsal Çalışma Alanı',
-                  style: TextStyle(
-                    color: AppColors.onSurfaceVariant,
-                    fontSize: 11,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                '6',
-                style: TextStyle(
-                  color: AppColors.primary,
-                  fontSize: 17,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              Text(
-                'ekip üyesi',
-                style: TextStyle(
-                  color: AppColors.onSurfaceVariant,
-                  fontSize: 9,
-                ),
-              ),
-            ],
-          ),
         ],
       ),
     );
@@ -314,7 +229,6 @@ class _SettingsTile extends StatelessWidget {
     super.key,
     required this.icon,
     required this.label,
-    required this.subtitle,
     required this.onTap,
     this.showDivider = true,
   });
@@ -323,7 +237,6 @@ class _SettingsTile extends StatelessWidget {
   final String label;
   final VoidCallback onTap;
   final bool showDivider;
-  final String subtitle;
 
   @override
   Widget build(BuildContext context) {
@@ -352,26 +265,13 @@ class _SettingsTile extends StatelessWidget {
             ),
             const SizedBox(width: 11),
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    label,
-                    style: const TextStyle(
-                      color: AppColors.onSurface,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 3),
-                  Text(
-                    subtitle,
-                    style: const TextStyle(
-                      color: AppColors.onSurfaceVariant,
-                      fontSize: 10,
-                    ),
-                  ),
-                ],
+              child: Text(
+                label,
+                style: const TextStyle(
+                  color: AppColors.onSurface,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
             const Icon(

@@ -82,7 +82,21 @@ void main() {
     expect(find.byKey(const ValueKey('hrProfilePage')), findsOneWidget);
     expect(find.text('Profil ve Ayarlar'), findsNothing);
     expect(find.text('Hesabını ve İK çalışma alanını yönet.'), findsNothing);
-    expect(find.text('Acme Teknoloji'), findsOneWidget);
+    expect(find.text('Acme Teknoloji'), findsNothing);
+    expect(find.text('Kurumsal Çalışma Alanı'), findsNothing);
+    expect(find.text('ekip üyesi'), findsNothing);
+    expect(find.byKey(const ValueKey('hrProfileSettingsTile')), findsOneWidget);
+    expect(find.byIcon(Icons.edit_outlined), findsNothing);
+    for (final subtitle in [
+      'Şirket bilgileri ve marka ayarları',
+      'İK ekibini ve erişim rollerini yönet',
+      'Aday akışı ve değerlendirme ayarları',
+      'E-posta ve mobil bildirim tercihleri',
+      'Şifre ve oturum güvenliği',
+      'Destek ve sık sorulan sorular',
+    ]) {
+      expect(find.text(subtitle), findsNothing);
+    }
   });
 
   testWidgets('HR job and candidate lists can be searched', (tester) async {
