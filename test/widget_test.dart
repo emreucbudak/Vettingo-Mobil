@@ -93,6 +93,18 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byKey(const ValueKey('candidateProfileMenu')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('candidateProfileHeader')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('candidateCareerSettingsGroup')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('candidateAccountSettingsGroup')),
+      findsOneWidget,
+    );
     expect(find.byType(CandidateTopBar), findsOneWidget);
     expect(find.byType(CandidateBottomBar), findsOneWidget);
     final menuRect = tester.getRect(
