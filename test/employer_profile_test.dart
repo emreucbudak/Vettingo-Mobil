@@ -91,7 +91,7 @@ void main() {
 
     await tester.tap(find.byKey(const ValueKey('bottomNav0')));
     await tester.pumpAndSettle();
-    expect(find.text('TOTAL APPLICATIONS'), findsOneWidget);
+    expect(find.text('TOPLAM BAŞVURU'), findsOneWidget);
 
     await tester.tap(find.byKey(const ValueKey('bottomNav1')));
     await tester.pumpAndSettle();

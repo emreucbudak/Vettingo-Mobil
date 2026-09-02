@@ -72,17 +72,41 @@ void main() {
   });
 
   testWidgets(
-    'employer login bypasses validation and opens the employer dashboard',
+    'employer login validates before opening the employer dashboard',
     (tester) async {
       await tester.pumpWidget(const VettingoApp());
 
       await tester.tap(find.text('İşveren'));
       await tester.pump();
       await tester.tap(find.byKey(const ValueKey('dashboardSignInButton')));
+      await tester.pump();
+
+      expect(find.text('Please enter your email address'), findsOneWidget);
+      expect(find.text('Please enter your password'), findsOneWidget);
+      expect(find.text('TOPLAM BAŞVURU'), findsNothing);
+
+      await tester.enterText(
+        find.byKey(const ValueKey('dashboardEmailField')),
+        'geçersiz-email',
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('dashboardPasswordField')),
+        '123',
+      );
+      await tester.tap(find.byKey(const ValueKey('dashboardSignInButton')));
+      await tester.pump();
+
+      expect(find.text('Please enter a valid email'), findsOneWidget);
+      expect(
+        find.text('Password must be at least 6 characters'),
+        findsOneWidget,
+      );
+      expect(find.text('TOPLAM BAŞVURU'), findsNothing);
+
+      await _enterValidDashboardCredentials(tester);
+      await tester.tap(find.byKey(const ValueKey('dashboardSignInButton')));
       await tester.pumpAndSettle();
 
-      expect(find.text('Please enter your email address'), findsNothing);
-      expect(find.text('Please enter your password'), findsNothing);
       expect(find.text('TOPLAM BAŞVURU'), findsOneWidget);
       expect(find.text('En İyi Eşleşmeler'), findsOneWidget);
       expect(find.text('Aktif İlanlar'), findsOneWidget);
