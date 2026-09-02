@@ -30,7 +30,7 @@ void main() {
       find.byKey(const ValueKey('employerJobSearchField')),
       findsOneWidget,
     );
-    expect(find.text('Pozisyon veya konum ara'), findsOneWidget);
+    expect(find.text('İlan ara'), findsOneWidget);
     expect(find.byKey(const ValueKey('employerJobCard0')), findsOneWidget);
     expect(find.byKey(const ValueKey('employerJobCard1')), findsOneWidget);
     expect(find.byKey(const ValueKey('employerJobCard2')), findsOneWidget);
@@ -39,6 +39,15 @@ void main() {
     expect(find.text('Senior Marketing Manager'), findsOneWidget);
     expect(find.byKey(const ValueKey('employerNewJobButton')), findsOneWidget);
     expect(find.text('Yeni İlan'), findsOneWidget);
+    expect(find.text('Adaylar'), findsOneWidget);
+    expect(find.text('Başvurular'), findsNothing);
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('bottomNav2')),
+        matching: find.byIcon(Icons.groups_outlined),
+      ),
+      findsOneWidget,
+    );
 
     final selectedIndicator = find.byKey(const ValueKey('bottomNavIndicator1'));
     final selectedDecoration =

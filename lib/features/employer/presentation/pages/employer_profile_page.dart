@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/talent_pulse_shell.dart';
+import 'employer_candidates_page.dart';
 import 'employer_jobs_page.dart';
 
 class EmployerProfilePage extends StatelessWidget {
@@ -147,7 +148,9 @@ class EmployerProfilePage extends StatelessWidget {
       return;
     }
 
-    _showMessage(context, 'Başvurular yakında kullanıma açılacak.');
+    Navigator.of(
+      context,
+    ).pushReplacementNamed(EmployerCandidatesPage.routeName);
   }
 }
 

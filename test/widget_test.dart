@@ -83,9 +83,9 @@ void main() {
 
       expect(find.text('Please enter your email address'), findsNothing);
       expect(find.text('Please enter your password'), findsNothing);
-      expect(find.text('TOTAL APPLICATIONS'), findsOneWidget);
-      expect(find.text('Top AI Matches'), findsOneWidget);
-      expect(find.text('Active Requisitions'), findsOneWidget);
+      expect(find.text('TOPLAM BAŞVURU'), findsOneWidget);
+      expect(find.text('En İyi Eşleşmeler'), findsOneWidget);
+      expect(find.text('Aktif İlanlar'), findsOneWidget);
       expect(find.byKey(const ValueKey('hrDashboardPage')), findsNothing);
     },
   );
