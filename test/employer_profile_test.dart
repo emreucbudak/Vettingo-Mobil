@@ -4,8 +4,8 @@ import 'package:vettingomobil/core/di/app_dependencies.dart';
 import 'package:vettingomobil/core/theme/app_colors.dart';
 import 'package:vettingomobil/core/widgets/talent_pulse_shell.dart';
 import 'package:vettingomobil/features/dashboard/presentation/pages/employer_dashboard_page.dart';
+import 'package:vettingomobil/features/employer/presentation/pages/employer_jobs_page.dart';
 import 'package:vettingomobil/features/employer/presentation/pages/employer_profile_page.dart';
-import 'package:vettingomobil/features/new_requisition/presentation/pages/new_requisition_page.dart';
 
 void main() {
   const dependencies = AppDependencies();
@@ -25,8 +25,8 @@ void main() {
           ),
           EmployerProfilePage.routeName: (context) =>
               const EmployerProfilePage(),
-          NewRequisitionPage.routeName: (context) => NewRequisitionPage(
-            controller: dependencies.createNewRequisitionController(),
+          EmployerJobsPage.routeName: (context) => EmployerJobsPage(
+            controller: dependencies.createEmployerDashboardController(),
           ),
         },
       ),
@@ -90,7 +90,7 @@ void main() {
 
     await tester.tap(find.byKey(const ValueKey('bottomNav1')));
     await tester.pumpAndSettle();
-    expect(find.byType(NewRequisitionPage), findsOneWidget);
+    expect(find.byType(EmployerJobsPage), findsOneWidget);
   });
 }
 

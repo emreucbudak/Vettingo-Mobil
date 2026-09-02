@@ -10,6 +10,7 @@ import 'features/cv_review/presentation/pages/cv_review_page.dart';
 import 'features/dashboard/presentation/pages/candidate_applications_page.dart';
 import 'features/dashboard/presentation/pages/candidate_dashboard_page.dart';
 import 'features/dashboard/presentation/pages/employer_dashboard_page.dart';
+import 'features/employer/presentation/pages/employer_jobs_page.dart';
 import 'features/employer/presentation/pages/employer_profile_page.dart';
 import 'features/hr/presentation/pages/hr_candidates_page.dart';
 import 'features/hr/presentation/pages/hr_dashboard_page.dart';
@@ -47,6 +48,9 @@ class VettingoApp extends StatelessWidget {
               controller: dependencies.createCandidateDashboardController(),
             ),
         EmployerDashboardPage.routeName: (context) => EmployerDashboardPage(
+          controller: dependencies.createEmployerDashboardController(),
+        ),
+        EmployerJobsPage.routeName: (context) => EmployerJobsPage(
           controller: dependencies.createEmployerDashboardController(),
         ),
         EmployerProfilePage.routeName: (context) => const EmployerProfilePage(),

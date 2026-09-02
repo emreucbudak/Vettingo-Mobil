@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/talent_pulse_shell.dart';
 import '../../../candidate_detail/presentation/pages/candidate_detail_page.dart';
+import '../../../employer/presentation/pages/employer_jobs_page.dart';
 import '../../../employer/presentation/pages/employer_profile_page.dart';
-import '../../../new_requisition/presentation/pages/new_requisition_page.dart';
 import '../../../talent_comparison/presentation/pages/talent_comparison_page.dart';
 import '../../domain/entities/employer_dashboard.dart';
 import '../controllers/employer_dashboard_controller.dart';
@@ -114,7 +114,9 @@ class EmployerDashboardPage extends StatelessWidget {
       bottomNavigationBar: TalentPulseBottomBar(
         onSelected: (index) {
           if (index == 1) {
-            Navigator.of(context).pushNamed(NewRequisitionPage.routeName);
+            Navigator.of(
+              context,
+            ).pushReplacementNamed(EmployerJobsPage.routeName);
             return;
           }
           if (index == 3) {

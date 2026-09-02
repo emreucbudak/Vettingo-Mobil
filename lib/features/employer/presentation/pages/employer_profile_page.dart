@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/talent_pulse_shell.dart';
-import '../../../new_requisition/presentation/pages/new_requisition_page.dart';
+import 'employer_jobs_page.dart';
 
 class EmployerProfilePage extends StatelessWidget {
   const EmployerProfilePage({super.key});
@@ -143,7 +143,7 @@ class EmployerProfilePage extends StatelessWidget {
       return;
     }
     if (index == 1) {
-      Navigator.of(context).pushNamed(NewRequisitionPage.routeName);
+      Navigator.of(context).pushReplacementNamed(EmployerJobsPage.routeName);
       return;
     }
 
