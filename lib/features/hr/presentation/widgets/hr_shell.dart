@@ -44,67 +44,17 @@ class HrTopBar extends StatelessWidget implements PreferredSizeWidget {
       toolbarHeight: 64,
       shape: const Border(bottom: BorderSide(color: AppColors.outlineVariant)),
       titleSpacing: 16,
-      title: const Row(
-        children: [
-          CircleAvatar(
-            radius: 17,
-            backgroundColor: AppColors.primary,
-            foregroundColor: Colors.white,
-            child: Text(
-              'V',
-              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
-            ),
-          ),
-          SizedBox(width: 10),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Vettingo',
-                style: TextStyle(
-                  color: AppColors.primary,
-                  fontSize: 16,
-                  height: 1.15,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              Text(
-                'İK Çalışma Alanı',
-                style: TextStyle(
-                  color: AppColors.onSurfaceVariant,
-                  fontSize: 10,
-                  height: 1.2,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: .35,
-                ),
-              ),
-            ],
-          ),
-        ],
+      centerTitle: true,
+      title: const Text(
+        'Vettingo',
+        style: TextStyle(
+          color: AppColors.primary,
+          fontSize: 20,
+          height: 1.4,
+          fontWeight: FontWeight.w600,
+          letterSpacing: -.2,
+        ),
       ),
-      actions: [
-        IconButton(
-          key: const ValueKey('hrNotificationsButton'),
-          tooltip: 'Bildirimler',
-          onPressed: () => showHrMessage(context, 'Yeni bildiriminiz yok.'),
-          icon: const Badge(
-            smallSize: 7,
-            child: Icon(Icons.notifications_outlined),
-          ),
-        ),
-        const Padding(
-          padding: EdgeInsets.only(right: 12),
-          child: CircleAvatar(
-            radius: 16,
-            backgroundColor: AppColors.surfaceHighest,
-            foregroundColor: AppColors.primary,
-            child: Text(
-              'EY',
-              style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }
@@ -120,7 +70,7 @@ class HrBottomBar extends StatelessWidget {
   final HrNavigationItem selectedItem;
 
   static const _items = <(IconData, IconData, String)>[
-    (Icons.dashboard_outlined, Icons.dashboard_rounded, 'Ana Sayfa'),
+    (Icons.home_outlined, Icons.home_rounded, 'Ana Sayfa'),
     (Icons.work_outline_rounded, Icons.work_rounded, 'İlanlar'),
     (Icons.groups_outlined, Icons.groups_rounded, 'Adaylar'),
     (Icons.person_outline_rounded, Icons.person_rounded, 'Profil'),
