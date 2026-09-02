@@ -36,15 +36,21 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byKey(const ValueKey('hrJobsPage')), findsOneWidget);
-    expect(find.text('İş İlanları'), findsOneWidget);
-    expect(find.text('3 ilan'), findsOneWidget);
+    expect(find.text('İş İlanları'), findsNothing);
+    expect(find.text('Açık pozisyonları ve aday akışını yönet.'), findsNothing);
+    expect(find.text('3 ilan'), findsNothing);
     expect(find.byKey(const ValueKey('hrNewJobButton')), findsOneWidget);
 
     await tester.tap(find.byKey(const ValueKey('hrBottomNav2')));
     await tester.pumpAndSettle();
 
     expect(find.byKey(const ValueKey('hrCandidatesPage')), findsOneWidget);
-    expect(find.text('4 aday'), findsOneWidget);
+    expect(find.text('Adaylar'), findsOneWidget);
+    expect(
+      find.text('Başvuruları değerlendir ve süreci ilerlet.'),
+      findsNothing,
+    );
+    expect(find.text('4 aday'), findsNothing);
     expect(
       find.byKey(const ValueKey('hrCandidateFilterButton')),
       findsOneWidget,
@@ -64,7 +70,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byKey(const ValueKey('hrProfilePage')), findsOneWidget);
-    expect(find.text('Profil ve Ayarlar'), findsOneWidget);
+    expect(find.text('Profil ve Ayarlar'), findsNothing);
+    expect(find.text('Hesabını ve İK çalışma alanını yönet.'), findsNothing);
     expect(find.text('Acme Teknoloji'), findsOneWidget);
   });
 

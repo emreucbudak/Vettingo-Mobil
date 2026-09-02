@@ -21,25 +21,6 @@ class HrProfilePage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Text(
-                  'Profil ve Ayarlar',
-                  style: TextStyle(
-                    color: AppColors.primary,
-                    fontSize: 26,
-                    height: 1.2,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: -.4,
-                  ),
-                ),
-                const SizedBox(height: 5),
-                const Text(
-                  'Hesabını ve İK çalışma alanını yönet.',
-                  style: TextStyle(
-                    color: AppColors.onSurfaceVariant,
-                    fontSize: 13,
-                  ),
-                ),
-                const SizedBox(height: 18),
                 _ProfileHeader(
                   onEdit: () => showHrMessage(
                     context,
