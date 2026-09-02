@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vettingomobil/core/di/app_dependencies.dart';
+import 'package:vettingomobil/core/theme/app_colors.dart';
 import 'package:vettingomobil/core/widgets/talent_pulse_shell.dart';
 import 'package:vettingomobil/features/dashboard/presentation/pages/candidate_dashboard_page.dart';
 import 'package:vettingomobil/features/dashboard/presentation/pages/employer_dashboard_page.dart';
@@ -63,6 +64,7 @@ void main() {
     expect(find.byType(CandidateScaffold), findsOneWidget);
     expect(find.byType(CandidateTopBar), findsOneWidget);
     expect(find.byType(CandidateBottomBar), findsOneWidget);
+    _expectHrStyleSelectedIndicator(tester);
   });
 
   testWidgets('employer dashboard renders metrics and requisitions', (
@@ -95,12 +97,25 @@ void main() {
     expect(find.text('Ana Sayfa'), findsOneWidget);
     expect(find.text('Başvurular'), findsOneWidget);
     expect(find.text('Arama'), findsOneWidget);
-    expect(find.text('İlanlar'), findsOneWidget);
+    expect(find.text('Profil'), findsOneWidget);
+    expect(find.text('İlanlar'), findsNothing);
     expect(find.text('Home'), findsNothing);
     expect(find.text('Apps'), findsNothing);
     expect(find.text('Search'), findsNothing);
     expect(find.text('Jobs'), findsNothing);
     expect(find.byIcon(Icons.home_rounded), findsOneWidget);
     expect(find.byIcon(Icons.dashboard_rounded), findsNothing);
+    expect(find.byIcon(Icons.person_outline_rounded), findsOneWidget);
+    _expectHrStyleSelectedIndicator(tester);
   });
+}
+
+void _expectHrStyleSelectedIndicator(WidgetTester tester) {
+  final indicatorFinder = find.byKey(const ValueKey('bottomNavIndicator0'));
+  final indicator = tester.widget<AnimatedContainer>(indicatorFinder);
+  final decoration = indicator.decoration! as BoxDecoration;
+
+  expect(tester.getSize(indicatorFinder), const Size(76, 56));
+  expect(decoration.color, AppColors.surfaceHighest);
+  expect(decoration.borderRadius, BorderRadius.circular(18));
 }

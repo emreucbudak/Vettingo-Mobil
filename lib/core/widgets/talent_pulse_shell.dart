@@ -96,7 +96,7 @@ class TalentPulseBottomBar extends StatelessWidget {
     (Icons.home_outlined, Icons.home_rounded, 'Ana Sayfa'),
     (Icons.description_outlined, Icons.description_rounded, 'Başvurular'),
     (Icons.search_rounded, Icons.search_rounded, 'Arama'),
-    (Icons.work_outline_rounded, Icons.work_rounded, 'İlanlar'),
+    (Icons.person_outline_rounded, Icons.person_rounded, 'Profil'),
   ];
 
   @override
@@ -121,56 +121,45 @@ class TalentPulseBottomBar extends StatelessWidget {
                 label: item.$3,
                 child: InkWell(
                   key: ValueKey('bottomNav$index'),
-                  borderRadius: BorderRadius.circular(999),
+                  borderRadius: BorderRadius.circular(18),
                   onTap: () => onSelected(index),
-                  child: SizedBox(
-                    width: 64,
-                    height: 64,
-                    child: Center(
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 180),
-                        width: selected ? 56 : 64,
-                        height: selected ? 60 : 56,
-                        decoration: BoxDecoration(
+                  child: AnimatedContainer(
+                    key: ValueKey('bottomNavIndicator$index'),
+                    duration: const Duration(milliseconds: 180),
+                    width: 76,
+                    height: 56,
+                    decoration: BoxDecoration(
+                      color: selected
+                          ? AppColors.surfaceHighest
+                          : Colors.transparent,
+                      borderRadius: BorderRadius.circular(18),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          selected ? item.$2 : item.$1,
+                          size: 22,
                           color: selected
-                              ? AppColors.surfaceHighest
-                              : Colors.transparent,
-                          borderRadius: BorderRadius.circular(999),
+                              ? AppColors.primary
+                              : AppColors.onSurfaceVariant,
                         ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              selected ? item.$2 : item.$1,
-                              size: 22,
-                              color: selected
-                                  ? AppColors.primary
-                                  : AppColors.onSurfaceVariant,
-                            ),
-                            const SizedBox(height: 2),
-                            SizedBox(
-                              width: selected ? 52 : 60,
-                              child: FittedBox(
-                                fit: BoxFit.scaleDown,
-                                child: Text(
-                                  item.$3,
-                                  maxLines: 1,
-                                  style: TextStyle(
-                                    color: selected
-                                        ? AppColors.primary
-                                        : AppColors.onSurfaceVariant,
-                                    fontSize: 11,
-                                    height: 1,
-                                    fontWeight: selected
-                                        ? FontWeight.w600
-                                        : FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
+                        const SizedBox(height: 3),
+                        Text(
+                          item.$3,
+                          maxLines: 1,
+                          style: TextStyle(
+                            color: selected
+                                ? AppColors.primary
+                                : AppColors.onSurfaceVariant,
+                            fontSize: 10,
+                            height: 1,
+                            fontWeight: selected
+                                ? FontWeight.w700
+                                : FontWeight.w500,
+                          ),
                         ),
-                      ),
+                      ],
                     ),
                   ),
                 ),
