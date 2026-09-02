@@ -94,8 +94,8 @@ class TalentPulseBottomBar extends StatelessWidget {
 
   static const _defaultItems = <(IconData, IconData, String)>[
     (Icons.home_outlined, Icons.home_rounded, 'Ana Sayfa'),
+    (Icons.work_outline_rounded, Icons.work_rounded, 'İlanlar'),
     (Icons.description_outlined, Icons.description_rounded, 'Başvurular'),
-    (Icons.search_rounded, Icons.search_rounded, 'Arama'),
     (Icons.person_outline_rounded, Icons.person_rounded, 'Profil'),
   ];
 

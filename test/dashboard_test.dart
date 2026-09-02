@@ -95,16 +95,23 @@ void main() {
       closeTo(employerTopBarRect.center.dx, .01),
     );
     expect(find.text('Ana Sayfa'), findsOneWidget);
+    expect(find.text('İlanlar'), findsOneWidget);
     expect(find.text('Başvurular'), findsOneWidget);
-    expect(find.text('Arama'), findsOneWidget);
+    expect(find.text('Arama'), findsNothing);
     expect(find.text('Profil'), findsOneWidget);
-    expect(find.text('İlanlar'), findsNothing);
+    expect(
+      tester.getCenter(find.text('İlanlar')).dx,
+      lessThan(tester.getCenter(find.text('Başvurular')).dx),
+    );
     expect(find.text('Home'), findsNothing);
     expect(find.text('Apps'), findsNothing);
     expect(find.text('Search'), findsNothing);
     expect(find.text('Jobs'), findsNothing);
     expect(find.byIcon(Icons.home_rounded), findsOneWidget);
     expect(find.byIcon(Icons.dashboard_rounded), findsNothing);
+    expect(find.byIcon(Icons.search_rounded), findsNothing);
+    expect(find.byIcon(Icons.work_outline_rounded), findsOneWidget);
+    expect(find.byIcon(Icons.description_outlined), findsOneWidget);
     expect(find.byIcon(Icons.person_outline_rounded), findsOneWidget);
     _expectHrStyleSelectedIndicator(tester);
   });
