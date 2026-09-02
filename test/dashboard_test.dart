@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vettingomobil/core/di/app_dependencies.dart';
 import 'package:vettingomobil/core/theme/app_colors.dart';
-import 'package:vettingomobil/core/widgets/talent_pulse_shell.dart';
+import 'package:vettingomobil/features/candidate/presentation/widgets/candidate_shell.dart';
 import 'package:vettingomobil/features/dashboard/presentation/pages/candidate_dashboard_page.dart';
 import 'package:vettingomobil/features/dashboard/presentation/pages/employer_dashboard_page.dart';
+import 'package:vettingomobil/features/employer/presentation/widgets/employer_shell.dart';
 
 void main() {
   const dependencies = AppDependencies();
@@ -51,7 +52,6 @@ void main() {
     final topBarRect = tester.getRect(find.byType(CandidateTopBar));
     final titleRect = tester.getRect(find.text('Vettingo'));
     expect(titleRect.center.dx, closeTo(topBarRect.center.dx, .01));
-    expect(find.text('TalentPulse'), findsNothing);
     expect(find.text('Ana Sayfa'), findsOneWidget);
     expect(find.text('Başvurularım'), findsOneWidget);
     expect(find.text('Arama'), findsOneWidget);
@@ -95,10 +95,9 @@ void main() {
     expect(find.text('Active Requisitions'), findsNothing);
     expect(find.text('Lead Data Scientist'), findsOneWidget);
     expect(find.text('Vettingo'), findsOneWidget);
-    expect(find.text('TalentPulse'), findsNothing);
     expect(find.text('EM'), findsNothing);
     expect(find.byIcon(Icons.notifications_outlined), findsNothing);
-    final employerTopBarRect = tester.getRect(find.byType(TalentPulseTopBar));
+    final employerTopBarRect = tester.getRect(find.byType(EmployerTopBar));
     final employerTitleRect = tester.getRect(find.text('Vettingo'));
     expect(
       employerTitleRect.center.dx,

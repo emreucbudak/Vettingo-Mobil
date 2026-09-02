@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/vettingo_bottom_navigation_bar.dart';
+import '../../../../core/widgets/vettingo_top_bar.dart';
 
 enum HrNavigationItem { dashboard, jobs, candidates, profile }
 
@@ -38,24 +39,7 @@ class HrTopBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppBar(
-      key: const ValueKey('hrTopBar'),
-      automaticallyImplyLeading: false,
-      toolbarHeight: 64,
-      shape: const Border(bottom: BorderSide(color: AppColors.outlineVariant)),
-      titleSpacing: 16,
-      centerTitle: true,
-      title: const Text(
-        'Vettingo',
-        style: TextStyle(
-          color: AppColors.primary,
-          fontSize: 20,
-          height: 1.4,
-          fontWeight: FontWeight.w600,
-          letterSpacing: -.2,
-        ),
-      ),
-    );
+    return const VettingoTopBar(key: ValueKey('hrTopBar'));
   }
 }
 
@@ -78,72 +62,13 @@ class HrBottomBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
+    return VettingoBottomNavigationBar(
       key: const ValueKey('hrBottomBar'),
-      decoration: const BoxDecoration(
-        color: AppColors.surface,
-        border: Border(top: BorderSide(color: AppColors.outlineVariant)),
-      ),
-      child: SafeArea(
-        top: false,
-        child: SizedBox(
-          height: 72,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: List.generate(_items.length, (index) {
-              final selected = selectedItem.index == index;
-              final item = _items[index];
-              return Semantics(
-                selected: selected,
-                button: true,
-                label: item.$3,
-                child: InkWell(
-                  key: ValueKey('hrBottomNav$index'),
-                  borderRadius: BorderRadius.circular(18),
-                  onTap: () => onSelected(HrNavigationItem.values[index]),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 180),
-                    width: 76,
-                    height: 56,
-                    decoration: BoxDecoration(
-                      color: selected
-                          ? AppColors.surfaceHighest
-                          : Colors.transparent,
-                      borderRadius: BorderRadius.circular(18),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          selected ? item.$2 : item.$1,
-                          size: 22,
-                          color: selected
-                              ? AppColors.primary
-                              : AppColors.onSurfaceVariant,
-                        ),
-                        const SizedBox(height: 3),
-                        Text(
-                          item.$3,
-                          style: TextStyle(
-                            color: selected
-                                ? AppColors.primary
-                                : AppColors.onSurfaceVariant,
-                            fontSize: 10,
-                            height: 1,
-                            fontWeight: selected
-                                ? FontWeight.w700
-                                : FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              );
-            }),
-          ),
-        ),
-      ),
+      items: _items,
+      selectedIndex: selectedItem.index,
+      itemKeyPrefix: 'hrBottomNav',
+      indicatorKeyPrefix: 'hrBottomNavIndicator',
+      onSelected: (index) => onSelected(HrNavigationItem.values[index]),
     );
   }
 }

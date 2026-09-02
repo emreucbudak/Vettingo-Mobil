@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/widgets/talent_pulse_shell.dart';
+import '../../../../core/widgets/coming_soon_snackbar.dart';
+import '../../../candidate/presentation/widgets/candidate_shell.dart';
 import '../../domain/entities/job_search.dart';
 import '../controllers/job_search_controller.dart';
 
@@ -90,7 +91,7 @@ class _JobSearchPageState extends State<JobSearchPage> {
                                 padding: const EdgeInsets.only(bottom: 8),
                                 child: _JobMatchCard(
                                   match: match,
-                                  onTap: () => showComingSoon(
+                                  onTap: () => showComingSoonSnackbar(
                                     context,
                                     '${match.title} details',
                                   ),

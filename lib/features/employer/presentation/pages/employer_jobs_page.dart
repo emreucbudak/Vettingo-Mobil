@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/widgets/talent_pulse_shell.dart';
 import '../../../dashboard/domain/entities/employer_dashboard.dart';
 import '../../../dashboard/presentation/controllers/employer_dashboard_controller.dart';
 import '../../../new_requisition/presentation/pages/new_requisition_page.dart';
-import 'employer_candidates_page.dart';
+import '../widgets/employer_shell.dart';
 
 class EmployerJobsPage extends StatefulWidget {
   const EmployerJobsPage({super.key, required this.controller});
@@ -31,12 +30,8 @@ class _EmployerJobsPageState extends State<EmployerJobsPage> {
   Widget build(BuildContext context) {
     final jobs = _visibleJobs(widget.controller.dashboard.requisitions);
 
-    return Scaffold(
-      appBar: const TalentPulseTopBar(
-        showAvatar: false,
-        showNotifications: false,
-        title: 'Vettingo',
-      ),
+    return EmployerScaffold(
+      selectedItem: EmployerNavigationItem.jobs,
       body: CustomScrollView(
         key: const ValueKey('employerJobsPage'),
         slivers: [
@@ -122,10 +117,6 @@ class _EmployerJobsPageState extends State<EmployerJobsPage> {
           style: TextStyle(fontWeight: FontWeight.w700),
         ),
       ),
-      bottomNavigationBar: TalentPulseBottomBar(
-        selectedIndex: 1,
-        onSelected: (index) => _openDestination(context, index),
-      ),
     );
   }
 
@@ -140,22 +131,6 @@ class _EmployerJobsPageState extends State<EmployerJobsPage> {
               job.location.toLowerCase().contains(query),
         )
         .toList(growable: false);
-  }
-
-  void _openDestination(BuildContext context, int index) {
-    if (index == 1) return;
-    if (index == 0) {
-      Navigator.of(context).pushReplacementNamed('/employer-dashboard');
-      return;
-    }
-    if (index == 3) {
-      Navigator.of(context).pushReplacementNamed('/employer-profile');
-      return;
-    }
-
-    Navigator.of(
-      context,
-    ).pushReplacementNamed(EmployerCandidatesPage.routeName);
   }
 }
 

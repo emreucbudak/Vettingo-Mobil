@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/widgets/talent_pulse_shell.dart';
 import '../../../candidate_detail/presentation/pages/candidate_detail_page.dart';
 import '../../../dashboard/presentation/controllers/employer_dashboard_controller.dart';
+import '../widgets/employer_shell.dart';
 
 enum _CandidateStage { all, screening, interview, offer }
 
@@ -32,12 +32,8 @@ class _EmployerCandidatesPageState extends State<EmployerCandidatesPage> {
   Widget build(BuildContext context) {
     final candidates = _visibleCandidates();
 
-    return Scaffold(
-      appBar: const TalentPulseTopBar(
-        showAvatar: false,
-        showNotifications: false,
-        title: 'Vettingo',
-      ),
+    return EmployerScaffold(
+      selectedItem: EmployerNavigationItem.candidates,
       body: CustomScrollView(
         key: const ValueKey('employerCandidatesPage'),
         slivers: [
@@ -152,10 +148,6 @@ class _EmployerCandidatesPageState extends State<EmployerCandidatesPage> {
               ),
             ),
         ],
-      ),
-      bottomNavigationBar: TalentPulseBottomBar(
-        selectedIndex: 2,
-        onSelected: (index) => _openDestination(context, index),
       ),
     );
   }
@@ -294,17 +286,6 @@ class _EmployerCandidatesPageState extends State<EmployerCandidatesPage> {
       _CandidateStage.interview => 'Mülakat',
       _CandidateStage.offer => 'Teklif',
     };
-  }
-
-  void _openDestination(BuildContext context, int index) {
-    if (index == 2) return;
-
-    final routeName = switch (index) {
-      0 => '/employer-dashboard',
-      1 => '/employer-jobs',
-      _ => '/employer-profile',
-    };
-    Navigator.of(context).pushReplacementNamed(routeName);
   }
 }
 

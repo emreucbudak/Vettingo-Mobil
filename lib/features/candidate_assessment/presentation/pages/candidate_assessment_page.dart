@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/widgets/talent_pulse_shell.dart';
+import '../../../candidate/presentation/widgets/candidate_shell.dart';
 import '../../domain/entities/candidate_assessment.dart';
 import '../controllers/candidate_assessment_controller.dart';
 
