@@ -40,6 +40,16 @@ void main() {
     );
 
     expect(find.text('Compare Talent'), findsOneWidget);
+    expect(find.text('Ana Sayfa'), findsOneWidget);
+    expect(find.text('Başvurular'), findsOneWidget);
+    expect(find.text('Arama'), findsOneWidget);
+    expect(find.text('İlanlar'), findsOneWidget);
+    expect(find.text('Home'), findsNothing);
+    expect(find.text('Apps'), findsNothing);
+    expect(find.text('Search'), findsNothing);
+    expect(find.text('Jobs'), findsNothing);
+    expect(find.byIcon(Icons.home_outlined), findsOneWidget);
+    expect(find.byIcon(Icons.dashboard_outlined), findsNothing);
     expect(find.text('Senior Frontend Engineer'), findsOneWidget);
     expect(find.text('Sarah Jenkins'), findsOneWidget);
     expect(find.text('94% Match'), findsOneWidget);

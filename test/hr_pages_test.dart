@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vettingomobil/app.dart';
 import 'package:vettingomobil/core/widgets/talent_pulse_shell.dart';
+import 'package:vettingomobil/features/hr/presentation/pages/hr_dashboard_page.dart';
 import 'package:vettingomobil/features/hr/presentation/widgets/hr_shell.dart';
 
 void main() {
@@ -9,11 +10,7 @@ void main() {
     tester,
   ) async {
     await _setPhoneSize(tester);
-    await tester.pumpWidget(const VettingoApp());
-
-    await tester.tap(find.text('İşveren'));
-    await tester.pump();
-    await _submitValidEmployerLogin(tester);
+    await _openHrDashboard(tester);
 
     expect(find.byKey(const ValueKey('hrDashboardPage')), findsOneWidget);
     expect(find.byType(HrScaffold), findsOneWidget);
@@ -101,11 +98,7 @@ void main() {
 
   testWidgets('HR job and candidate lists can be searched', (tester) async {
     await _setPhoneSize(tester);
-    await tester.pumpWidget(const VettingoApp());
-
-    await tester.tap(find.text('İşveren'));
-    await tester.pump();
-    await _submitValidEmployerLogin(tester);
+    await _openHrDashboard(tester);
     await tester.tap(find.byKey(const ValueKey('hrBottomNav1')));
     await tester.pumpAndSettle();
 
@@ -129,16 +122,10 @@ void main() {
   });
 }
 
-Future<void> _submitValidEmployerLogin(WidgetTester tester) async {
-  await tester.enterText(
-    find.byKey(const ValueKey('dashboardEmailField')),
-    'employer@example.com',
-  );
-  await tester.enterText(
-    find.byKey(const ValueKey('dashboardPasswordField')),
-    'password123',
-  );
-  await tester.tap(find.byKey(const ValueKey('dashboardSignInButton')));
+Future<void> _openHrDashboard(WidgetTester tester) async {
+  await tester.pumpWidget(const VettingoApp());
+  final navigator = tester.state<NavigatorState>(find.byType(Navigator));
+  navigator.pushReplacementNamed<void, void>(HrDashboardPage.routeName);
   await tester.pumpAndSettle();
 }
 

@@ -71,19 +71,24 @@ void main() {
     expect(find.text('Welcome back, Alex.'), findsOneWidget);
   });
 
-  testWidgets('employer login opens the separate HR dashboard', (tester) async {
-    await tester.pumpWidget(const VettingoApp());
+  testWidgets(
+    'employer login bypasses validation and opens the employer dashboard',
+    (tester) async {
+      await tester.pumpWidget(const VettingoApp());
 
-    await tester.tap(find.text('İşveren'));
-    await tester.pump();
-    await _submitValidDashboardLogin(tester);
+      await tester.tap(find.text('İşveren'));
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('dashboardSignInButton')));
+      await tester.pumpAndSettle();
 
-    expect(find.byKey(const ValueKey('hrDashboardPage')), findsOneWidget);
-    expect(find.text('Merhaba, Elif'), findsNothing);
-    expect(find.text('Hızlı İşlemler'), findsNothing);
-    expect(find.byKey(const ValueKey('hrCreateJobAction')), findsNothing);
-    expect(find.byKey(const ValueKey('hrBottomBar')), findsOneWidget);
-  });
+      expect(find.text('Please enter your email address'), findsNothing);
+      expect(find.text('Please enter your password'), findsNothing);
+      expect(find.text('TOTAL APPLICATIONS'), findsOneWidget);
+      expect(find.text('Top AI Matches'), findsOneWidget);
+      expect(find.text('Active Requisitions'), findsOneWidget);
+      expect(find.byKey(const ValueKey('hrDashboardPage')), findsNothing);
+    },
+  );
 
   testWidgets('candidate profile tab opens the account menu', (tester) async {
     await tester.pumpWidget(const VettingoApp());

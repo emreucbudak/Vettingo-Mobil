@@ -207,7 +207,8 @@ class _TalentComparisonPageState extends State<TalentComparisonPage> {
             ),
           ),
           bottomNavigationBar: _ComparisonBottomBar(
-            onUnavailable: (label) => _showMessage('$label is coming soon.'),
+            onUnavailable: (label) =>
+                _showMessage('$label yakında kullanıma açılacak.'),
           ),
         );
       },
@@ -728,23 +729,23 @@ class _ComparisonBottomBar extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               _BottomItem(
-                icon: Icons.dashboard_outlined,
-                label: 'Home',
-                onTap: () => onUnavailable('Home'),
+                icon: Icons.home_outlined,
+                label: 'Ana Sayfa',
+                onTap: () => onUnavailable('Ana Sayfa'),
               ),
               _BottomItem(
                 icon: Icons.description_outlined,
-                label: 'Apps',
-                onTap: () => onUnavailable('Apps'),
+                label: 'Başvurular',
+                onTap: () => onUnavailable('Başvurular'),
               ),
               _BottomItem(
                 icon: Icons.search_rounded,
-                label: 'Search',
-                onTap: () => onUnavailable('Search'),
+                label: 'Arama',
+                onTap: () => onUnavailable('Arama'),
               ),
               const _BottomItem(
                 icon: Icons.work_rounded,
-                label: 'Jobs',
+                label: 'İlanlar',
                 selected: true,
               ),
             ],
