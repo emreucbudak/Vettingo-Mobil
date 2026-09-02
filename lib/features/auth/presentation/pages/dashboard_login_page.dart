@@ -23,9 +23,7 @@ class _DashboardLoginPageState extends State<DashboardLoginPage> {
 
   Future<void> _submit() async {
     FocusScope.of(context).unfocus();
-    final isEmployer =
-        widget.controller.credentials.accountType == AccountType.employer;
-    if (!isEmployer && !(_formKey.currentState?.validate() ?? false)) return;
+    if (!(_formKey.currentState?.validate() ?? false)) return;
     await widget.controller.signIn();
     if (!mounted) return;
     final routeName =
