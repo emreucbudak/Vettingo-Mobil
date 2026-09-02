@@ -372,103 +372,193 @@ class _CandidateProfileMenu extends StatelessWidget {
       child: Material(
         color: AppColors.surface,
         child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 24, 16, 24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 24,
-                      backgroundColor: AppColors.surfaceHighest,
-                      foregroundColor: AppColors.primary,
-                      child: Text(
-                        'A',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                        ),
+          padding: const EdgeInsets.fromLTRB(16, 20, 16, 32),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 720),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const _CandidateProfileHeader(),
+                  const SizedBox(height: 24),
+                  const _CandidateProfileGroupLabel('Kariyer'),
+                  const SizedBox(height: 8),
+                  _CandidateProfileMenuGroup(
+                    key: const ValueKey('candidateCareerSettingsGroup'),
+                    children: [
+                      _CandidateProfileMenuTile(
+                        key: const ValueKey('candidateProfileMenuProfile'),
+                        icon: Icons.account_circle_outlined,
+                        label: 'Profilim',
+                        onTap: onProfile,
+                      ),
+                      _CandidateProfileMenuTile(
+                        icon: Icons.bookmark_border_rounded,
+                        label: 'Kaydedilen İlanlar',
+                        onTap: onSavedJobs,
+                      ),
+                      _CandidateProfileMenuTile(
+                        icon: Icons.event_available_outlined,
+                        label: 'Mülakatlarım',
+                        onTap: onInterviews,
+                      ),
+                      _CandidateProfileMenuTile(
+                        icon: Icons.chat_bubble_outline_rounded,
+                        label: 'Mesajlarım',
+                        onTap: onMessages,
+                        showDivider: false,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  const _CandidateProfileGroupLabel('Hesap'),
+                  const SizedBox(height: 8),
+                  _CandidateProfileMenuGroup(
+                    key: const ValueKey('candidateAccountSettingsGroup'),
+                    children: [
+                      _CandidateProfileMenuTile(
+                        icon: Icons.notifications_none_rounded,
+                        label: 'Bildirimler',
+                        onTap: onMenuNotifications,
+                      ),
+                      _CandidateProfileMenuTile(
+                        icon: Icons.help_outline_rounded,
+                        label: 'Yardım Merkezi',
+                        onTap: onHelp,
+                      ),
+                      _CandidateProfileMenuTile(
+                        icon: Icons.settings_outlined,
+                        label: 'Ayarlar',
+                        onTap: onSettings,
+                        showDivider: false,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  OutlinedButton.icon(
+                    key: const ValueKey('candidateProfileMenuSignOut'),
+                    onPressed: onSignOut,
+                    icon: const Icon(Icons.logout_rounded),
+                    label: const Text('Çıkış Yap'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFFBA1A1A),
+                      side: const BorderSide(color: Color(0xFFE6B8B8)),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      textStyle: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
-                    SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Alex',
-                            style: TextStyle(
-                              color: AppColors.primary,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          Text(
-                            'Aday Hesabı',
-                            style: TextStyle(
-                              color: AppColors.onSurfaceVariant,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 36),
-                const Divider(height: 1),
-                const SizedBox(height: 8),
-                _CandidateProfileMenuTile(
-                  key: const ValueKey('candidateProfileMenuProfile'),
-                  icon: Icons.account_circle_outlined,
-                  label: 'Profilim',
-                  onTap: onProfile,
-                ),
-                _CandidateProfileMenuTile(
-                  icon: Icons.bookmark_border_rounded,
-                  label: 'Kaydedilen İlanlar',
-                  onTap: onSavedJobs,
-                ),
-                _CandidateProfileMenuTile(
-                  icon: Icons.event_available_outlined,
-                  label: 'Mülakatlarım',
-                  onTap: onInterviews,
-                ),
-                _CandidateProfileMenuTile(
-                  icon: Icons.chat_bubble_outline_rounded,
-                  label: 'Mesajlarım',
-                  onTap: onMessages,
-                ),
-                _CandidateProfileMenuTile(
-                  icon: Icons.notifications_none_rounded,
-                  label: 'Bildirimler',
-                  onTap: onMenuNotifications,
-                ),
-                _CandidateProfileMenuTile(
-                  icon: Icons.help_outline_rounded,
-                  label: 'Yardım Merkezi',
-                  onTap: onHelp,
-                ),
-                _CandidateProfileMenuTile(
-                  icon: Icons.settings_outlined,
-                  label: 'Ayarlar',
-                  onTap: onSettings,
-                ),
-                const Divider(height: 17),
-                _CandidateProfileMenuTile(
-                  key: const ValueKey('candidateProfileMenuSignOut'),
-                  icon: Icons.logout_rounded,
-                  label: 'Çıkış Yap',
-                  foregroundColor: const Color(0xFFBA1A1A),
-                  onTap: onSignOut,
-                ),
-              ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),
       ),
+    );
+  }
+}
+
+class _CandidateProfileHeader extends StatelessWidget {
+  const _CandidateProfileHeader();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      key: const ValueKey('candidateProfileHeader'),
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: AppColors.primary,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: const Row(
+        children: [
+          CircleAvatar(
+            radius: 30,
+            backgroundColor: Colors.white,
+            foregroundColor: AppColors.primary,
+            child: Text(
+              'A',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+            ),
+          ),
+          SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Alex',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  'Aday Hesabı',
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                SizedBox(height: 2),
+                Text(
+                  'alex@example.com',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(color: Colors.white60, fontSize: 11),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _CandidateProfileGroupLabel extends StatelessWidget {
+  const _CandidateProfileGroupLabel(this.label);
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      label.toUpperCase(),
+      style: const TextStyle(
+        color: AppColors.onSurfaceVariant,
+        fontSize: 10,
+        fontWeight: FontWeight.w700,
+        letterSpacing: .8,
+      ),
+    );
+  }
+}
+
+class _CandidateProfileMenuGroup extends StatelessWidget {
+  const _CandidateProfileMenuGroup({super.key, required this.children});
+
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.outlineVariant),
+      ),
+      child: Column(children: children),
     );
   }
 }
@@ -479,39 +569,58 @@ class _CandidateProfileMenuTile extends StatelessWidget {
     required this.icon,
     required this.label,
     required this.onTap,
-    this.foregroundColor = AppColors.onSurface,
+    this.showDivider = true,
   });
 
-  final Color foregroundColor;
   final IconData icon;
   final String label;
   final VoidCallback onTap;
+  final bool showDivider;
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 4),
-      minVerticalPadding: 22,
-      leading: Container(
-        width: 40,
-        height: 40,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: foregroundColor.withValues(alpha: .08),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Icon(icon, color: foregroundColor),
-      ),
-      title: Text(
-        label,
-        style: TextStyle(
-          color: foregroundColor,
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-      trailing: Icon(Icons.chevron_right_rounded, color: foregroundColor),
+    return InkWell(
       onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        decoration: BoxDecoration(
+          border: showDivider
+              ? const Border(
+                  bottom: BorderSide(color: AppColors.outlineVariant),
+                )
+              : null,
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 38,
+              height: 38,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: AppColors.surfaceLow,
+                borderRadius: BorderRadius.circular(9),
+              ),
+              child: Icon(icon, size: 20, color: AppColors.primary),
+            ),
+            const SizedBox(width: 11),
+            Expanded(
+              child: Text(
+                label,
+                style: const TextStyle(
+                  color: AppColors.onSurface,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+            const Icon(
+              Icons.chevron_right_rounded,
+              size: 20,
+              color: AppColors.onSurfaceVariant,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
