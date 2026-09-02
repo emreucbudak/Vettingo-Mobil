@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vettingomobil/core/di/app_dependencies.dart';
-import 'package:vettingomobil/core/widgets/talent_pulse_shell.dart';
+import 'package:vettingomobil/features/candidate/presentation/widgets/candidate_shell.dart';
 import 'package:vettingomobil/features/candidate_assessment/presentation/pages/candidate_assessment_page.dart';
 import 'package:vettingomobil/features/job_search/presentation/pages/job_search_page.dart';
 import 'package:vettingomobil/features/new_requisition/domain/entities/requisition.dart';
@@ -123,7 +123,6 @@ void _expectCandidateShell() {
   expect(find.byType(CandidateTopBar), findsOneWidget);
   expect(find.byType(CandidateBottomBar), findsOneWidget);
   expect(find.text('Vettingo'), findsOneWidget);
-  expect(find.text('TalentPulse'), findsNothing);
   expect(find.text('Ana Sayfa'), findsOneWidget);
   expect(find.text('Başvurularım'), findsOneWidget);
   expect(find.text('Arama'), findsOneWidget);

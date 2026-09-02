@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vettingomobil/app.dart';
-import 'package:vettingomobil/core/widgets/talent_pulse_shell.dart';
+import 'package:vettingomobil/features/candidate/presentation/widgets/candidate_shell.dart';
 import 'package:vettingomobil/features/hr/presentation/pages/hr_dashboard_page.dart';
 import 'package:vettingomobil/features/hr/presentation/widgets/hr_shell.dart';
 

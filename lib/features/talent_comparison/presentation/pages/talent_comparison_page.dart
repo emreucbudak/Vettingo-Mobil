@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../employer/presentation/pages/employer_candidates_page.dart';
-import '../../../employer/presentation/pages/employer_jobs_page.dart';
+import '../../../employer/presentation/widgets/employer_shell.dart';
 import '../../domain/entities/talent_comparison.dart';
 import '../controllers/talent_comparison_controller.dart';
 
@@ -208,17 +207,8 @@ class _TalentComparisonPageState extends State<TalentComparisonPage> {
               },
             ),
           ),
-          bottomNavigationBar: _ComparisonBottomBar(
-            onUnavailable: (label) =>
-                _showMessage('$label yakında kullanıma açılacak.'),
-            onJobs: () => Navigator.of(
-              context,
-            ).pushReplacementNamed(EmployerJobsPage.routeName),
-            onCandidates: () => Navigator.of(
-              context,
-            ).pushReplacementNamed(EmployerCandidatesPage.routeName),
-            onProfile: () =>
-                Navigator.of(context).pushReplacementNamed('/employer-profile'),
+          bottomNavigationBar: const EmployerBottomBar(
+            selectedItem: EmployerNavigationItem.candidates,
           ),
         );
       },
@@ -713,124 +703,6 @@ class _ActionArea extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-class _ComparisonBottomBar extends StatelessWidget {
-  const _ComparisonBottomBar({
-    required this.onUnavailable,
-    required this.onJobs,
-    required this.onCandidates,
-    required this.onProfile,
-  });
-
-  final ValueChanged<String> onUnavailable;
-  final VoidCallback onJobs;
-  final VoidCallback onCandidates;
-  final VoidCallback onProfile;
-
-  @override
-  Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: const BoxDecoration(
-        color: _TalentComparisonPageState._surface,
-        border: Border(
-          top: BorderSide(color: _TalentComparisonPageState._outline),
-        ),
-      ),
-      child: SafeArea(
-        top: false,
-        child: SizedBox(
-          height: 72,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _BottomItem(
-                icon: Icons.home_outlined,
-                label: 'Ana Sayfa',
-                onTap: () => onUnavailable('Ana Sayfa'),
-              ),
-              _BottomItem(
-                icon: Icons.work_outline_rounded,
-                label: 'İlanlar',
-                onTap: onJobs,
-              ),
-              _BottomItem(
-                icon: Icons.groups_rounded,
-                label: 'Adaylar',
-                selected: true,
-                onTap: onCandidates,
-              ),
-              _BottomItem(
-                icon: Icons.person_outline_rounded,
-                label: 'Profil',
-                onTap: onProfile,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _BottomItem extends StatelessWidget {
-  const _BottomItem({
-    required this.icon,
-    required this.label,
-    this.selected = false,
-    this.onTap,
-  });
-
-  final IconData icon;
-  final String label;
-  final bool selected;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(
-      selected: selected,
-      button: true,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(999),
-        onTap: onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 180),
-          width: 64,
-          height: 64,
-          decoration: BoxDecoration(
-            color: selected
-                ? _TalentComparisonPageState._surfaceHighest
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(999),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                icon,
-                size: 24,
-                color: selected
-                    ? _TalentComparisonPageState._primary
-                    : _TalentComparisonPageState._onSurfaceVariant,
-              ),
-              const SizedBox(height: 3),
-              Text(
-                label,
-                style: TextStyle(
-                  color: selected
-                      ? _TalentComparisonPageState._primary
-                      : _TalentComparisonPageState._onSurfaceVariant,
-                  fontSize: 11,
-                  fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

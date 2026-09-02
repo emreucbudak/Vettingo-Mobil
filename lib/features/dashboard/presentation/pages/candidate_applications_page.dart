@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/widgets/talent_pulse_shell.dart';
+import '../../../../core/widgets/coming_soon_snackbar.dart';
+import '../../../candidate/presentation/widgets/candidate_shell.dart';
 import '../../domain/entities/candidate_dashboard.dart';
 import '../controllers/candidate_dashboard_controller.dart';
 
@@ -92,7 +93,7 @@ class _CandidateApplicationsPageState extends State<CandidateApplicationsPage> {
                       padding: const EdgeInsets.only(bottom: 10),
                       child: _ApplicationCard(
                         application: application,
-                        onTap: () => showComingSoon(
+                        onTap: () => showComingSoonSnackbar(
                           context,
                           '${application.role} başvuru detayı',
                         ),

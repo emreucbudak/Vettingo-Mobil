@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vettingomobil/core/di/app_dependencies.dart';
-import 'package:vettingomobil/core/widgets/talent_pulse_shell.dart';
+import 'package:vettingomobil/features/candidate/presentation/widgets/candidate_shell.dart';
 import 'package:vettingomobil/features/candidate_detail/domain/entities/candidate_detail.dart';
 import 'package:vettingomobil/features/candidate_detail/presentation/pages/candidate_detail_page.dart';
 import 'package:vettingomobil/features/cv_review/presentation/pages/cv_review_page.dart';
@@ -66,7 +66,6 @@ void main() {
     expect(find.byType(CandidateTopBar), findsOneWidget);
     expect(find.byType(CandidateBottomBar), findsOneWidget);
     expect(find.text('Vettingo'), findsOneWidget);
-    expect(find.text('TalentPulse'), findsNothing);
     expect(find.text('Ana Sayfa'), findsOneWidget);
     expect(find.text('Başvurularım'), findsOneWidget);
     expect(find.text('Arama'), findsOneWidget);
@@ -104,7 +103,6 @@ void main() {
 
     expect(find.text('Sarah Jenkins'), findsOneWidget);
     expect(find.text('Vettingo'), findsOneWidget);
-    expect(find.text('TalentPulse'), findsNothing);
     expect(find.byIcon(Icons.notifications_outlined), findsNothing);
     expect(find.text('AI Executive Summary'), findsOneWidget);
     expect(find.text('Strong Match (92%)'), findsOneWidget);

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/widgets/talent_pulse_shell.dart';
 import '../../../candidate_assessment/presentation/pages/candidate_assessment_page.dart';
+import '../../../candidate/presentation/widgets/candidate_shell.dart';
+import '../../../../core/widgets/coming_soon_snackbar.dart';
 import '../../domain/entities/candidate_dashboard.dart';
 import '../controllers/candidate_dashboard_controller.dart';
 import 'candidate_applications_page.dart';
@@ -80,7 +81,8 @@ class CandidateDashboardPage extends StatelessWidget {
                     padding: const EdgeInsets.only(bottom: 8),
                     child: _RecommendationTile(
                       recommendation: recommendation,
-                      onTap: () => showComingSoon(context, 'Job details'),
+                      onTap: () =>
+                          showComingSoonSnackbar(context, 'Job details'),
                     ),
                   ),
                 ),

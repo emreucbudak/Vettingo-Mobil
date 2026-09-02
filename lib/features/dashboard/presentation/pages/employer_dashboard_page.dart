@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/widgets/talent_pulse_shell.dart';
+import '../../../../core/widgets/coming_soon_snackbar.dart';
 import '../../../candidate_detail/presentation/pages/candidate_detail_page.dart';
-import '../../../employer/presentation/pages/employer_candidates_page.dart';
-import '../../../employer/presentation/pages/employer_jobs_page.dart';
-import '../../../employer/presentation/pages/employer_profile_page.dart';
+import '../../../employer/presentation/widgets/employer_shell.dart';
 import '../../../talent_comparison/presentation/pages/talent_comparison_page.dart';
 import '../../domain/entities/employer_dashboard.dart';
 import '../controllers/employer_dashboard_controller.dart';
@@ -20,12 +18,8 @@ class EmployerDashboardPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dashboard = controller.dashboard;
-    return Scaffold(
-      appBar: const TalentPulseTopBar(
-        showAvatar: false,
-        showNotifications: false,
-        title: 'Vettingo',
-      ),
+    return EmployerScaffold(
+      selectedItem: EmployerNavigationItem.home,
       body: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
         child: Center(
@@ -39,7 +33,8 @@ class EmployerDashboardPage extends StatelessWidget {
                 _SectionHeader(
                   title: 'En İyi Eşleşmeler',
                   action: 'TÜMÜNÜ GÖR',
-                  onAction: () => showComingSoon(context, 'Tüm eşleşmeler'),
+                  onAction: () =>
+                      showComingSoonSnackbar(context, 'Tüm eşleşmeler'),
                 ),
                 const SizedBox(height: 10),
                 SizedBox(
@@ -85,7 +80,8 @@ class EmployerDashboardPage extends StatelessWidget {
                 SizedBox(
                   height: 42,
                   child: OutlinedButton(
-                    onPressed: () => showComingSoon(context, 'Tüm ilanlar'),
+                    onPressed: () =>
+                        showComingSoonSnackbar(context, 'Tüm ilanlar'),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: AppColors.tertiary,
                       side: const BorderSide(color: AppColors.outlineVariant),
@@ -105,27 +101,6 @@ class EmployerDashboardPage extends StatelessWidget {
             ),
           ),
         ),
-      ),
-      bottomNavigationBar: TalentPulseBottomBar(
-        onSelected: (index) {
-          if (index == 1) {
-            Navigator.of(
-              context,
-            ).pushReplacementNamed(EmployerJobsPage.routeName);
-            return;
-          }
-          if (index == 3) {
-            Navigator.of(
-              context,
-            ).pushReplacementNamed(EmployerProfilePage.routeName);
-            return;
-          }
-          if (index == 2) {
-            Navigator.of(
-              context,
-            ).pushReplacementNamed(EmployerCandidatesPage.routeName);
-          }
-        },
       ),
     );
   }

@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vettingomobil/core/di/app_dependencies.dart';
 import 'package:vettingomobil/core/theme/app_colors.dart';
-import 'package:vettingomobil/core/widgets/talent_pulse_shell.dart';
 import 'package:vettingomobil/features/dashboard/presentation/pages/employer_dashboard_page.dart';
 import 'package:vettingomobil/features/employer/presentation/pages/employer_candidates_page.dart';
 import 'package:vettingomobil/features/employer/presentation/pages/employer_jobs_page.dart';
 import 'package:vettingomobil/features/employer/presentation/pages/employer_profile_page.dart';
+import 'package:vettingomobil/features/employer/presentation/widgets/employer_shell.dart';
 
 void main() {
   const dependencies = AppDependencies();
@@ -80,7 +80,7 @@ void main() {
     expect(decoration.color, AppColors.surfaceHighest);
     expect(decoration.borderRadius, BorderRadius.circular(18));
 
-    final topBar = find.byType(TalentPulseTopBar);
+    final topBar = find.byType(EmployerTopBar);
     expect(
       find.descendant(
         of: topBar,

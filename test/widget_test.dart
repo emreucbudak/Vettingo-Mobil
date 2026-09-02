@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vettingomobil/app.dart';
 import 'package:vettingomobil/core/di/app_dependencies.dart';
-import 'package:vettingomobil/core/widgets/talent_pulse_shell.dart';
+import 'package:vettingomobil/features/candidate/presentation/widgets/candidate_shell.dart';
 import 'package:vettingomobil/features/auth/domain/entities/login_credentials.dart';
 import 'package:vettingomobil/features/auth/presentation/pages/login_page.dart';
 import 'package:vettingomobil/features/dashboard/presentation/pages/candidate_applications_page.dart';
@@ -11,7 +11,6 @@ void main() {
   testWidgets('app opens the redesigned dashboard login', (tester) async {
     await tester.pumpWidget(const VettingoApp());
 
-    expect(find.text('TalentPulse'), findsNothing);
     expect(find.text('Access your dashboard'), findsNothing);
     expect(find.text('Vettingo'), findsOneWidget);
     expect(find.text('İş Arayan'), findsOneWidget);

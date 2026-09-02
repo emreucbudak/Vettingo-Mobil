@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/widgets/talent_pulse_shell.dart';
-import 'employer_candidates_page.dart';
-import 'employer_jobs_page.dart';
+import '../widgets/employer_shell.dart';
 
 class EmployerProfilePage extends StatelessWidget {
   const EmployerProfilePage({super.key});
@@ -12,12 +10,8 @@ class EmployerProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const TalentPulseTopBar(
-        showAvatar: false,
-        showNotifications: false,
-        title: 'Vettingo',
-      ),
+    return EmployerScaffold(
+      selectedItem: EmployerNavigationItem.profile,
       body: SingleChildScrollView(
         key: const ValueKey('employerProfilePage'),
         padding: const EdgeInsets.fromLTRB(16, 20, 16, 32),
@@ -130,27 +124,7 @@ class EmployerProfilePage extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: TalentPulseBottomBar(
-        selectedIndex: 3,
-        onSelected: (index) => _openDestination(context, index),
-      ),
     );
-  }
-
-  void _openDestination(BuildContext context, int index) {
-    if (index == 3) return;
-    if (index == 0) {
-      Navigator.of(context).pushReplacementNamed('/employer-dashboard');
-      return;
-    }
-    if (index == 1) {
-      Navigator.of(context).pushReplacementNamed(EmployerJobsPage.routeName);
-      return;
-    }
-
-    Navigator.of(
-      context,
-    ).pushReplacementNamed(EmployerCandidatesPage.routeName);
   }
 }
 
