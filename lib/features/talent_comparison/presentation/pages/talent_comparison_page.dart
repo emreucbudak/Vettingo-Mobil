@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../employer/presentation/pages/employer_candidates_page.dart';
 import '../../../employer/presentation/pages/employer_jobs_page.dart';
 import '../../domain/entities/talent_comparison.dart';
 import '../controllers/talent_comparison_controller.dart';
@@ -213,6 +214,9 @@ class _TalentComparisonPageState extends State<TalentComparisonPage> {
             onJobs: () => Navigator.of(
               context,
             ).pushReplacementNamed(EmployerJobsPage.routeName),
+            onCandidates: () => Navigator.of(
+              context,
+            ).pushReplacementNamed(EmployerCandidatesPage.routeName),
             onProfile: () =>
                 Navigator.of(context).pushReplacementNamed('/employer-profile'),
           ),
@@ -717,11 +721,13 @@ class _ComparisonBottomBar extends StatelessWidget {
   const _ComparisonBottomBar({
     required this.onUnavailable,
     required this.onJobs,
+    required this.onCandidates,
     required this.onProfile,
   });
 
   final ValueChanged<String> onUnavailable;
   final VoidCallback onJobs;
+  final VoidCallback onCandidates;
   final VoidCallback onProfile;
 
   @override
@@ -751,9 +757,10 @@ class _ComparisonBottomBar extends StatelessWidget {
                 onTap: onJobs,
               ),
               _BottomItem(
-                icon: Icons.description_rounded,
-                label: 'Başvurular',
+                icon: Icons.groups_rounded,
+                label: 'Adaylar',
                 selected: true,
+                onTap: onCandidates,
               ),
               _BottomItem(
                 icon: Icons.person_outline_rounded,

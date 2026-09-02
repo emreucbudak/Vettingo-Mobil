@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/talent_pulse_shell.dart';
 import '../../../candidate_detail/presentation/pages/candidate_detail_page.dart';
+import '../../../employer/presentation/pages/employer_candidates_page.dart';
 import '../../../employer/presentation/pages/employer_jobs_page.dart';
 import '../../../employer/presentation/pages/employer_profile_page.dart';
 import '../../../talent_comparison/presentation/pages/talent_comparison_page.dart';
@@ -36,9 +37,9 @@ class EmployerDashboardPage extends StatelessWidget {
                 _SummaryGrid(dashboard: dashboard),
                 const SizedBox(height: 24),
                 _SectionHeader(
-                  title: 'Top AI Matches',
-                  action: 'VIEW ALL',
-                  onAction: () => showComingSoon(context, 'All matches'),
+                  title: 'En İyi Eşleşmeler',
+                  action: 'TÜMÜNÜ GÖR',
+                  onAction: () => showComingSoon(context, 'Tüm eşleşmeler'),
                 ),
                 const SizedBox(height: 10),
                 SizedBox(
@@ -57,12 +58,7 @@ class EmployerDashboardPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 24),
-                _SectionHeader(
-                  title: 'Active Requisitions',
-                  action: 'FILTER',
-                  actionIcon: Icons.filter_list_rounded,
-                  onAction: () => showComingSoon(context, 'Filters'),
-                ),
+                const _SectionHeader(title: 'Aktif İlanlar'),
                 const SizedBox(height: 12),
                 Container(
                   clipBehavior: Clip.antiAlias,
@@ -89,8 +85,7 @@ class EmployerDashboardPage extends StatelessWidget {
                 SizedBox(
                   height: 42,
                   child: OutlinedButton(
-                    onPressed: () =>
-                        showComingSoon(context, 'All requisitions'),
+                    onPressed: () => showComingSoon(context, 'Tüm ilanlar'),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: AppColors.tertiary,
                       side: const BorderSide(color: AppColors.outlineVariant),
@@ -103,7 +98,7 @@ class EmployerDashboardPage extends StatelessWidget {
                         letterSpacing: .6,
                       ),
                     ),
-                    child: const Text('VIEW ALL REQUISITIONS'),
+                    child: const Text('TÜM İLANLARI GÖR'),
                   ),
                 ),
               ],
@@ -126,7 +121,9 @@ class EmployerDashboardPage extends StatelessWidget {
             return;
           }
           if (index == 2) {
-            showComingSoon(context, 'Başvurular');
+            Navigator.of(
+              context,
+            ).pushReplacementNamed(EmployerCandidatesPage.routeName);
           }
         },
       ),
@@ -150,7 +147,7 @@ class _SummaryGrid extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const _MetricLabel('TOTAL APPLICATIONS'),
+              const _MetricLabel('TOPLAM BAŞVURU'),
               const SizedBox(height: 8),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -203,14 +200,14 @@ class _SummaryGrid extends StatelessWidget {
           children: [
             Expanded(
               child: _SmallMetricCard(
-                label: 'OPEN ROLES',
+                label: 'AÇIK POZİSYONLAR',
                 value: '${dashboard.openRoles}',
               ),
             ),
             const SizedBox(width: 8),
             Expanded(
               child: _SmallMetricCard(
-                label: 'AI PROCESSED',
+                label: 'YZ İLE İNCELENEN',
                 value: '${dashboard.aiProcessed}',
               ),
             ),
@@ -284,17 +281,11 @@ class _SmallMetricCard extends StatelessWidget {
 }
 
 class _SectionHeader extends StatelessWidget {
-  const _SectionHeader({
-    required this.title,
-    required this.action,
-    required this.onAction,
-    this.actionIcon,
-  });
+  const _SectionHeader({required this.title, this.action, this.onAction});
 
   final String title;
-  final String action;
-  final VoidCallback onAction;
-  final IconData? actionIcon;
+  final String? action;
+  final VoidCallback? onAction;
 
   @override
   Widget build(BuildContext context) {
@@ -311,25 +302,22 @@ class _SectionHeader extends StatelessWidget {
             ),
           ),
         ),
-        TextButton.icon(
-          onPressed: onAction,
-          iconAlignment: IconAlignment.end,
-          icon: actionIcon == null
-              ? const SizedBox.shrink()
-              : Icon(actionIcon, size: 16),
-          label: Text(action),
-          style: TextButton.styleFrom(
-            foregroundColor: AppColors.tertiary,
-            padding: EdgeInsets.zero,
-            minimumSize: Size.zero,
-            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            textStyle: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              letterSpacing: .6,
+        if (action != null && onAction != null)
+          TextButton(
+            onPressed: onAction,
+            style: TextButton.styleFrom(
+              foregroundColor: AppColors.tertiary,
+              padding: EdgeInsets.zero,
+              minimumSize: Size.zero,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              textStyle: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                letterSpacing: .6,
+              ),
             ),
+            child: Text(action!),
           ),
-        ),
       ],
     );
   }
@@ -430,7 +418,7 @@ class _MatchPill extends StatelessWidget {
         borderRadius: BorderRadius.circular(999),
       ),
       child: Text(
-        '$value% Match',
+        '$value% Eşleşme',
         style: const TextStyle(
           color: AppColors.success,
           fontSize: 10,

@@ -42,12 +42,13 @@ void main() {
     expect(find.text('Compare Talent'), findsOneWidget);
     expect(find.text('Ana Sayfa'), findsOneWidget);
     expect(find.text('İlanlar'), findsOneWidget);
-    expect(find.text('Başvurular'), findsOneWidget);
+    expect(find.text('Adaylar'), findsOneWidget);
+    expect(find.text('Başvurular'), findsNothing);
     expect(find.text('Arama'), findsNothing);
     expect(find.text('Profil'), findsOneWidget);
     expect(
       tester.getCenter(find.text('İlanlar')).dx,
-      lessThan(tester.getCenter(find.text('Başvurular')).dx),
+      lessThan(tester.getCenter(find.text('Adaylar')).dx),
     );
     expect(find.text('Home'), findsNothing);
     expect(find.text('Apps'), findsNothing);
@@ -57,7 +58,7 @@ void main() {
     expect(find.byIcon(Icons.dashboard_outlined), findsNothing);
     expect(find.byIcon(Icons.search_rounded), findsNothing);
     expect(find.byIcon(Icons.work_outline_rounded), findsOneWidget);
-    expect(find.byIcon(Icons.description_rounded), findsOneWidget);
+    expect(find.byIcon(Icons.groups_rounded), findsOneWidget);
     expect(find.byIcon(Icons.person_outline_rounded), findsOneWidget);
     expect(find.text('Senior Frontend Engineer'), findsOneWidget);
     expect(find.text('Sarah Jenkins'), findsOneWidget);

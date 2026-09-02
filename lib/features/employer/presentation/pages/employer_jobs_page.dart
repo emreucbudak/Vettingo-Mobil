@@ -5,6 +5,7 @@ import '../../../../core/widgets/talent_pulse_shell.dart';
 import '../../../dashboard/domain/entities/employer_dashboard.dart';
 import '../../../dashboard/presentation/controllers/employer_dashboard_controller.dart';
 import '../../../new_requisition/presentation/pages/new_requisition_page.dart';
+import 'employer_candidates_page.dart';
 
 class EmployerJobsPage extends StatefulWidget {
   const EmployerJobsPage({super.key, required this.controller});
@@ -51,7 +52,7 @@ class _EmployerJobsPageState extends State<EmployerJobsPage> {
                     onChanged: (_) => setState(() {}),
                     textInputAction: TextInputAction.search,
                     decoration: InputDecoration(
-                      hintText: 'Pozisyon veya konum ara',
+                      hintText: 'İlan ara',
                       prefixIcon: const Icon(Icons.search_rounded),
                       suffixIcon: _searchController.text.isEmpty
                           ? null
@@ -152,7 +153,9 @@ class _EmployerJobsPageState extends State<EmployerJobsPage> {
       return;
     }
 
-    _showMessage(context, 'Başvurular yakında kullanıma açılacak.');
+    Navigator.of(
+      context,
+    ).pushReplacementNamed(EmployerCandidatesPage.routeName);
   }
 }
 
@@ -328,10 +331,4 @@ class _EmptyJobs extends StatelessWidget {
       ),
     );
   }
-}
-
-void _showMessage(BuildContext context, String message) {
-  ScaffoldMessenger.of(context)
-    ..hideCurrentSnackBar()
-    ..showSnackBar(SnackBar(content: Text(message)));
 }

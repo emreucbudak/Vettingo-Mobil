@@ -78,11 +78,21 @@ void main() {
       ),
     );
 
-    expect(find.text('TOTAL APPLICATIONS'), findsOneWidget);
+    expect(find.text('TOPLAM BAŞVURU'), findsOneWidget);
+    expect(find.text('AÇIK POZİSYONLAR'), findsOneWidget);
+    expect(find.text('YZ İLE İNCELENEN'), findsOneWidget);
     expect(find.text('1,248'), findsOneWidget);
-    expect(find.text('Top AI Matches'), findsOneWidget);
+    expect(find.text('En İyi Eşleşmeler'), findsOneWidget);
     expect(find.text('Sarah Jenkins'), findsOneWidget);
-    expect(find.text('Active Requisitions'), findsOneWidget);
+    expect(find.text('Aktif İlanlar'), findsOneWidget);
+    expect(find.text('TÜMÜNÜ GÖR'), findsOneWidget);
+    expect(find.text('FİLTRELE'), findsNothing);
+    expect(find.byIcon(Icons.filter_list_rounded), findsNothing);
+    expect(find.text('TÜM İLANLARI GÖR'), findsOneWidget);
+    expect(find.text('98% Eşleşme'), findsOneWidget);
+    expect(find.text('TOTAL APPLICATIONS'), findsNothing);
+    expect(find.text('Top AI Matches'), findsNothing);
+    expect(find.text('Active Requisitions'), findsNothing);
     expect(find.text('Lead Data Scientist'), findsOneWidget);
     expect(find.text('Vettingo'), findsOneWidget);
     expect(find.text('TalentPulse'), findsNothing);
@@ -96,12 +106,13 @@ void main() {
     );
     expect(find.text('Ana Sayfa'), findsOneWidget);
     expect(find.text('İlanlar'), findsOneWidget);
-    expect(find.text('Başvurular'), findsOneWidget);
+    expect(find.text('Adaylar'), findsOneWidget);
+    expect(find.text('Başvurular'), findsNothing);
     expect(find.text('Arama'), findsNothing);
     expect(find.text('Profil'), findsOneWidget);
     expect(
       tester.getCenter(find.text('İlanlar')).dx,
-      lessThan(tester.getCenter(find.text('Başvurular')).dx),
+      lessThan(tester.getCenter(find.text('Adaylar')).dx),
     );
     expect(find.text('Home'), findsNothing);
     expect(find.text('Apps'), findsNothing);
@@ -111,7 +122,8 @@ void main() {
     expect(find.byIcon(Icons.dashboard_rounded), findsNothing);
     expect(find.byIcon(Icons.search_rounded), findsNothing);
     expect(find.byIcon(Icons.work_outline_rounded), findsOneWidget);
-    expect(find.byIcon(Icons.description_outlined), findsOneWidget);
+    expect(find.byIcon(Icons.groups_outlined), findsOneWidget);
+    expect(find.byIcon(Icons.description_outlined), findsNothing);
     expect(find.byIcon(Icons.person_outline_rounded), findsOneWidget);
     _expectHrStyleSelectedIndicator(tester);
   });
