@@ -103,6 +103,9 @@ void main() {
     );
 
     expect(find.text('Sarah Jenkins'), findsOneWidget);
+    expect(find.text('Vettingo'), findsOneWidget);
+    expect(find.text('TalentPulse'), findsNothing);
+    expect(find.byIcon(Icons.notifications_outlined), findsNothing);
     expect(find.text('AI Executive Summary'), findsOneWidget);
     expect(find.text('Strong Match (92%)'), findsOneWidget);
     expect(find.text('VP of Engineering'), findsOneWidget);

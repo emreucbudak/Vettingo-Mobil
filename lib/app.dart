@@ -26,7 +26,7 @@ class VettingoApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'TalentPulse',
+      title: 'Vettingo',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       home: DashboardLoginPage(

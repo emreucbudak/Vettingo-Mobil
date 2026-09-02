@@ -29,9 +29,9 @@ class CandidateDetailPage extends StatelessWidget {
               onPressed: () => Navigator.of(context).maybePop(),
               icon: const Icon(Icons.arrow_back_rounded),
             ),
-            titleSpacing: 0,
+            centerTitle: true,
             title: const Text(
-              'TalentPulse',
+              'Vettingo',
               style: TextStyle(
                 color: AppColors.primary,
                 fontSize: 20,
@@ -44,12 +44,6 @@ class CandidateDetailPage extends StatelessWidget {
                 tooltip: 'Share candidate',
                 onPressed: () => _shareCandidate(context),
                 icon: const Icon(Icons.share_outlined),
-              ),
-              IconButton(
-                tooltip: 'Notifications',
-                onPressed: () =>
-                    _showMessage(context, 'No new candidate notifications.'),
-                icon: const Icon(Icons.notifications_outlined),
               ),
               const SizedBox(width: 4),
             ],

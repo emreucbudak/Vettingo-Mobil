@@ -11,7 +11,7 @@ class TalentPulseTopBar extends StatelessWidget implements PreferredSizeWidget {
     this.showAvatar = true,
     this.showNotifications = true,
     this.showTitle = true,
-    this.title = 'TalentPulse',
+    this.title = 'Vettingo',
   });
 
   final String avatarLabel;
@@ -69,7 +69,7 @@ class TalentPulseTopBar extends StatelessWidget implements PreferredSizeWidget {
       actions: showNotifications
           ? [
               IconButton(
-                tooltip: 'Notifications',
+                tooltip: 'Bildirimler',
                 onPressed: onNotifications,
                 icon: const Icon(Icons.notifications_outlined),
               ),
@@ -93,10 +93,10 @@ class TalentPulseBottomBar extends StatelessWidget {
   final ValueChanged<int> onSelected;
 
   static const _defaultItems = <(IconData, IconData, String)>[
-    (Icons.dashboard_outlined, Icons.dashboard_rounded, 'Home'),
-    (Icons.description_outlined, Icons.description_rounded, 'Apps'),
-    (Icons.search_rounded, Icons.search_rounded, 'Search'),
-    (Icons.work_outline_rounded, Icons.work_rounded, 'Jobs'),
+    (Icons.home_outlined, Icons.home_rounded, 'Ana Sayfa'),
+    (Icons.description_outlined, Icons.description_rounded, 'Başvurular'),
+    (Icons.search_rounded, Icons.search_rounded, 'Arama'),
+    (Icons.work_outline_rounded, Icons.work_rounded, 'İlanlar'),
   ];
 
   @override

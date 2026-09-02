@@ -108,7 +108,7 @@ class _LoginPageState extends State<LoginPage> {
       mainAxisSize: MainAxisSize.min,
       children: [
         const Text(
-          'TalentPulse',
+          'Vettingo',
           style: TextStyle(
             color: primary,
             fontSize: 20,

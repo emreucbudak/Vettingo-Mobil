@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../dashboard/presentation/pages/candidate_dashboard_page.dart';
-import '../../../hr/presentation/pages/hr_dashboard_page.dart';
+import '../../../dashboard/presentation/pages/employer_dashboard_page.dart';
 import '../../domain/entities/login_credentials.dart';
 import '../controllers/login_controller.dart';
 import 'dashboard_register_page.dart';
@@ -23,12 +23,14 @@ class _DashboardLoginPageState extends State<DashboardLoginPage> {
 
   Future<void> _submit() async {
     FocusScope.of(context).unfocus();
-    if (!(_formKey.currentState?.validate() ?? false)) return;
+    final isEmployer =
+        widget.controller.credentials.accountType == AccountType.employer;
+    if (!isEmployer && !(_formKey.currentState?.validate() ?? false)) return;
     await widget.controller.signIn();
     if (!mounted) return;
     final routeName =
         widget.controller.credentials.accountType == AccountType.employer
-        ? HrDashboardPage.routeName
+        ? EmployerDashboardPage.routeName
         : CandidateDashboardPage.routeName;
     await Navigator.of(context).pushReplacementNamed(routeName);
   }

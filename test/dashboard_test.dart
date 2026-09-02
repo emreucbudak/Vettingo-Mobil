@@ -82,5 +82,25 @@ void main() {
     expect(find.text('Sarah Jenkins'), findsOneWidget);
     expect(find.text('Active Requisitions'), findsOneWidget);
     expect(find.text('Lead Data Scientist'), findsOneWidget);
+    expect(find.text('Vettingo'), findsOneWidget);
+    expect(find.text('TalentPulse'), findsNothing);
+    expect(find.text('EM'), findsNothing);
+    expect(find.byIcon(Icons.notifications_outlined), findsNothing);
+    final employerTopBarRect = tester.getRect(find.byType(TalentPulseTopBar));
+    final employerTitleRect = tester.getRect(find.text('Vettingo'));
+    expect(
+      employerTitleRect.center.dx,
+      closeTo(employerTopBarRect.center.dx, .01),
+    );
+    expect(find.text('Ana Sayfa'), findsOneWidget);
+    expect(find.text('Başvurular'), findsOneWidget);
+    expect(find.text('Arama'), findsOneWidget);
+    expect(find.text('İlanlar'), findsOneWidget);
+    expect(find.text('Home'), findsNothing);
+    expect(find.text('Apps'), findsNothing);
+    expect(find.text('Search'), findsNothing);
+    expect(find.text('Jobs'), findsNothing);
+    expect(find.byIcon(Icons.home_rounded), findsOneWidget);
+    expect(find.byIcon(Icons.dashboard_rounded), findsNothing);
   });
 }

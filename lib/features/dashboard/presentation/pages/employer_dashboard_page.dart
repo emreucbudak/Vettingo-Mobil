@@ -19,9 +19,10 @@ class EmployerDashboardPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final dashboard = controller.dashboard;
     return Scaffold(
-      appBar: TalentPulseTopBar(
-        avatarLabel: 'EM',
-        onNotifications: () => showComingSoon(context, 'Notifications'),
+      appBar: const TalentPulseTopBar(
+        showAvatar: false,
+        showNotifications: false,
+        title: 'Vettingo',
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
@@ -118,7 +119,7 @@ class EmployerDashboardPage extends StatelessWidget {
           if (index != 0) {
             showComingSoon(
               context,
-              const ['Home', 'Apps', 'Search', 'Jobs'][index],
+              const ['Ana Sayfa', 'Başvurular', 'Arama', 'İlanlar'][index],
             );
           }
         },
