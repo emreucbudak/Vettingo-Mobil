@@ -1,25 +1,45 @@
 {
   "expo": {
-    "name": "vettingo-rn",
-    "slug": "vettingo-rn",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "orientation": "portrait",
+    "name": "Vettingo",
+    "slug": "vettingo-mobile",
+    "version": "1.0.0",
+    "experiments": {
+      "typedRoutes": true
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "resizeMode": "contain",
+          "image": "./assets/images/vettingo_splash_logo.png",
+          "backgroundColor": "#F8F9FF",
+          "imageWidth": 220
+        }
+      ],
+      "expo-font"
+    ],
+    "web": {
+      "output": "single",
+      "bundler": "metro",
+      "favicon": "./assets/images/vettingo_app_icon.png"
+    },
     "ios": {
+      "bundleIdentifier": "com.example.vettingomobil",
       "supportsTablet": true
     },
+    "scheme": "vettingo",
     "android": {
+      "package": "com.example.vettingomobil",
+      "predictiveBackGestureEnabled": true,
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png",
-        "monochromeImage": "./assets/android-icon-monochrome.png"
-      },
-      "predictiveBackGestureEnabled": false
+        "backgroundColor": "#3982B4",
+        "foregroundImage": "./assets/images/vettingo_adaptive_foreground.png",
+        "backgroundImage": "./assets/images/vettingo_adaptive_background.png"
+      }
     },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    }
+    "icon": "./assets/images/vettingo_app_icon.png"
   }
 }
