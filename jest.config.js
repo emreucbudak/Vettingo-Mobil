@@ -3,8 +3,10 @@ module.exports = {
   testMatch: ["<rootDir>/tests/**/*.test.ts", "<rootDir>/tests/**/*.test.tsx"],
   setupFilesAfterEnv: ["<rootDir>/tests/setup.ts"],
   collectCoverageFrom: [
-    "src/domain/**/*.{ts,tsx}",
-    "src/application/**/*.ts",
-    "src/presentation/screens/**/*.{ts,tsx}",
+    "src/features/**/domain/**/*.ts",
+    "src/features/**/application/**/*.ts",
+    "src/features/**/presentation/screens/**/*.tsx",
+    "src/core/application/**/*.ts",
+    "src/shared/domain/**/*.ts",
   ],
 };

@@ -1,59 +1,84 @@
-# Mobil Clean Architecture
+# Mobil Feature-first Clean Architecture
 
-Uygulama Expo SDK 57 ve React Native ile çalışır. Mimari katmanlar bağımlılıkların içeriye yönelmesini sağlar; domain ve application içinde React, React Native, Expo, AsyncStorage veya ekran import'u yoktur.
+Kod önce işlevlere, sonra o işlevin katmanlarına göre düzenlenir. Expo Router yolları `src/app` altında kalır ve feature ekranlarına yönlendirir. Domain ve application framework bağımsızdır.
 
-## Katmanlar
+## Özellik sahipliği
 
-| Katman                 | Görev                                                                                              |
-| ---------------------- | -------------------------------------------------------------------------------------------------- |
-| `domain/entities`      | Session, CV, aday, ilan, değerlendirme ve çalışma alanı modelleri                                  |
-| `domain/policies`      | Form, CV, tarih, dosya boyutu, arama, aşama ve değerlendirme kuralları                             |
-| `domain/repositories`  | AuthRepository, WorkspaceRepository, RecruitmentRepository sözleşmeleri                            |
-| `domain/ports`         | Saat, belge seçici ve paylaşım sözleşmeleri                                                        |
-| `application/usecases` | Giriş/çıkış, katalog sorguları, başvuru, CV tamamlama, aday kararı, ilan ve değerlendirme akışları |
-| `data`                 | Demo kaynakları, JSON mapper ve AsyncStorage kullanan repository uygulamaları                      |
-| `infrastructure`       | SystemClock, ExpoCvDocumentPicker ve ReactNativeSummarySharer                                      |
-| `presentation`         | Ekranlar, bileşenler, React Context, form state'i, etiketler ve rota seçimi                        |
-| `composition`          | Somut repository ve port uygulamalarını use case constructor'larına bağlar                         |
-| `app`                  | Expo Router yolları, rol korumaları ve composition root'un uygulamaya verilmesi                    |
+| Feature      | Sahip olduğu kod                                                                                                                                                |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| auth         | Session/Role, form kuralları, AuthRepository, AuthUseCases, yerel kimlik doğrulama, giriş/kayıt ve hukuki içerik                                                |
+| jobs         | Job modeli, iş arama/filtre politikası, JobsRepository/JobsQueries, demo işler, JobCard ve arama ekranı                                                         |
+| applications | Application modeli, ApplicationUseCases, başlangıç başvuruları, ApplicationCard ve başvuru listesi                                                              |
+| candidates   | Candidate/Decision/Stage, aday ve mülakat kuralları, CandidatesRepository/Queries, karar/paylaşım use case'i, demo adaylar, kart, liste, detay ve karşılaştırma |
+| cv           | Cv modeli, CV/dosya kuralları, belge seçici portu/adaptörü, CvUseCases, demo CV ve düzenleme ekranı                                                             |
+| requisitions | Requisition/RequisitionState, ilan kuralları, katalog repository/query, taslak/yayın use case'i, demo ilanlar, kart ve ekranlar                                 |
+| assessment   | Question/Assessment, süre kuralları, soru repository/query, değerlendirme use case'i, başlangıç verileri ve ekran                                               |
+| account      | Hesap/profil ekranı                                                                                                                                             |
+| dashboard    | Diğer feature'ların kartlarını birleştiren ana sayfalar                                                                                                         |
+
+Örneğin adaylarla ilgili bir değişiklik `src/features/candidates` içinde bulunur:
+
+```text
+features/candidates/
+  domain/
+    entities/          Candidate, CandidateDecisions, CandidateCatalog
+    policies/          Aşama ve mülakat kuralları
+    repositories/      CandidatesRepository
+    ports/             SummarySharer
+  application/usecases/ CandidateUseCases, CandidatesQueries
+  data/
+    fixtures/          Aday demo içeriği
+    repositories/      DemoCandidatesRepository
+  infrastructure/      ReactNativeSummarySharer
+  presentation/
+    components/        CandidateCard
+    formatters/        Aşama/karar etiketleri
+    screens/           Liste, detay, karşılaştırma
+```
+
+Her feature yalnızca ihtiyaç duyduğu katmanları içerir. Account/dashboard için boş domain veya data klasörleri yoktur. Ortak model, fixture veya ekranları tekrar dıştaki genel katmanlara taşıyan uyumluluk barrel'ları tutulmaz.
+
+## Core ve shared
+
+`core` uygulama genelindeki entegrasyonu taşır: `AppServices`, `SessionUseCases`, `WorkspaceUseCases`, `WorkspaceCommand`, eski kayıt şeması olan `Workspace`, kayıt mapper/repository'si, `AppProvider` ve `AppShell`.
+
+Feature use case'leri Workspace modelini import etmez. Başvuru use case'i Application listesini, aday kararı CandidateDecisions'ı, değerlendirme Assessment'ı, ilan use case'i RequisitionState'i alır. Core komut yönlendiricisi bu sonuçları uygulama state'ine birleştirir. CV doğrudan Cv modeliyle çalışır. AuthUseCases kimlik doğrulamayı yönetir; core SessionUseCases hesaba ait workspace yükleme/kayıt akışını tamamlar.
+
+`shared` yeniden kullanılabilir UI bileşenleri/renkler, metin arama, Experience/Education tipleri, Clock portu, SystemClock ve AsyncStorageSource içerir. Feature veya core import etmez. Uygulama state'ine ve gezinmeye bağlı AppShell bu nedenle core içinde kalır.
+
+Başvuru akışı jobs domain modelini tüketir. Dashboard farklı feature'ların presentation kartlarını birleştirir. Bu açık bağlantılar dış katmanların domain/application içine taşınmasını gerektirmez.
+
+## Bağımlılık yönü
 
 ```mermaid
 flowchart LR
-  P[Presentation] --> A[Application use cases]
-  A --> D[Domain entities / policies / contracts]
-  R[Data repositories] --> D
-  I[Infrastructure adapters] --> D
-  C[Composition root] --> A
-  C --> R
-  C --> I
-  E[Expo Router root] --> C
-  E --> P
+  Routes[Expo Router] --> UI[Feature presentation]
+  UI --> UseCases[Feature application]
+  UseCases --> Domain[Feature domain]
+  Data[Feature data] --> Domain
+  Adapters[Feature infrastructure] --> Domain
+  Core[Core integration] --> UseCases
+  UI --> State[Core UI state / shell]
+  State --> Core
+  Domain --> Shared[Shared domain]
+  UI --> SharedUI[Shared UI]
+  Composition[Composition root] --> Core
+  Composition --> Data
+  Composition --> Adapters
 ```
 
-Oklar import bağımlılıklarını gösterir. Application somut repository'leri import etmez; domain arayüzlerinden verilen nesneleri kullanır. UI renkleri, Türkçe rol etiketleri, rota adları ve hukuki içerik presentation içinde kalır.
+Somut bağlantılar yalnızca `src/composition/createAppServices.ts` içinde kurulur. Jobs, candidates, assessment ve requisitions katalogları kendi asenkron repository'lerinden yüklenir. `loadCatalogs()` bunları başlangıçta birlikte yükler; ekranlar katalog ve oturum hazır olmadan açılmaz. Yükleme hatasında tekrar deneme gösterilir.
 
-## Ekrandan iş kuralına
+## Kalıcı kayıt ve backend
 
-`AuthScreen`, form hata gösterimini yönetir; `SessionUseCases` giriş verisini doğrular, `AuthRepository` üzerinden demo kimliği alır ve hesaba ait çalışma alanını yükler. Şifre Session modeline veya kalıcı kayda aktarılmaz.
+`core/data/repositories/LocalWorkspaceRepository.ts`, hesap/rol bazında eski v1 JSON şemasını korur. `vettingo:workspace:v1:<rol>:<e-posta>` ve `vettingo:demo-session:v1` anahtarları değişmez. Refactor mevcut kayıtları silmez. Mapper bozuk veya farklı sürümlü kayıt için başlangıç verisine döner.
 
-CV, ilan ve mülakat ekranları form state'ini tutar. Tamamlama, yayınlama ve karar verme kuralları ilgili use case içinde de uygulanır. `WorkspaceCommand` application sözleşmesidir; `WorkspaceUseCases` komutları `CvUseCases`, `CandidateUseCases`, `RequisitionUseCases`, `AssessmentUseCases` ve `ApplicationUseCases` sınıflarına yönlendirir. React Context yalnızca bu sonuçları UI state'ine uygular ve kayıt yaşam döngüsünü başlatır.
+Auth ve workspace repository'leri aynı AsyncStorageSource nesnesini paylaşır. Yazmalar sıraya alınır; hesap değişiminde/çıkışta önce bekleyen yazmalar tamamlanır. Şifre Session modeline veya kalıcı kayda aktarılmaz.
 
-`RecruitmentQueries.load()` asenkron repository'den kataloğu yükler. Sorgular daha sonra bu katalog üzerinde çalışır. Ekranlar katalog ve oturum yüklenmeden açılmaz. Veri yüklemesi başarısız olursa tekrar deneme gösterilir. Saat portu değerlendirme süresi, mülakat doğrulaması ve ilan kimliği için enjekte edilir. Belge seçimi ve paylaşım da port üzerinden çağrılır.
+Mevcut repository'ler yerel demo davranışını sürdürür. API/cache adaptörleri ilgili feature'ın data katmanında repository arayüzünü uygulayıp composition içinde seçilebilir. Backend cevapları feature modellerine data mapper'larında dönüştürülmelidir. Sayfalama veya yeni sorgular için ilgili feature'ın sözleşmeleri genişletilir. Gerçek auth/token ve sunucu yetkilendirmesi ayrıca bağlanmalıdır.
 
-## Kalıcı kayıt
+## Kontroller
 
-`LocalWorkspaceRepository` hesap ve rol bazında çalışma alanını yükler/kaydeder. `workspaceMapper` bozuk veya farklı sürümlü JSON'u demo başlangıç verisine döndürür. Eski `vettingo:workspace:v1:<rol>:<e-posta>` ve `vettingo:demo-session:v1` anahtarları korunmuştur. Bu refactor veriyi silmez veya yeniden sürümlendirmez.
+ESLint tüm feature/core/shared yollarındaki Clean Architecture sınırlarını kontrol eder. Feature domain/application core'a bağımlı olamaz; shared hiçbir feature'a veya core'a bağımlı olamaz. Presentation somut data/infrastructure/composition, AsyncStorage veya belge seçici import edemez. Framework bağımlılıkları domain/application'a giremez.
 
-Auth ve workspace repository'leri aynı `AsyncStorageSource` nesnesini paylaşır. Yazmalar sıraya alınır; hesap değiştirirken ve çıkarken önce bekleyen kayıtlar tamamlanır. Böylece önceki bir yazma yeni kaydın üzerine geçmez. Kayıt hataları ekranda gösterilir.
-
-## Backend bağlama
-
-Mevcut adapter'lar yerel demo davranışını korur. API bağlantısı bu değişikliğe dahil değildir.
-
-`AuthRepository`, `RecruitmentRepository` ve `WorkspaceRepository` arayüzlerini uygulayan API/cache repository'leri eklenip `createAppServices.ts` içinde seçilebilir. Backend cevaplarının domain entity'lerine dönüşümü data mapper'larında yapılmalıdır. Katalog yükleme sözleşmesi zaten asenkrondur; uzaktan sayfalama veya farklı sorgu ihtiyaçları gelirse repository ve query sözleşmeleri genişletilir. Gerçek token saklama ve sunucu yetkilendirmesi ayrıca uygulanmalıdır.
-
-## Sınırların korunması
-
-ESLint, domain/application içinde framework ve dış katman import'larını engeller. Presentation içinde data, infrastructure, composition, AsyncStorage ve Expo belge seçici import'ları engellenir. Data/infrastructure ekranlara veya application'a bağımlı olamaz. Bağlantılar yalnızca composition root'ta kurulur.
-
-Mevcut 24 test yeni yolları, enjekte edilen use case'leri ve saati kullanacak şekilde güncellendi. Formlar, arama, kayıt izolasyonu, aday kararları, CV, ilan ve değerlendirme davranışları korunur. Testler, typecheck ve lint GitHub Actions'ta çalışır.
+Mevcut 24 test yeni feature yollarına ve use case bağlantılarına taşındı. Entegrasyon testleri birden fazla feature ve kalıcı kayıt davranışını birlikte kontrol ettiği için `tests` altında kalır. TypeScript, lint, test ve web paketleme GitHub Actions'ta çalışır.

@@ -49,24 +49,33 @@ Eski Flutter sürümünde olduğu gibi bu uygulama **yerel demo verileriyle** ç
 
 Gerçek entegrasyonda kimlik doğrulamayı bir API servisine taşıyın, yetkilendirmeyi sunucuda uygulayın ve gerçek tokenları güvenli depolamada tutun. AsyncStorage'daki mevcut oturum bir **demo kullanıcı tercihi**dir, güvenlik sınırı değildir.
 
-## Clean Architecture
+## Feature-first Clean Architecture
 
-İş kuralları React Native ve Expo'dan bağımsızdır. Ekranlar use case'leri çağırır; use case'ler domain içindeki repository ve cihaz servisi arayüzlerine bağımlıdır. Somut uygulamalar `composition/createAppServices.ts` içinde bağlanır. Katman sınırları ESLint ile kontrol edilir.
+Özellikler `src/features` altında toplanır; her özelliğin modelleri, kuralları, use case'leri, repository'leri, verileri ve ekranları kendi klasöründe bulunur. İş kuralları React Native ve Expo'dan bağımsızdır. Somut bağımlılıklar `composition/createAppServices.ts` içinde bağlanır. Katman sınırları ESLint ile kontrol edilir.
 
 ```text
 src/
-  app/             Expo Router yolları ve rol korumaları
-  domain/          Entity'ler, saf iş kuralları, repository ve port arayüzleri
-  application/     Giriş, arama, başvuru, CV, aday, ilan ve değerlendirme use case'leri
-  data/            Demo verisi, kayıt mapper'ı ve yerel repository uygulamaları
-  infrastructure/  Saat, Expo belge seçimi ve React Native paylaşım adaptörleri
-  presentation/    Ekranlar, bileşenler, UI state, etiketler ve gezinme
-  composition/     Constructor injection ile bağımlılıkların bağlandığı nokta
+  app/                Expo Router yolları ve rol korumaları
+  features/
+    auth/             Giriş/kayıt, kimlik doğrulama, rol etiketleri ve hukuki içerik
+    jobs/             İş kataloğu, arama/filtreler ve iş kartı
+    applications/     Başvuru modeli, tekrarsız başvuru ve başvuru listesi
+    candidates/       Aday kataloğu, detay, karşılaştırma ve karar/mülakat akışları
+    cv/               CV modeli, kuralları, belge seçimi ve profil düzenleme
+    requisitions/     İlan modelleri, katalog, taslak/yayın ve ilan ekranları
+    assessment/       Sorular, değerlendirme modeli, süre ve yanıt akışları
+    account/          Hesap/profil ekranı
+    dashboard/        Özellikleri birleştiren ana sayfalar
+  core/               Oturum/workspace orkestrasyonu, kalıcı kayıt ve uygulama kabuğu
+  shared/             Ortak UI, metin arama, profil tipleri, saat ve depolama adaptörü
+  composition/        Constructor injection ile bağımlılıkların bağlandığı nokta
 tests/          İş kuralları, ekran etkileşimleri ve kayıt testleri
 assets/images/  Özgün Vettingo görselleri
 ```
 
 Akış ve backend entegrasyon noktaları: [Mimari belgesi](docs/ARCHITECTURE.md). Yerel kayıt anahtarları ve veri sürümü korunmuştur.
+
+Örneğin `features/candidates` içinde `domain`, `application`, `data`, `infrastructure` ve `presentation` katmanları vardır. Katmanlar ihtiyaca göre eklenir; yalnızca UI birleştiren account/dashboard için boş katmanlar oluşturulmaz.
 
 ## Kontroller
 

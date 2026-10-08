@@ -1,1 +1,1 @@
-export { ApplicationsScreen as default } from "../../presentation/screens/ListsScreen";
+export { ApplicationsScreen as default } from "../../features/applications/presentation/screens/ApplicationsScreen";

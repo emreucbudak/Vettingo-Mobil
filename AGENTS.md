@@ -2,7 +2,11 @@ This is an Expo/React Native mobile application. Prioritize mobile-first pattern
 
 ## Clean Architecture boundaries
 
-- Keep domain and application framework-free. Domain must not depend on any outer layer; application depends only on domain and its own contracts.
+- Use feature-first ownership under `src/features/<feature>/{domain,application,data,infrastructure,presentation}`. Keep models, policies, fixtures, repositories, use cases, screens and cards with their owning feature. Add only layers a feature needs.
+- `src/core` integrates features: session/workspace orchestration, legacy aggregate persistence, application state and shell. Feature domain/application must not import core or the global Workspace model; use feature-specific state slices.
+- `src/shared` contains reusable primitives and adapters and must not import features or core. Dashboard may compose presentation components from multiple features; applications may consume the jobs domain model.
+
+- Keep domain and application framework-free. Domain must not depend on outer layers. Feature application depends on domain/shared domain and its own contracts; core application may compose feature use cases.
 - Define repository/device contracts in domain. Implement persistence and mapping in data; platform adapters in infrastructure.
 - Presentation calls application use cases and owns UI state. Never import demo fixtures, AsyncStorage, concrete repositories, or platform service adapters there.
 - Wire concrete dependencies only in `src/composition/createAppServices.ts`, then inject services from the Expo Router root.

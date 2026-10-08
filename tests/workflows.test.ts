@@ -1,25 +1,25 @@
-import { candidates, jobs, questions } from "../src/data/fixtures/demo";
-import { Requisition } from "../src/domain/entities/models";
-import {
-  candidateStage,
-  filterJobs,
-  validateAuth,
-  validateRequisition,
-} from "../src/domain/policies/recruitment";
-import { homeFor } from "../src/presentation/navigation/routes";
-import { initialWorkspace } from "../src/data/datasources/DemoWorkspaceSource";
-import { restoreWorkspace as restore } from "../src/data/mappers/workspaceMapper";
-import { DemoRecruitmentRepository } from "../src/data/repositories/DemoRecruitmentRepository";
-import { RecruitmentQueries } from "../src/application/usecases/RecruitmentQueries";
-import { WorkspaceUseCases } from "../src/application/usecases/WorkspaceUseCases";
-import { WorkspaceCommand } from "../src/application/contracts/WorkspaceCommand";
-import { Workspace } from "../src/domain/entities/models";
-import { CvUseCases } from "../src/application/usecases/CvUseCases";
-import { CandidateUseCases } from "../src/application/usecases/CandidateUseCases";
-import { RequisitionUseCases } from "../src/application/usecases/RequisitionUseCases";
-import { AssessmentUseCases } from "../src/application/usecases/AssessmentUseCases";
-import { ApplicationUseCases } from "../src/application/usecases/ApplicationUseCases";
-const queries = new RecruitmentQueries(new DemoRecruitmentRepository());
+import { candidates } from "../src/features/candidates/data/fixtures/candidates";
+import { jobs } from "../src/features/jobs/data/fixtures/jobs";
+import { questions } from "../src/features/assessment/data/fixtures/questions";
+import { Requisition } from "../src/features/requisitions/domain/entities/Requisition";
+import { candidateStage } from "../src/features/candidates/domain/policies/stage";
+import { filterJobs } from "../src/features/jobs/domain/policies/search";
+import { validateAuth } from "../src/features/auth/domain/policies/validation";
+import { validateRequisition } from "../src/features/requisitions/domain/policies/validation";
+import { homeFor } from "../src/features/auth/presentation/navigation/routes";
+import { initialWorkspace } from "../src/core/data/datasources/DemoWorkspaceSource";
+import { restoreWorkspace as restore } from "../src/core/data/mappers/workspaceMapper";
+import { DemoAssessmentRepository } from "../src/features/assessment/data/repositories/DemoAssessmentRepository";
+import { AssessmentQueries } from "../src/features/assessment/application/usecases/AssessmentQueries";
+import { WorkspaceUseCases } from "../src/core/application/usecases/WorkspaceUseCases";
+import { WorkspaceCommand } from "../src/core/application/contracts/WorkspaceCommand";
+import { Workspace } from "../src/core/domain/entities/Workspace";
+import { CvUseCases } from "../src/features/cv/application/usecases/CvUseCases";
+import { CandidateUseCases } from "../src/features/candidates/application/usecases/CandidateUseCases";
+import { RequisitionUseCases } from "../src/features/requisitions/application/usecases/RequisitionUseCases";
+import { AssessmentUseCases } from "../src/features/assessment/application/usecases/AssessmentUseCases";
+import { ApplicationUseCases } from "../src/features/applications/application/usecases/ApplicationUseCases";
+const queries = new AssessmentQueries(new DemoAssessmentRepository());
 let now = 0;
 const useCases = new WorkspaceUseCases(
   new CvUseCases({ pick: async () => null }),

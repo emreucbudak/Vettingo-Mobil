@@ -3,8 +3,8 @@ import { createAppServices } from "../composition/createAppServices";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { AppProvider, useApp } from "../presentation/state/AppProvider";
-import { Loading } from "../presentation/components/ui";
+import { AppProvider, useApp } from "../core/presentation/state/AppProvider";
+import { Loading } from "../shared/presentation/components/ui";
 
 function Routes() {
   const { session, ready } = useApp();

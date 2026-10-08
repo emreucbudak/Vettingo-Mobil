@@ -1,0 +1,40 @@
+import { Requisition } from "../../domain/entities/Requisition";
+
+export const requisitions: Requisition[] = [
+  {
+    id: "data-scientist",
+    title: "Lead Data Scientist",
+    department: "Engineering",
+    locationType: "hybrid",
+    office: "San Francisco, CA",
+    skills: ["Python", "ML"],
+    marketCompensation: false,
+    description: "",
+    status: "Sourcing",
+    candidateLabel: "+12",
+  },
+  {
+    id: "vp-engineering",
+    title: "VP of Engineering",
+    department: "Engineering",
+    locationType: "remote",
+    office: "",
+    skills: ["Leadership", "Cloud"],
+    marketCompensation: false,
+    description: "",
+    status: "Interviewing",
+    candidateLabel: "+4",
+  },
+  {
+    id: "marketing-manager",
+    title: "Senior Marketing Manager",
+    department: "Marketing",
+    locationType: "onsite",
+    office: "New York, NY",
+    skills: ["Marketing"],
+    marketCompensation: false,
+    description: "",
+    status: "Sourcing",
+    candidateLabel: "New",
+  },
+];

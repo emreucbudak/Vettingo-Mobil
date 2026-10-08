@@ -1,20 +1,23 @@
 import React, { useState } from "react";
-import { act, fireEvent, render, waitFor } from "@testing-library/react-native";
+import {
+  act,
+  fireEvent,
+  renderAsync,
+  waitFor,
+} from "@testing-library/react-native";
 import { createAppServices } from "../src/composition/createAppServices";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import AuthScreen from "../src/presentation/screens/AuthScreen";
-import {
-  CandidatesScreen,
-  JobSearchScreen,
-} from "../src/presentation/screens/ListsScreen";
-import RequisitionScreen from "../src/presentation/screens/RequisitionScreen";
-import CvReviewScreen from "../src/presentation/screens/CvReviewScreen";
-import ComparisonScreen from "../src/presentation/screens/ComparisonScreen";
-import AssessmentScreen from "../src/presentation/screens/AssessmentScreen";
+import AuthScreen from "../src/features/auth/presentation/screens/AuthScreen";
+import { CandidatesScreen } from "../src/features/candidates/presentation/screens/CandidatesScreen";
+import { JobSearchScreen } from "../src/features/jobs/presentation/screens/JobSearchScreen";
+import RequisitionScreen from "../src/features/requisitions/presentation/screens/RequisitionScreen";
+import CvReviewScreen from "../src/features/cv/presentation/screens/CvReviewScreen";
+import ComparisonScreen from "../src/features/candidates/presentation/screens/ComparisonScreen";
+import AssessmentScreen from "../src/features/assessment/presentation/screens/AssessmentScreen";
 import {
   AppProvider as InjectedAppProvider,
   useApp,
-} from "../src/presentation/state/AppProvider";
+} from "../src/core/presentation/state/AppProvider";
 
 function AppProvider({ children }: React.PropsWithChildren) {
   const [services] = useState(createAppServices);
@@ -29,6 +32,13 @@ const session = {
   company: "",
   remember: true,
 };
+async function renderApp(element: React.ReactElement) {
+  const view = await renderAsync(<AppProvider>{element}</AppProvider>);
+  await waitFor(() =>
+    expect(view.queryByText("Vettingo yükleniyor…")).toBeNull(),
+  );
+  return view;
+}
 beforeEach(async () => {
   await AsyncStorage.clear();
   jest.clearAllMocks();
@@ -38,32 +48,19 @@ async function signedIn(element: React.ReactElement, role = "candidate") {
     "vettingo:demo-session:v1",
     JSON.stringify({ ...session, role }),
   );
-  const view = render(<AppProvider>{element}</AppProvider>);
-  await waitFor(() =>
-    expect(view.queryByText("Vettingo yükleniyor…")).toBeNull(),
-  );
-  return view;
+  return renderApp(element);
 }
 test("auth form reports errors and exposes all three account roles", async () => {
-  const view = render(
-    <AppProvider>
-      <AuthScreen />
-    </AppProvider>,
-  );
-  await waitFor(() => expect(view.queryByText("Vettingo yükleniyor…")).toBeNull());
+  const view = await renderApp(<AuthScreen />);
   fireEvent.press(view.getByRole("button", { name: "Giriş Yap" }));
   expect(view.getByText("Geçerli bir e-posta adresi girin.")).toBeTruthy();
   expect(view.getByText("Şifre en az 6 karakter olmalıdır.")).toBeTruthy();
   for (const role of ["İş Arayan", "İşveren", "İK"])
     expect(view.getByRole("button", { name: role })).toBeTruthy();
-});
+  // The first async native mount also initializes the React Native mocks.
+}, 15000);
 test("registration shows company field only for hiring roles and enforces consent", async () => {
-  const view = render(
-    <AppProvider>
-      <AuthScreen register />
-    </AppProvider>,
-  );
-  await waitFor(() => expect(view.queryByText("Vettingo yükleniyor…")).toBeNull());
+  const view = await renderApp(<AuthScreen register />);
   expect(view.queryByLabelText("Şirket Adı")).toBeNull();
   fireEvent.press(view.getByRole("button", { name: "İşveren" }));
   expect(view.getByLabelText("Şirket Adı")).toBeTruthy();
@@ -153,7 +150,7 @@ test("assessment accepts an answer, advances and locks after submission", async 
     view.getByRole("button", { name: "Yanıtları Kaydet ve Bitir" }),
   );
   expect(view.getByText("Değerlendirme tamamlandı")).toBeTruthy();
-  view.unmount();
+  await view.unmountAsync();
 });
 test("signing into another role resets workspace and never stores password", async () => {
   let app: ReturnType<typeof useApp>;
@@ -161,11 +158,7 @@ test("signing into another role resets workspace and never stores password", asy
     app = useApp();
     return null;
   }
-  const view = render(
-    <AppProvider>
-      <Probe />
-    </AppProvider>,
-  );
+  const view = await renderApp(<Probe />);
   await waitFor(() => expect(app!.ready).toBe(true));
   await act(async () => {
     await app!.signIn({
@@ -197,5 +190,5 @@ test("signing into another role resets workspace and never stores password", asy
     await app!.signOut();
   });
   expect(await AsyncStorage.getItem("vettingo:demo-session:v1")).toBeNull();
-  view.unmount();
+  await view.unmountAsync();
 });

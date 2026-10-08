@@ -1,1 +1,1 @@
-export { default } from "../../presentation/screens/ProfileScreen";
+export { default } from "../../features/account/presentation/screens/ProfileScreen";

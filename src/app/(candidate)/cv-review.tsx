@@ -1,1 +1,1 @@
-export { default } from "../../presentation/screens/CvReviewScreen";
+export { default } from "../../features/cv/presentation/screens/CvReviewScreen";

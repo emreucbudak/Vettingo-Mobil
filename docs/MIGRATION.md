@@ -50,6 +50,10 @@ Aktif Flutter uygulamasında kullanılmayan eski landing/login view parçaları 
 
 8 Ekim 2026'da React Native uygulaması Clean Architecture katmanlarına ayrıldı. İş kuralları ve use case'ler framework bağımlılıklarından ayrıldı; repository arayüzleri ve cihaz portları eklendi. Ekranlar demo verilerini veya AsyncStorage'ı doğrudan kullanmaz. Katman sınırları ESLint ile denetlenir. Yerel kayıt sürümü ve anahtarları korunmuştur. [Mimari ayrıntıları](ARCHITECTURE.md).
 
+## Feature-first düzeni
+
+8 Ekim 2026'da Clean Architecture feature-first düzene taşındı. Auth, jobs, applications, candidates, CV, requisitions ve assessment kendi domain/application/data/presentation katmanlarını taşır. Account ve dashboard ekran birleştirmesi yapar. Özellik modelleri, fixture'lar, kartlar ve liste ekranları ayrıldı; feature use case'leri global Workspace yerine kendi state dilimleriyle çalışır. Core eski kalıcı kayıt şemasını ve özellikler arası orkestrasyonu korur. Shared feature'lara bağımlı değildir. [Güncel mimari](ARCHITECTURE.md).
+
 ## Yerel yedek
 
 Aktif proje `Vettingo-Mobil/vettingomobil` altında React Native olarak devam eder.
