@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
+import { createAppServices } from "../composition/createAppServices";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { AppProvider, useApp } from "../state/AppProvider";
-import { Loading } from "../components/ui";
+import { AppProvider, useApp } from "../presentation/state/AppProvider";
+import { Loading } from "../presentation/components/ui";
 
 function Routes() {
   const { session, ready } = useApp();
@@ -36,9 +37,10 @@ function Routes() {
   );
 }
 export default function RootLayout() {
+  const [services] = useState(createAppServices);
   return (
     <SafeAreaProvider>
-      <AppProvider>
+      <AppProvider services={services}>
         <Routes />
       </AppProvider>
     </SafeAreaProvider>

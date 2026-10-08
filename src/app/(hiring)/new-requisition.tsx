@@ -1,1 +1,1 @@
-export { default } from "../../screens/RequisitionScreen";
+export { default } from "../../presentation/screens/RequisitionScreen";

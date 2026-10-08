@@ -49,19 +49,24 @@ Eski Flutter sürümünde olduğu gibi bu uygulama **yerel demo verileriyle** ç
 
 Gerçek entegrasyonda kimlik doğrulamayı bir API servisine taşıyın, yetkilendirmeyi sunucuda uygulayın ve gerçek tokenları güvenli depolamada tutun. AsyncStorage'daki mevcut oturum bir **demo kullanıcı tercihi**dir, güvenlik sınırı değildir.
 
-## Yapı
+## Clean Architecture
+
+İş kuralları React Native ve Expo'dan bağımsızdır. Ekranlar use case'leri çağırır; use case'ler domain içindeki repository ve cihaz servisi arayüzlerine bağımlıdır. Somut uygulamalar `composition/createAppServices.ts` içinde bağlanır. Katman sınırları ESLint ile kontrol edilir.
 
 ```text
 src/
-  app/          Expo Router ekranları ve rol korumaları
-  components/   Ortak tasarım sistemi, kartlar ve mobil kabuk
-  data/         Flutter'dan taşınan demo içerikler ve hukuki metinler
-  domain/       Tipler, doğrulamalar, arama ve workflow reducer
-  screens/      İşlevsel ekranlar
-  state/        React Context ve hesap bazında yerel kayıt
+  app/             Expo Router yolları ve rol korumaları
+  domain/          Entity'ler, saf iş kuralları, repository ve port arayüzleri
+  application/     Giriş, arama, başvuru, CV, aday, ilan ve değerlendirme use case'leri
+  data/            Demo verisi, kayıt mapper'ı ve yerel repository uygulamaları
+  infrastructure/  Saat, Expo belge seçimi ve React Native paylaşım adaptörleri
+  presentation/    Ekranlar, bileşenler, UI state, etiketler ve gezinme
+  composition/     Constructor injection ile bağımlılıkların bağlandığı nokta
 tests/          İş kuralları, ekran etkileşimleri ve kayıt testleri
 assets/images/  Özgün Vettingo görselleri
 ```
+
+Akış ve backend entegrasyon noktaları: [Mimari belgesi](docs/ARCHITECTURE.md). Yerel kayıt anahtarları ve veri sürümü korunmuştur.
 
 ## Kontroller
 

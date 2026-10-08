@@ -1,5 +1,13 @@
 This is an Expo/React Native mobile application. Prioritize mobile-first patterns, performance, and cross-platform compatibility.
 
+## Clean Architecture boundaries
+
+- Keep domain and application framework-free. Domain must not depend on any outer layer; application depends only on domain and its own contracts.
+- Define repository/device contracts in domain. Implement persistence and mapping in data; platform adapters in infrastructure.
+- Presentation calls application use cases and owns UI state. Never import demo fixtures, AsyncStorage, concrete repositories, or platform service adapters there.
+- Wire concrete dependencies only in `src/composition/createAppServices.ts`, then inject services from the Expo Router root.
+- Preserve existing account-scoped storage keys and schema unless a migration is implemented. Architecture details: `docs/ARCHITECTURE.md`.
+
 ## Expo has changed — do not trust your training data
 
 Expo ships breaking changes every SDK release. APIs you remember are likely renamed, moved, or removed. Before writing any code that touches an Expo, EAS, or React Native API:

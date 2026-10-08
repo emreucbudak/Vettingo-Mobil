@@ -4,6 +4,7 @@ module.exports = {
   setupFilesAfterEnv: ["<rootDir>/tests/setup.ts"],
   collectCoverageFrom: [
     "src/domain/**/*.{ts,tsx}",
-    "src/screens/**/*.{ts,tsx}",
+    "src/application/**/*.ts",
+    "src/presentation/screens/**/*.{ts,tsx}",
   ],
 };

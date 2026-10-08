@@ -1,1 +1,1 @@
-export { JobSearchScreen as default } from "../../screens/ListsScreen";
+export { JobSearchScreen as default } from "../../presentation/screens/ListsScreen";

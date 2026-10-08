@@ -1,1 +1,1 @@
-export { RequisitionsScreen as default } from "../../screens/ListsScreen";
+export { RequisitionsScreen as default } from "../../presentation/screens/ListsScreen";

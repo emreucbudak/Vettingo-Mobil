@@ -46,6 +46,10 @@ Aktif Flutter uygulamasında kullanılmayan eski landing/login view parçaları 
 
 `npm audit`, 8 Ekim 2026'da Expo 57/Jest 29 bağımlılık ağında 16 orta ve 49 yüksek uyarı bildirdi. Kök nedenler arasında braces, node-forge, decode-uri-component, sprintf-js ve uuid bulunuyor. Kontrol sırasında braces, node-forge ve sprintf-js için npm'deki son sürümler de bildirilen aralık içindeydi. Expo veya React Native'i eski/uyumsuz sürümlere indiren `audit fix --force` önerileri uygulanmadı. SDK uyumlu upstream düzeltmeler takip edilmelidir. Bu durum uygulamanın çalıştırma testleriyle giderilmiş sayılmaz.
 
+## Clean Architecture refactor'u
+
+8 Ekim 2026'da React Native uygulaması Clean Architecture katmanlarına ayrıldı. İş kuralları ve use case'ler framework bağımlılıklarından ayrıldı; repository arayüzleri ve cihaz portları eklendi. Ekranlar demo verilerini veya AsyncStorage'ı doğrudan kullanmaz. Katman sınırları ESLint ile denetlenir. Yerel kayıt sürümü ve anahtarları korunmuştur. [Mimari ayrıntıları](ARCHITECTURE.md).
+
 ## Yerel yedek
 
 Aktif proje `Vettingo-Mobil/vettingomobil` altında React Native olarak devam eder.

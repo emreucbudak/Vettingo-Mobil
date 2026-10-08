@@ -1,14 +1,27 @@
-import React from "react";
+import React, { useState } from "react";
 import { act, fireEvent, render, waitFor } from "@testing-library/react-native";
+import { createAppServices } from "../src/composition/createAppServices";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import AuthScreen from "../src/screens/AuthScreen";
-import { CandidatesScreen, JobSearchScreen } from "../src/screens/ListsScreen";
-import RequisitionScreen from "../src/screens/RequisitionScreen";
-import CvReviewScreen from "../src/screens/CvReviewScreen";
-import ComparisonScreen from "../src/screens/ComparisonScreen";
-import AssessmentScreen from "../src/screens/AssessmentScreen";
-import { AppProvider, useApp } from "../src/state/AppProvider";
+import AuthScreen from "../src/presentation/screens/AuthScreen";
+import {
+  CandidatesScreen,
+  JobSearchScreen,
+} from "../src/presentation/screens/ListsScreen";
+import RequisitionScreen from "../src/presentation/screens/RequisitionScreen";
+import CvReviewScreen from "../src/presentation/screens/CvReviewScreen";
+import ComparisonScreen from "../src/presentation/screens/ComparisonScreen";
+import AssessmentScreen from "../src/presentation/screens/AssessmentScreen";
+import {
+  AppProvider as InjectedAppProvider,
+  useApp,
+} from "../src/presentation/state/AppProvider";
 
+function AppProvider({ children }: React.PropsWithChildren) {
+  const [services] = useState(createAppServices);
+  return (
+    <InjectedAppProvider services={services}>{children}</InjectedAppProvider>
+  );
+}
 const session = {
   email: "test@vettingo.com",
   name: "Alex",
@@ -37,7 +50,7 @@ test("auth form reports errors and exposes all three account roles", async () =>
       <AuthScreen />
     </AppProvider>,
   );
-  await act(async () => {});
+  await waitFor(() => expect(view.queryByText("Vettingo yükleniyor…")).toBeNull());
   fireEvent.press(view.getByRole("button", { name: "Giriş Yap" }));
   expect(view.getByText("Geçerli bir e-posta adresi girin.")).toBeTruthy();
   expect(view.getByText("Şifre en az 6 karakter olmalıdır.")).toBeTruthy();
@@ -50,7 +63,7 @@ test("registration shows company field only for hiring roles and enforces consen
       <AuthScreen register />
     </AppProvider>,
   );
-  await act(async () => {});
+  await waitFor(() => expect(view.queryByText("Vettingo yükleniyor…")).toBeNull());
   expect(view.queryByLabelText("Şirket Adı")).toBeNull();
   fireEvent.press(view.getByRole("button", { name: "İşveren" }));
   expect(view.getByLabelText("Şirket Adı")).toBeTruthy();
@@ -155,7 +168,11 @@ test("signing into another role resets workspace and never stores password", asy
   );
   await waitFor(() => expect(app!.ready).toBe(true));
   await act(async () => {
-    await app!.signIn(session as Parameters<typeof app.signIn>[0]);
+    await app!.signIn({
+      ...session,
+      password: "secret",
+      register: false,
+    } as Parameters<typeof app.signIn>[0]);
   });
   act(() =>
     app!.dispatch({
@@ -165,9 +182,12 @@ test("signing into another role resets workspace and never stores password", asy
     }),
   );
   await act(async () => {
-    await app!.signIn({ ...session, role: "hr" } as Parameters<
-      typeof app.signIn
-    >[0]);
+    await app!.signIn({
+      ...session,
+      role: "hr",
+      password: "secret",
+      register: false,
+    } as Parameters<typeof app.signIn>[0]);
   });
   expect(app!.state.decisions).toEqual({});
   expect(await AsyncStorage.getItem("vettingo:demo-session:v1")).not.toContain(

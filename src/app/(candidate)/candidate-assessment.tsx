@@ -1,1 +1,1 @@
-export { default } from "../../screens/AssessmentScreen";
+export { default } from "../../presentation/screens/AssessmentScreen";

@@ -1,1 +1,1 @@
-export { default } from "../../screens/ComparisonScreen";
+export { default } from "../../presentation/screens/ComparisonScreen";

@@ -1,17 +1,43 @@
-import { candidates, jobs, questions } from "../src/data/demo";
-import { Requisition } from "../src/domain/models";
+import { candidates, jobs, questions } from "../src/data/fixtures/demo";
+import { Requisition } from "../src/domain/entities/models";
 import {
   candidateStage,
   filterJobs,
-  homeFor,
-  initialWorkspace,
-  restoreWorkspace,
   validateAuth,
   validateRequisition,
-  workspaceReducer,
-} from "../src/domain/workflows";
+} from "../src/domain/policies/recruitment";
+import { homeFor } from "../src/presentation/navigation/routes";
+import { initialWorkspace } from "../src/data/datasources/DemoWorkspaceSource";
+import { restoreWorkspace as restore } from "../src/data/mappers/workspaceMapper";
+import { DemoRecruitmentRepository } from "../src/data/repositories/DemoRecruitmentRepository";
+import { RecruitmentQueries } from "../src/application/usecases/RecruitmentQueries";
+import { WorkspaceUseCases } from "../src/application/usecases/WorkspaceUseCases";
+import { WorkspaceCommand } from "../src/application/contracts/WorkspaceCommand";
+import { Workspace } from "../src/domain/entities/models";
+import { CvUseCases } from "../src/application/usecases/CvUseCases";
+import { CandidateUseCases } from "../src/application/usecases/CandidateUseCases";
+import { RequisitionUseCases } from "../src/application/usecases/RequisitionUseCases";
+import { AssessmentUseCases } from "../src/application/usecases/AssessmentUseCases";
+import { ApplicationUseCases } from "../src/application/usecases/ApplicationUseCases";
+const queries = new RecruitmentQueries(new DemoRecruitmentRepository());
+let now = 0;
+const useCases = new WorkspaceUseCases(
+  new CvUseCases({ pick: async () => null }),
+  new CandidateUseCases({ now: () => now }, { share: async () => {} }),
+  new RequisitionUseCases({ now: () => now }),
+  new AssessmentUseCases(queries, { now: () => now }),
+  new ApplicationUseCases(),
+);
+beforeAll(() => queries.load());
+beforeEach(() => {
+  now = 0;
+});
+const workspaceReducer = (state: Workspace, command: WorkspaceCommand) =>
+  useCases.execute(state, command);
+const restoreWorkspace = (raw: string | null) =>
+  restore(raw, initialWorkspace(), questions.length);
 
-describe("Flutter workflow migration", () => {
+describe("Clean Architecture use cases and migration behavior", () => {
   test("job search combines all query words and active filters", () => {
     expect(
       filterJobs(jobs, "engineering Globex", []).map((item) => item.id),
@@ -152,13 +178,13 @@ describe("Flutter workflow migration", () => {
     expect(Object.keys(initialWorkspace().assessment.answers)).toHaveLength(4);
   });
   test("assessment resumes its original deadline rather than resetting its timer", () => {
+    now = 1000;
     const first = workspaceReducer(initialWorkspace(), {
       type: "start-assessment",
-      now: 1000,
     });
+    now = 50000;
     const resumed = workspaceReducer(restoreWorkspace(JSON.stringify(first)), {
       type: "start-assessment",
-      now: 50000,
     });
     expect(resumed.assessment.deadline).toBe(2536000);
   });
