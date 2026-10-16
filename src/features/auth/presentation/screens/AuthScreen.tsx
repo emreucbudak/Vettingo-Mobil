@@ -11,6 +11,7 @@ import {
   View,
 } from "react-native";
 import { router, Href } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
   Button,
@@ -93,16 +94,14 @@ export default function AuthScreen({
             style={{ width: 210, height: 80, alignSelf: "center" }}
             resizeMode="contain"
           />
-          <View style={{ gap: 6, marginBottom: 6 }}>
-            <Title>
-              {register ? "Hesabınızı oluşturun" : "Vettingo’ya hoş geldiniz"}
-            </Title>
-            <Label muted>
-              {register
-                ? "Kariyerinizin ve işe alımın bir sonraki adımı."
-                : "Kariyerinizi ve işe alım süreçlerinizi yönetin."}
-            </Label>
-          </View>
+          {register && (
+            <View style={{ gap: 6, marginBottom: 6 }}>
+              <Title>Hesabınızı oluşturun</Title>
+              <Label muted>
+                Kariyerinizin ve işe alımın bir sonraki adımı.
+              </Label>
+            </View>
+          )}
           <View style={styles.wrap}>
             {(["candidate", "employer", "hr"] as Role[]).map((item) => (
               <Chip
@@ -112,18 +111,6 @@ export default function AuthScreen({
                 onPress={() => setRole(item)}
               />
             ))}
-          </View>
-          <View
-            style={{
-              padding: 12,
-              backgroundColor: colors.soft,
-              borderRadius: 10,
-            }}
-          >
-            <Label muted>
-              Demo modu · Giriş ve kayıt yerel olarak çalışır. Gerçek hesap
-              doğrulaması ve sunucu bağlantısı henüz yoktur.
-            </Label>
           </View>
           {register && (
             <>
@@ -250,11 +237,27 @@ export default function AuthScreen({
               <Button
                 label="LinkedIn ile Giriş Yap"
                 secondary
+                icon={
+                  <Ionicons
+                    name="logo-linkedin"
+                    size={20}
+                    color="#0A66C2"
+                    accessible={false}
+                  />
+                }
                 onPress={() => unavailable("LinkedIn ile giriş")}
               />
               <Button
                 label="Google ile Giriş Yap"
                 secondary
+                icon={
+                  <Image
+                    source={require("../../../../../assets/images/google-logo.png")}
+                    style={{ width: 20, height: 20 }}
+                    resizeMode="contain"
+                    accessible={false}
+                  />
+                }
                 onPress={() => unavailable("Google ile giriş")}
               />
             </>
