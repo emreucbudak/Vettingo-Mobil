@@ -1,10 +1,9 @@
 import React from "react";
-import { Alert, Pressable, Switch, View } from "react-native";
+import { Alert, Switch, View } from "react-native";
 import { router } from "expo-router";
 import { AppShell } from "../../../../core/presentation/layout/AppShell";
 import {
   Avatar,
-  Button,
   Card,
   Label,
   styles,
@@ -12,6 +11,7 @@ import {
 } from "../../../../shared/presentation/components/ui";
 import { roleLabels } from "../../../auth/presentation/formatters/labels";
 import { useApp } from "../../../../core/presentation/state/AppProvider";
+import { ProfileMenuGroup, ProfileMenuRow } from "../components/ProfileMenu";
 
 export default function ProfileScreen() {
   const { session, state, dispatch, signOut } = useApp();
@@ -48,54 +48,53 @@ export default function ProfileScreen() {
           </View>
         </View>
       </Card>
-      {candidate ? (
-        <Button
-          label="Profil ve CV Düzenle"
-          secondary
-          onPress={() => router.push("/cv-review")}
-        />
-      ) : (
-        <Card>
-          {["Şirket Profili", "Ekip ve Yetkiler", "İşe Alım Tercihleri"].map(
-            (label) => (
-              <Pressable
-                key={label}
-                accessibilityRole="button"
-                onPress={() => unavailable(label)}
-                style={{ paddingVertical: 12 }}
-              >
-                <Label>{label} ›</Label>
-              </Pressable>
-            ),
-          )}
-        </Card>
-      )}
-      <Card>
-        <View style={[styles.row, { justifyContent: "space-between" }]}>
-          <Label>Bildirim Tercihi</Label>
-          <Switch
-            accessibilityLabel="Bildirim tercihi"
-            value={state.notifications}
-            onValueChange={(enabled) =>
-              dispatch({ type: "notifications", enabled })
-            }
+      <ProfileMenuGroup>
+        {candidate ? (
+          <ProfileMenuRow
+            label="Profil ve CV Düzenle"
+            onPress={() => router.push("/cv-review")}
           />
-        </View>
-        <Label muted>
-          Tercihin cihazda saklanır. Push bildirim servisi henüz bağlı değildir.
-        </Label>
+        ) : (
+          ["Şirket Profili", "Ekip ve Yetkiler", "İşe Alım Tercihleri"].map(
+            (label) => (
+              <ProfileMenuRow
+                key={label}
+                label={label}
+                onPress={() => unavailable(label)}
+              />
+            ),
+          )
+        )}
+      </ProfileMenuGroup>
+      <ProfileMenuGroup>
+        <ProfileMenuRow
+          label="Bildirim Tercihi"
+          description="Tercihin cihazda saklanır. Push bildirim servisi henüz bağlı değildir."
+          accessory={
+            <Switch
+              accessibilityLabel="Bildirim tercihi"
+              value={state.notifications}
+              onValueChange={(enabled) =>
+                dispatch({ type: "notifications", enabled })
+              }
+            />
+          }
+        />
         {["Güvenlik", "Yardım Merkezi"].map((label) => (
-          <Pressable
+          <ProfileMenuRow
             key={label}
-            accessibilityRole="button"
+            label={label}
             onPress={() => unavailable(label)}
-            style={{ paddingVertical: 12 }}
-          >
-            <Label>{label} ›</Label>
-          </Pressable>
+          />
         ))}
-      </Card>
-      <Button label="Çıkış Yap" danger onPress={() => void logout()} />
+      </ProfileMenuGroup>
+      <ProfileMenuGroup>
+        <ProfileMenuRow
+          label="Çıkış Yap"
+          danger
+          onPress={() => void logout()}
+        />
+      </ProfileMenuGroup>
     </AppShell>
   );
 }

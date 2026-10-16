@@ -95,7 +95,6 @@ export function AppShell({
           }}
         >
           Vettingo
-          {role !== "candidate" && <Text style={{ color: colors.blue }}>.</Text>}
         </Text>
         {!main && (
           <Pressable
