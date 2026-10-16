@@ -108,12 +108,6 @@ export default function DashboardScreen() {
       ];
   return (
     <AppShell>
-      {!hr && (
-        <View style={{ gap: 6 }}>
-          <Title>İşe Alım Özeti</Title>
-          <Label muted>Adayları keşfedin, ekiplerinizi büyütün.</Label>
-        </View>
-      )}
       <View style={styles.wrap}>
         {metrics.map(([label, value], index) => (
           <View key={label} style={{ width: "48%", flexGrow: 1 }}>
