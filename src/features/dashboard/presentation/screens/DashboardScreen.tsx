@@ -28,12 +28,7 @@ export default function DashboardScreen() {
     return (
       <AppShell>
         <View style={{ gap: 6 }}>
-          <Label muted>
-            {new Intl.DateTimeFormat("tr-TR", { dateStyle: "full" }).format(
-              new Date(),
-            )}
-          </Label>
-          <Title>Merhaba, {session.name.split(" ")[0]} 👋</Title>
+          <Title>Merhaba, {session.name.split(" ")[0]}</Title>
           <Label muted>
             {
               state.applications.filter((item) => item.status !== "Rejected")

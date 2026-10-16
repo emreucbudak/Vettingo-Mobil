@@ -94,7 +94,8 @@ export function AppShell({
             letterSpacing: -0.8,
           }}
         >
-          Vettingo<Text style={{ color: colors.blue }}>.</Text>
+          Vettingo
+          {role !== "candidate" && <Text style={{ color: colors.blue }}>.</Text>}
         </Text>
         {!main && (
           <Pressable
