@@ -100,6 +100,7 @@ export function Button({
   danger = false,
   disabled = false,
   loading = false,
+  icon,
   testID,
 }: {
   label: string;
@@ -108,6 +109,7 @@ export function Button({
   danger?: boolean;
   disabled?: boolean;
   loading?: boolean;
+  icon?: React.ReactNode;
   testID?: string;
 }) {
   return (
@@ -138,6 +140,7 @@ export function Button({
       {loading && (
         <ActivityIndicator color={secondary ? colors.primary : "#fff"} />
       )}
+      {!loading && icon}
       <Text
         style={{
           fontSize: 14,
