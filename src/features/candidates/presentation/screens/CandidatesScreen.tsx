@@ -45,6 +45,7 @@ export function CandidatesScreen() {
       {!items.length && <Empty />}
       <Dialog
         title="Adayları Filtrele"
+        closeIcon
         visible={open}
         onClose={() => setOpen(false)}
       >

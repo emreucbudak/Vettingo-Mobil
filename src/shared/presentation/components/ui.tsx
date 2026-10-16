@@ -400,11 +400,13 @@ export function Dialog({
   title,
   visible,
   onClose,
+  closeIcon = false,
   children,
 }: React.PropsWithChildren<{
   title: string;
   visible: boolean;
   onClose: () => void;
+  closeIcon?: boolean;
 }>) {
   return (
     <Modal
@@ -435,7 +437,28 @@ export function Dialog({
           }}
         >
           <View style={{ padding: 20, gap: 14 }}>
-            <Section title={title} action="Kapat" onPress={onClose} />
+            {closeIcon ? (
+              <View style={styles.row}>
+                <View style={{ flex: 1 }}>
+                  <Title small>{title}</Title>
+                </View>
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel="Kapat"
+                  onPress={onClose}
+                  style={{
+                    width: 44,
+                    height: 44,
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Ionicons name="close" size={24} color={colors.ink} />
+                </Pressable>
+              </View>
+            ) : (
+              <Section title={title} action="Kapat" onPress={onClose} />
+            )}
           </View>
           <ScrollView
             keyboardShouldPersistTaps="handled"
