@@ -5,7 +5,6 @@ import { useApp } from "../../../../core/presentation/state/AppProvider";
 import { AppShell } from "../../../../core/presentation/layout/AppShell";
 import {
   Badge,
-  Button,
   Card,
   colors,
   Label,
@@ -18,6 +17,7 @@ import { ApplicationCard } from "../../../applications/presentation/components/A
 import { CandidateCard } from "../../../candidates/presentation/components/CandidateCard";
 import { JobCard } from "../../../jobs/presentation/components/JobCard";
 import { RequisitionCard } from "../../../requisitions/presentation/components/RequisitionCard";
+import { ScoutEntryCard } from "../../../candidates/presentation/components/ScoutEntryCard";
 
 export default function DashboardScreen() {
   const { session, state, services } = useApp();
@@ -140,6 +140,7 @@ export default function DashboardScreen() {
           </View>
         ))}
       </View>
+      <ScoutEntryCard />
       {hr && (
         <>
           <Section title="Yaklaşan Mülakatlar" />
@@ -177,10 +178,6 @@ export default function DashboardScreen() {
           {state.requisitions.slice(0, 3).map((job) => (
             <RequisitionCard key={job.id} job={job} />
           ))}
-          <Button
-            label="Yeni İlan Oluştur"
-            onPress={() => router.push("/new-requisition")}
-          />
         </>
       )}
     </AppShell>
