@@ -223,21 +223,42 @@ export function Badge({
 export function Field({
   label,
   error,
+  trailingAccessory,
   ...props
-}: TextInputProps & { label: string; error?: string }) {
+}: TextInputProps & {
+  label: string;
+  error?: string;
+  trailingAccessory?: React.ReactNode;
+}) {
   return (
     <View style={{ gap: 6 }}>
       <Text style={styles.label}>{label}</Text>
-      <TextInput
-        accessibilityLabel={label}
-        placeholderTextColor="#8791A1"
-        {...props}
-        style={[
-          styles.input,
-          props.multiline && { minHeight: 110, textAlignVertical: "top" },
-          props.style,
-        ]}
-      />
+      <View style={{ position: "relative" }}>
+        <TextInput
+          accessibilityLabel={label}
+          placeholderTextColor="#8791A1"
+          {...props}
+          style={[
+            styles.input,
+            props.multiline && { minHeight: 110, textAlignVertical: "top" },
+            props.style,
+            !!trailingAccessory && { paddingRight: 56 },
+          ]}
+        />
+        {trailingAccessory && (
+          <View
+            style={{
+              position: "absolute",
+              right: 4,
+              top: 0,
+              bottom: 0,
+              justifyContent: "center",
+            }}
+          >
+            {trailingAccessory}
+          </View>
+        )}
+      </View>
       {!!error && (
         <Text accessibilityRole="alert" style={styles.error}>
           {error}

@@ -91,7 +91,12 @@ export default function AuthScreen({
         >
           <Image
             source={require("../../../../../assets/images/vettingo_splash_logo.png")}
-            style={{ width: 210, height: 80, alignSelf: "center" }}
+            style={{
+              width: 252,
+              height: 96,
+              maxWidth: "100%",
+              alignSelf: "center",
+            }}
             resizeMode="contain"
           />
           {register && (
@@ -102,16 +107,18 @@ export default function AuthScreen({
               </Label>
             </View>
           )}
-          <View style={styles.wrap}>
-            {(["candidate", "employer", "hr"] as Role[]).map((item) => (
-              <Chip
-                key={item}
-                label={roleLabels[item]}
-                active={role === item}
-                onPress={() => setRole(item)}
-              />
-            ))}
-          </View>
+          {register && (
+            <View style={styles.wrap}>
+              {(["candidate", "employer", "hr"] as Role[]).map((item) => (
+                <Chip
+                  key={item}
+                  label={roleLabels[item]}
+                  active={role === item}
+                  onPress={() => setRole(item)}
+                />
+              ))}
+            </View>
+          )}
           {register && (
             <>
               <Field
@@ -140,26 +147,37 @@ export default function AuthScreen({
             autoComplete="email"
             error={errors.email}
           />
-          <View style={{ gap: 8 }}>
-            <Field
-              label="Şifre"
-              value={values.password}
-              onChangeText={(text) => update("password", text)}
-              secureTextEntry={!visible}
-              autoCapitalize="none"
-              autoComplete={register ? "new-password" : "current-password"}
-              error={errors.password}
-            />
-            <Pressable
-              accessibilityRole="button"
-              onPress={() => setVisible(!visible)}
-              style={{ alignSelf: "flex-end", padding: 4 }}
-            >
-              <Text style={{ color: colors.blue, fontSize: 12 }}>
-                {visible ? "Şifreyi gizle" : "Şifreyi göster"}
-              </Text>
-            </Pressable>
-          </View>
+          <Field
+            label="Şifre"
+            value={values.password}
+            onChangeText={(text) => update("password", text)}
+            secureTextEntry={!visible}
+            autoCapitalize="none"
+            autoComplete={register ? "new-password" : "current-password"}
+            error={errors.password}
+            trailingAccessory={
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={
+                  visible ? "Şifreyi gizle" : "Şifreyi göster"
+                }
+                onPress={() => setVisible((current) => !current)}
+                style={{
+                  minWidth: 44,
+                  minHeight: 44,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Ionicons
+                  name={visible ? "eye-off-outline" : "eye-outline"}
+                  size={22}
+                  color={colors.muted}
+                  accessible={false}
+                />
+              </Pressable>
+            }
+          />
           {register && role !== "candidate" && (
             <Field
               label="Şirket Adı"
