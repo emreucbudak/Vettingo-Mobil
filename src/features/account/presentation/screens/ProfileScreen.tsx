@@ -55,15 +55,15 @@ export default function ProfileScreen() {
             onPress={() => router.push("/cv-review")}
           />
         ) : (
-          ["Şirket Profili", "Ekip ve Yetkiler", "İşe Alım Tercihleri"].map(
-            (label) => (
-              <ProfileMenuRow
-                key={label}
-                label={label}
-                onPress={() => unavailable(label)}
-              />
-            ),
-          )
+          ["Şirket Profili", "Ekip ve Yetkiler", "Scout"].map((label) => (
+            <ProfileMenuRow
+              key={label}
+              label={label}
+              onPress={() =>
+                label === "Scout" ? router.push("/scout") : unavailable(label)
+              }
+            />
+          ))
         )}
       </ProfileMenuGroup>
       <ProfileMenuGroup>
