@@ -50,13 +50,21 @@ async function signedIn(element: React.ReactElement, role = "candidate") {
   );
   return renderApp(element);
 }
-test("auth form reports errors and exposes all three account roles", async () => {
+test("login reports errors without showing account role buttons", async () => {
   const view = await renderApp(<AuthScreen />);
   fireEvent.press(view.getByRole("button", { name: "Giriş Yap" }));
   expect(view.getByText("Geçerli bir e-posta adresi girin.")).toBeTruthy();
   expect(view.getByText("Şifre en az 6 karakter olmalıdır.")).toBeTruthy();
   for (const role of ["İş Arayan", "İşveren", "İK"])
-    expect(view.getByRole("button", { name: role })).toBeTruthy();
+    expect(view.queryByRole("button", { name: role })).toBeNull();
+  fireEvent.changeText(view.getByLabelText("Şifre"), "secret");
+  expect(view.getByLabelText("Şifre").props.secureTextEntry).toBe(true);
+  fireEvent.press(view.getByRole("button", { name: "Şifreyi göster" }));
+  expect(view.getByLabelText("Şifre").props.secureTextEntry).toBe(false);
+  expect(view.getByLabelText("Şifre").props.value).toBe("secret");
+  fireEvent.press(view.getByRole("button", { name: "Şifreyi gizle" }));
+  expect(view.getByLabelText("Şifre").props.secureTextEntry).toBe(true);
+  expect(view.queryByText("Şifreyi göster")).toBeNull();
   // The first async native mount also initializes the React Native mocks.
 }, 15000);
 test("registration shows company field only for hiring roles and enforces consent", async () => {
