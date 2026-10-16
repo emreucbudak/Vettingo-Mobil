@@ -7,6 +7,7 @@ import {
 } from "@testing-library/react-native";
 import { createAppServices } from "../src/composition/createAppServices";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { router } from "expo-router";
 import AuthScreen from "../src/features/auth/presentation/screens/AuthScreen";
 import { CandidatesScreen } from "../src/features/candidates/presentation/screens/CandidatesScreen";
 import { JobSearchScreen } from "../src/features/jobs/presentation/screens/JobSearchScreen";
@@ -32,8 +33,17 @@ const session = {
   company: "",
   remember: true,
 };
-async function renderApp(element: React.ReactElement) {
-  const view = await renderAsync(<AppProvider>{element}</AppProvider>);
+async function renderApp(
+  element: React.ReactElement,
+  services?: ReturnType<typeof createAppServices>,
+) {
+  const view = await renderAsync(
+    services ? (
+      <InjectedAppProvider services={services}>{element}</InjectedAppProvider>
+    ) : (
+      <AppProvider>{element}</AppProvider>
+    ),
+  );
   await waitFor(() =>
     expect(view.queryByText("Vettingo yükleniyor…")).toBeNull(),
   );
@@ -53,11 +63,16 @@ async function signedIn(element: React.ReactElement, role = "candidate") {
 test("login reports errors without showing account role buttons", async () => {
   const view = await renderApp(<AuthScreen />);
   fireEvent.press(view.getByRole("button", { name: "Giriş Yap" }));
-  expect(view.getByText("Geçerli bir e-posta adresi girin.")).toBeTruthy();
+  await waitFor(() =>
+    expect(view.getByText("Geçerli bir e-posta adresi girin.")).toBeTruthy(),
+  );
   expect(view.getByText("Şifre en az 6 karakter olmalıdır.")).toBeTruthy();
   for (const role of ["İş Arayan", "İşveren", "İK"])
     expect(view.queryByRole("button", { name: role })).toBeNull();
   fireEvent.changeText(view.getByLabelText("Şifre"), "secret");
+  await waitFor(() =>
+    expect(view.queryByText("Şifre en az 6 karakter olmalıdır.")).toBeNull(),
+  );
   expect(view.getByLabelText("Şifre").props.secureTextEntry).toBe(true);
   fireEvent.press(view.getByRole("button", { name: "Şifreyi göster" }));
   expect(view.getByLabelText("Şifre").props.secureTextEntry).toBe(false);
@@ -69,11 +84,159 @@ test("login reports errors without showing account role buttons", async () => {
 }, 15000);
 test("registration shows company field only for hiring roles and enforces consent", async () => {
   const view = await renderApp(<AuthScreen register />);
+  expect(view.queryByRole("button", { name: "İK" })).toBeNull();
   expect(view.queryByLabelText("Şirket Adı")).toBeNull();
   fireEvent.press(view.getByRole("button", { name: "İşveren" }));
   expect(view.getByLabelText("Şirket Adı")).toBeTruthy();
   fireEvent.press(view.getByRole("button", { name: "Kayıt Ol" }));
-  expect(view.getByText("Devam etmek için koşulları kabul edin.")).toBeTruthy();
+  await waitFor(() =>
+    expect(
+      view.getByText("Devam etmek için koşulları kabul edin."),
+    ).toBeTruthy(),
+  );
+  expect(view.getByText("Şirket adı en az 2 karakter olmalıdır.")).toBeTruthy();
+  fireEvent.press(view.getByRole("button", { name: "İş Arayan" }));
+  expect(view.queryByLabelText("Şirket Adı")).toBeNull();
+  expect(view.queryByText("Şirket adı en az 2 karakter olmalıdır.")).toBeNull();
+});
+
+test("login submits RHF values and respects the remember switch", async () => {
+  const services = createAppServices();
+  const signIn = jest.spyOn(services.sessions, "signIn");
+  const view = await renderApp(<AuthScreen />, services);
+  fireEvent.changeText(
+    view.getByLabelText("E-posta Adresi"),
+    "alex@vettingo.com",
+  );
+  fireEvent.changeText(view.getByLabelText("Şifre"), "secret");
+  fireEvent(view.getByLabelText("Beni hatırla"), "valueChange", false);
+  fireEvent.press(view.getByRole("button", { name: "Giriş Yap" }));
+  await waitFor(() =>
+    expect(router.replace).toHaveBeenCalledWith("/candidate-dashboard"),
+  );
+  expect(signIn).toHaveBeenCalledWith(
+    expect.objectContaining({
+      email: "alex@vettingo.com",
+      password: "secret",
+      remember: false,
+      register: false,
+    }),
+  );
+  expect(await AsyncStorage.getItem("vettingo:demo-session:v1")).toBeNull();
+  await view.unmountAsync();
+});
+
+test.each(["candidate", "employer"] as const)(
+  "registration submits valid %s fields and consent",
+  async (role) => {
+    const services = createAppServices();
+    const signIn = jest.spyOn(services.sessions, "signIn");
+    const view = await renderApp(<AuthScreen register />, services);
+    if (role === "employer") {
+      fireEvent.press(view.getByRole("button", { name: "İşveren" }));
+      fireEvent.changeText(view.getByLabelText("Şirket Adı"), "Vettingo");
+    }
+    fireEvent.changeText(view.getByLabelText("Ad"), "Alex");
+    fireEvent.changeText(view.getByLabelText("Soyad"), "Test");
+    fireEvent.changeText(
+      view.getByLabelText("E-posta Adresi"),
+      "alex@vettingo.com",
+    );
+    fireEvent.changeText(view.getByLabelText("Şifre"), "secret");
+    fireEvent(
+      view.getByLabelText("Koşulları kabul ediyorum"),
+      "valueChange",
+      true,
+    );
+    fireEvent.press(view.getByRole("button", { name: "Kayıt Ol" }));
+    await waitFor(() =>
+      expect(router.replace).toHaveBeenCalledWith(`/${role}-dashboard`),
+    );
+    expect(signIn).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: "Alex",
+        surname: "Test",
+        role,
+        terms: true,
+        register: true,
+      }),
+    );
+    const saved = JSON.parse(
+      (await AsyncStorage.getItem("vettingo:demo-session:v1"))!,
+    );
+    expect(saved).toMatchObject({ name: "Alex Test", role });
+    expect(saved).not.toHaveProperty("password");
+    await view.unmountAsync();
+  },
+);
+
+test("login shows a submission error and allows retry", async () => {
+  const services = createAppServices();
+  jest
+    .spyOn(services.sessions, "signIn")
+    .mockRejectedValueOnce(new Error("Offline"));
+  const view = await renderApp(<AuthScreen />, services);
+  fireEvent.changeText(
+    view.getByLabelText("E-posta Adresi"),
+    "alex@vettingo.com",
+  );
+  fireEvent.changeText(view.getByLabelText("Şifre"), "secret");
+  fireEvent.press(view.getByRole("button", { name: "Giriş Yap" }));
+  await waitFor(() =>
+    expect(
+      view.getByText("Oturum açılamadı. Lütfen tekrar deneyin."),
+    ).toBeTruthy(),
+  );
+  expect(router.replace).not.toHaveBeenCalled();
+  await waitFor(() =>
+    expect(
+      view.getByRole("button", { name: "Giriş Yap" }).props.accessibilityState
+        .disabled,
+    ).toBe(false),
+  );
+  fireEvent.press(view.getByRole("button", { name: "Giriş Yap" }));
+  await waitFor(() =>
+    expect(router.replace).toHaveBeenCalledWith("/candidate-dashboard"),
+  );
+  expect(
+    view.queryByText("Oturum açılamadı. Lütfen tekrar deneyin."),
+  ).toBeNull();
+  await view.unmountAsync();
+});
+
+test("login disables repeat submission while sign-in is pending", async () => {
+  const services = createAppServices();
+  type SignInResult = Awaited<ReturnType<typeof services.sessions.signIn>>;
+  let finishSignIn!: (result: SignInResult) => void;
+  const pending = new Promise<SignInResult>((resolve) => {
+    finishSignIn = resolve;
+  });
+  const signIn = jest
+    .spyOn(services.sessions, "signIn")
+    .mockReturnValueOnce(pending);
+  const view = await renderApp(<AuthScreen />, services);
+  fireEvent.changeText(
+    view.getByLabelText("E-posta Adresi"),
+    "alex@vettingo.com",
+  );
+  fireEvent.changeText(view.getByLabelText("Şifre"), "secret");
+  fireEvent.press(view.getByRole("button", { name: "Giriş Yap" }));
+  await waitFor(() =>
+    expect(
+      view.getByRole("button", { name: "Giriş Yap" }).props.accessibilityState
+        .disabled,
+    ).toBe(true),
+  );
+  fireEvent.press(view.getByRole("button", { name: "Giriş Yap" }));
+  expect(signIn).toHaveBeenCalledTimes(1);
+  await act(async () => {
+    finishSignIn({
+      session: { ...session, role: "candidate" },
+      state: services.sessions.createWorkspace(),
+    });
+  });
+  expect(router.replace).toHaveBeenCalledWith("/candidate-dashboard");
+  await view.unmountAsync();
 });
 test("job search and filter dialog change actual results", async () => {
   const view = await signedIn(<JobSearchScreen />);
