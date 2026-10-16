@@ -12,18 +12,21 @@ import {
 } from "react-native";
 import { router, Href } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import { Controller, useForm, useWatch } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
   Button,
   Chip,
   colors,
   Dialog,
-  Field,
   Label,
   styles,
   Title,
 } from "../../../../shared/presentation/components/ui";
-import { Role } from "../../domain/entities/Session";
+import { AuthenticationInput, Role } from "../../domain/entities/Session";
+import { authenticationSchema } from "../../domain/policies/validation";
+import { AuthField } from "../components/AuthField";
 import { homeFor } from "../navigation/routes";
 import { roleLabels } from "../formatters/labels";
 import { useApp } from "../../../../core/presentation/state/AppProvider";
@@ -34,40 +37,40 @@ export default function AuthScreen({
 }: {
   register?: boolean;
 }) {
-  const { signIn, services } = useApp();
-  const [role, setRole] = useState<Role>("candidate");
-  const [values, setValues] = useState({
-    email: "",
-    password: "",
-    name: "",
-    surname: "",
-    company: "",
-    terms: false,
-  });
-  const [remember, setRemember] = useState(true);
-  const [visible, setVisible] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [document, setDocument] = useState<"terms" | "privacy" | null>(null);
-  const update = (key: keyof typeof values, value: string | boolean) =>
-    setValues((current) => ({ ...current, [key]: value }));
-  async function submit() {
-    const validation = services.sessions.validate({
-      ...values,
+  const { signIn } = useApp();
+  const {
+    control,
+    handleSubmit,
+    setError,
+    clearErrors,
+    formState: { errors, isSubmitting },
+  } = useForm<AuthenticationInput>({
+    resolver: zodResolver(authenticationSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+      name: "",
+      surname: "",
+      company: "",
+      terms: false,
       register,
-      role,
-      remember,
-    });
-    setErrors(validation);
-    if (Object.keys(validation).length || loading) return;
-    setLoading(true);
+      role: "candidate",
+      remember: true,
+    },
+  });
+  const role = useWatch({ control, name: "role" });
+  const [visible, setVisible] = useState(false);
+  const [document, setDocument] = useState<"terms" | "privacy" | null>(null);
+  async function submit(values: AuthenticationInput) {
+    clearErrors("root");
     try {
-      await signIn({ ...values, register, role, remember });
-      router.replace(homeFor(role) as Href);
+      await signIn(values);
+      router.replace(homeFor(values.role) as Href);
     } catch {
-      setErrors({ form: "Oturum açılamadı. Lütfen tekrar deneyin." });
-    } finally {
-      setLoading(false);
+      setError("root", {
+        type: "server",
+        message: "Oturum açılamadı. Lütfen tekrar deneyin.",
+      });
     }
   }
   const unavailable = (label: string) =>
@@ -102,59 +105,61 @@ export default function AuthScreen({
           {register && (
             <View style={{ gap: 6, marginBottom: 6 }}>
               <Title>Hesabınızı oluşturun</Title>
-              <Label muted>
-                Kariyerinizin ve işe alımın bir sonraki adımı.
-              </Label>
             </View>
           )}
           {register && (
-            <View style={styles.wrap}>
-              {(["candidate", "employer", "hr"] as Role[]).map((item) => (
-                <Chip
-                  key={item}
-                  label={roleLabels[item]}
-                  active={role === item}
-                  onPress={() => setRole(item)}
-                />
-              ))}
-            </View>
+            <Controller
+              control={control}
+              name="role"
+              render={({ field: { value, onChange } }) => (
+                <View style={styles.wrap}>
+                  {(["candidate", "employer"] as Role[]).map((item) => (
+                    <Chip
+                      key={item}
+                      label={roleLabels[item]}
+                      active={value === item}
+                      onPress={() => {
+                        onChange(item);
+                        clearErrors("company");
+                      }}
+                    />
+                  ))}
+                </View>
+              )}
+            />
           )}
           {register && (
             <>
-              <Field
+              <AuthField
+                control={control}
+                name="name"
                 label="Ad"
-                value={values.name}
-                onChangeText={(text) => update("name", text)}
-                error={errors.name}
                 autoComplete="given-name"
               />
-              <Field
+              <AuthField
+                control={control}
+                name="surname"
                 label="Soyad"
-                value={values.surname}
-                onChangeText={(text) => update("surname", text)}
-                error={errors.surname}
                 autoComplete="family-name"
               />
             </>
           )}
-          <Field
+          <AuthField
+            control={control}
+            name="email"
             label="E-posta Adresi"
-            value={values.email}
-            onChangeText={(text) => update("email", text)}
             placeholder="ornek@vettingo.com"
             keyboardType="email-address"
             autoCapitalize="none"
             autoComplete="email"
-            error={errors.email}
           />
-          <Field
+          <AuthField
+            control={control}
+            name="password"
             label="Şifre"
-            value={values.password}
-            onChangeText={(text) => update("password", text)}
             secureTextEntry={!visible}
             autoCapitalize="none"
             autoComplete={register ? "new-password" : "current-password"}
-            error={errors.password}
             trailingAccessory={
               <Pressable
                 accessibilityRole="button"
@@ -179,20 +184,24 @@ export default function AuthScreen({
             }
           />
           {register && role !== "candidate" && (
-            <Field
-              label="Şirket Adı"
-              value={values.company}
-              onChangeText={(text) => update("company", text)}
-              error={errors.company}
-            />
+            <AuthField control={control} name="company" label="Şirket Adı" />
           )}
           {register ? (
             <>
               <View style={styles.row}>
-                <Switch
-                  accessibilityLabel="Koşulları kabul ediyorum"
-                  value={values.terms}
-                  onValueChange={(value) => update("terms", value)}
+                <Controller
+                  control={control}
+                  name="terms"
+                  render={({ field: { value, onChange, onBlur } }) => (
+                    <Switch
+                      accessibilityLabel="Koşulları kabul ediyorum"
+                      value={value ?? false}
+                      onValueChange={(next) => {
+                        onChange(next);
+                        onBlur();
+                      }}
+                    />
+                  )}
                 />
                 <View style={{ flex: 1, gap: 4 }}>
                   <Pressable
@@ -213,7 +222,11 @@ export default function AuthScreen({
                   </Pressable>
                 </View>
               </View>
-              {errors.terms && <Text style={styles.error}>{errors.terms}</Text>}
+              {errors.terms && (
+                <Text accessibilityRole="alert" style={styles.error}>
+                  {errors.terms.message}
+                </Text>
+              )}
             </>
           ) : (
             <View
@@ -223,10 +236,16 @@ export default function AuthScreen({
               ]}
             >
               <View style={styles.row}>
-                <Switch
-                  accessibilityLabel="Beni hatırla"
-                  value={remember}
-                  onValueChange={setRemember}
+                <Controller
+                  control={control}
+                  name="remember"
+                  render={({ field: { value, onChange } }) => (
+                    <Switch
+                      accessibilityLabel="Beni hatırla"
+                      value={value}
+                      onValueChange={onChange}
+                    />
+                  )}
                 />
                 <Label muted>Beni hatırla</Label>
               </View>
@@ -240,15 +259,15 @@ export default function AuthScreen({
               </Pressable>
             </View>
           )}
-          {errors.form && (
+          {errors.root && (
             <Text accessibilityRole="alert" style={styles.error}>
-              {errors.form}
+              {errors.root.message}
             </Text>
           )}
           <Button
             label={register ? "Kayıt Ol" : "Giriş Yap"}
-            onPress={() => void submit()}
-            loading={loading}
+            onPress={() => void handleSubmit(submit)()}
+            loading={isSubmitting}
           />
           {!register && (
             <>

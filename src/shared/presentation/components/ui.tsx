@@ -224,17 +224,20 @@ export function Field({
   label,
   error,
   trailingAccessory,
+  ref: inputRef,
   ...props
 }: TextInputProps & {
   label: string;
   error?: string;
   trailingAccessory?: React.ReactNode;
+  ref?: React.Ref<TextInput>;
 }) {
   return (
     <View style={{ gap: 6 }}>
       <Text style={styles.label}>{label}</Text>
       <View style={{ position: "relative" }}>
         <TextInput
+          ref={inputRef}
           accessibilityLabel={label}
           placeholderTextColor="#8791A1"
           {...props}
