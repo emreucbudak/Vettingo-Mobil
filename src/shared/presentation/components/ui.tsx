@@ -400,12 +400,14 @@ export function Dialog({
   visible,
   onClose,
   closeIcon = false,
+  headerBottomPadding = 20,
   children,
 }: React.PropsWithChildren<{
   title: string;
   visible: boolean;
   onClose: () => void;
   closeIcon?: boolean;
+  headerBottomPadding?: number;
 }>) {
   return (
     <Modal
@@ -435,7 +437,9 @@ export function Dialog({
             overflow: "hidden",
           }}
         >
-          <View style={{ padding: 20, gap: 14 }}>
+          <View
+            style={{ padding: 20, paddingBottom: headerBottomPadding, gap: 14 }}
+          >
             {closeIcon ? (
               <View style={styles.row}>
                 <View style={{ flex: 1 }}>

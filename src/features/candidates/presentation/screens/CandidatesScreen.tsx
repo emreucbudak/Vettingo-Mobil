@@ -16,7 +16,8 @@ import { Stage } from "../../domain/entities/Candidate";
 import { useApp } from "../../../../core/presentation/state/AppProvider";
 
 export function CandidatesScreen() {
-  const { state, services } = useApp();
+  const { session, state, services } = useApp();
+  const employer = session?.role === "employer";
   const [query, setQuery] = useState("");
   const [stage, setStage] = useState<Stage | "all">("all");
   const [open, setOpen] = useState(false);
@@ -26,7 +27,7 @@ export function CandidatesScreen() {
       <Search
         value={query}
         onChangeText={setQuery}
-        placeholder="Aday, pozisyon veya yetenek ara"
+        placeholder={employer ? "Aday ara" : "Aday, pozisyon veya yetenek ara"}
         onFilter={() => setOpen(true)}
       />
       <View style={styles.row}>
@@ -44,8 +45,9 @@ export function CandidatesScreen() {
       ))}
       {!items.length && <Empty />}
       <Dialog
-        title="Adayları Filtrele"
+        title={employer ? "" : "Adayları Filtrele"}
         closeIcon
+        headerBottomPadding={employer ? 0 : 20}
         visible={open}
         onClose={() => setOpen(false)}
       >
@@ -65,7 +67,9 @@ export function CandidatesScreen() {
             />
           ))}
         </View>
-        <Button label="Sonuçları Göster" onPress={() => setOpen(false)} />
+        {!employer && (
+          <Button label="Sonuçları Göster" onPress={() => setOpen(false)} />
+        )}
       </Dialog>
     </AppShell>
   );
