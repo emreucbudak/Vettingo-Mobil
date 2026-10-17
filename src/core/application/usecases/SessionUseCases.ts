@@ -1,5 +1,6 @@
 import {
   AuthenticationInput,
+  Role,
   Session,
 } from "../../../features/auth/domain/entities/Session";
 import { AuthUseCases } from "../../../features/auth/application/usecases/AuthUseCases";
@@ -37,6 +38,21 @@ export class SessionUseCases {
   }
   createWorkspace() {
     return this.workspace.create();
+  }
+  createTemporaryWorkspace(role: Role): {
+    session: Session;
+    state: ReturnType<WorkspaceRepository["create"]>;
+  } {
+    return {
+      session: {
+        email: `preview+${role}@vettingo.invalid`,
+        name: "Ekran Önizleme",
+        role,
+        company: role === "candidate" ? "" : "Vettingo",
+        remember: false,
+      },
+      state: this.workspace.create(),
+    };
   }
   saveWorkspace(
     session: Session,

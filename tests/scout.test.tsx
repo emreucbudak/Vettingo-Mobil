@@ -24,7 +24,7 @@ async function signedIn(element: React.ReactElement, role: string) {
     <AppProvider services={createAppServices()}>{element}</AppProvider>,
   );
   await waitFor(() =>
-    expect(view.queryByText("Vettingo yükleniyor…")).toBeNull(),
+    expect(view.queryByRole("progressbar")).toBeNull(),
   );
   return view;
 }

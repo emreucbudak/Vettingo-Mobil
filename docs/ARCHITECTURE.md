@@ -67,7 +67,7 @@ flowchart LR
   Composition --> Adapters
 ```
 
-Somut bağlantılar yalnızca `src/composition/createAppServices.ts` içinde kurulur. Jobs, candidates, assessment ve requisitions katalogları kendi asenkron repository'lerinden yüklenir. `loadCatalogs()` bunları başlangıçta birlikte yükler; ekranlar katalog ve oturum hazır olmadan açılmaz. Yükleme hatasında tekrar deneme gösterilir.
+Somut bağlantılar yalnızca `src/composition/createAppServices.ts` içinde kurulur. Açılıştaki `Loading` yalnızca kayıtlı oturum ve ona ait yerel state geri yüklenirken gösterilir. Oturum yoksa login/kayıt ekranları katalog yüklemeden açılır. Oturum varsa `WorkspaceCatalogGate`, jobs, candidates, assessment ve requisitions kataloglarını `loadCatalogs()` ile kendi asenkron repository'lerinden yükler; uygulama ekranlarını kataloglar hazır olduğunda açar. Bu aşamada splash logosu yerine veri yükleme göstergesi, hata durumunda tekrar deneme gösterilir.
 
 ## Kalıcı kayıt ve backend
 

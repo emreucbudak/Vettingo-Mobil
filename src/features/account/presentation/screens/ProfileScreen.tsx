@@ -69,7 +69,6 @@ export default function ProfileScreen() {
       <ProfileMenuGroup>
         <ProfileMenuRow
           label="Bildirim Tercihi"
-          description="Tercihin cihazda saklanır. Push bildirim servisi henüz bağlı değildir."
           accessory={
             <Switch
               accessibilityLabel="Bildirim tercihi"
