@@ -6,8 +6,6 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Loading } from "../../../shared/presentation/components/ui";
-import { WorkspaceCatalogGate } from "../layout/WorkspaceCatalogGate";
 import {
   AuthenticationInput,
   Role,
@@ -37,7 +35,10 @@ export function AppProvider({
   const [ready, setReady] = useState(false);
   const [storageError, setStorageError] = useState("");
   const loadedSession = useRef<Session | null>(null);
+  const initialized = useRef(false);
   useEffect(() => {
+    // Fast Refresh must not overwrite an active preview with the saved session.
+    if (initialized.current) return;
     let mounted = true;
     async function restore() {
       try {
@@ -52,7 +53,10 @@ export function AppProvider({
             "Yerel kayıt okunamadı. Bu oturumdaki değişiklikler kaydedilemeyebilir.",
           );
       }
-      if (mounted) setReady(true);
+      if (mounted) {
+        initialized.current = true;
+        setReady(true);
+      }
     }
     void restore();
     return () => {
@@ -91,8 +95,8 @@ export function AppProvider({
       setState((current) => services.workspace.execute(current, command)),
     [services],
   );
-  // The startup logo only waits for the persisted session and its local state.
-  if (!ready) return <Loading />;
+  // The native splash stays visible until the initial session check completes.
+  if (!ready) return null;
   return (
     <Context.Provider
       value={{
@@ -107,13 +111,7 @@ export function AppProvider({
         dispatch,
       }}
     >
-      {session ? (
-        <WorkspaceCatalogGate services={services}>
-          {children}
-        </WorkspaceCatalogGate>
-      ) : (
-        children
-      )}
+      {children}
     </Context.Provider>
   );
 }

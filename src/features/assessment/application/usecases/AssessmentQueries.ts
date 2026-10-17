@@ -2,8 +2,10 @@ import { Question } from "../../domain/entities/Assessment";
 import { AssessmentRepository } from "../../domain/repositories/AssessmentRepository";
 
 export class AssessmentQueries {
-  private loaded: Question[] | null = null;
-  constructor(private readonly repository: AssessmentRepository) {}
+  constructor(
+    private readonly repository: AssessmentRepository,
+    private loaded: Question[] | null = null,
+  ) {}
   async load() {
     this.loaded = await this.repository.load();
   }

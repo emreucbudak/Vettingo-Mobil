@@ -4,6 +4,7 @@ export interface Job {
   company: string;
   location: string;
   salary: string;
+  experienceYears?: number;
   match: number;
   tags: string[];
 }

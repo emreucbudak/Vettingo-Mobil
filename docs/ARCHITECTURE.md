@@ -67,7 +67,7 @@ flowchart LR
   Composition --> Adapters
 ```
 
-Somut bağlantılar yalnızca `src/composition/createAppServices.ts` içinde kurulur. Açılıştaki `Loading` yalnızca kayıtlı oturum ve ona ait yerel state geri yüklenirken gösterilir. Oturum yoksa login/kayıt ekranları katalog yüklemeden açılır. Oturum varsa `WorkspaceCatalogGate`, jobs, candidates, assessment ve requisitions kataloglarını `loadCatalogs()` ile kendi asenkron repository'lerinden yükler; uygulama ekranlarını kataloglar hazır olduğunda açar. Bu aşamada splash logosu yerine veri yükleme göstergesi, hata durumunda tekrar deneme gösterilir.
+Somut bağlantılar yalnızca `src/composition/createAppServices.ts` içinde kurulur. İlk oturum kontrolü tamamlanana kadar `app.json` içindeki native splash açık tutulur; ayrı React `Loading` bileşeni yoktur. Jobs, candidates, assessment ve requisitions demo katalogları, composition sırasında kendi demo repository'lerinin bağımsız `snapshot()` kopyalarıyla sorgu servislerine verilir. Login ve uygulama ekranları ek bir katalog yükleme ekranı beklemeden açılır; skeleton gösterilmez. Repository'lerin asenkron `load()` sözleşmeleri gelecekteki veri kaynakları için korunur. Root layout servisleri `useMemo` ile oluşturur; Fast Refresh sırasında composition değişiklikleri yenilenir. Oturum kontrolü provider başına bir kez yapılır; servisler yeniden oluşturulduğunda açık önizleme oturumu korunur. Geliştirme düğmeleri oturumu günceller, korumalı router güncellemeden sonra ilgili role yönlendirir.
 
 ## Kalıcı kayıt ve backend
 

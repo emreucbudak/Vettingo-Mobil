@@ -48,6 +48,25 @@ describe("Clean Architecture use cases and migration behavior", () => {
   });
   test("salary filter includes ranges that reach 200k", () =>
     expect(filterJobs(jobs, "", ["$200k+"])).toHaveLength(3));
+  test("job filter categories combine salary, experience and working preference", () => {
+    expect(
+      filterJobs(jobs, "", [
+        "Remote",
+        "salary:100000:Infinity",
+        "experience:10:Infinity",
+      ]).map((job) => job.id),
+    ).toEqual(["vp-engineering-acme"]);
+    expect(filterJobs(jobs, "", ["salary:0:50000"])).toEqual([]);
+    expect(filterJobs(jobs, "", ["experience:0:5"])).toEqual([]);
+    expect(
+      filterJobs(jobs, "", ["experience:5:10"]).map((job) => job.id),
+    ).toEqual([
+      "vp-engineering-acme",
+      "director-engineering-globex",
+      "head-platform-northstar",
+    ]);
+    expect(filterJobs(jobs, "", ["Onsite"])).toEqual([]);
+  });
   test("login rejects invalid email and short passwords for every role", () => {
     for (const role of ["candidate", "employer", "hr"] as const)
       expect(

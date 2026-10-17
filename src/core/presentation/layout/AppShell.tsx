@@ -16,7 +16,6 @@ import {
   colors,
   styles,
   Title,
-  Loading,
 } from "../../../shared/presentation/components/ui";
 
 export function AppShell({
@@ -26,7 +25,7 @@ export function AppShell({
 }: React.PropsWithChildren<{ title?: string; actions?: React.ReactNode }>) {
   const { session, storageError } = useApp();
   const path = usePathname();
-  if (!session) return <Loading />;
+  if (!session) return null;
   const role = session.role;
   const tabs: {
     label: string;

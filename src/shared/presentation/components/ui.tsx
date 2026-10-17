@@ -1,7 +1,6 @@
 import React from "react";
 import {
   ActivityIndicator,
-  Image,
   KeyboardAvoidingView,
   Modal,
   Platform,
@@ -469,23 +468,5 @@ export function Dialog({
         </View>
       </KeyboardAvoidingView>
     </Modal>
-  );
-}
-export function Loading() {
-  return (
-    <View
-      accessibilityRole="progressbar"
-      accessibilityLabel="Vettingo yükleniyor…"
-      style={[
-        styles.page,
-        { justifyContent: "center", alignItems: "center" },
-      ]}
-    >
-      <Image
-        source={require("../../../../assets/images/vettingo_splash_logo.png")}
-        style={{ width: 220, height: 220 }}
-        resizeMode="contain"
-      />
-    </View>
   );
 }
