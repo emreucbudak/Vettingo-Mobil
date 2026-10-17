@@ -11,5 +11,4 @@ export interface AppServices {
   candidates: CandidatesQueries;
   questions: AssessmentQueries;
   requisitionCatalog: RequisitionQueries;
-  loadCatalogs(): Promise<void>;
 }

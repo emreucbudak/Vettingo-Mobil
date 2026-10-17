@@ -3,8 +3,10 @@ import { JobsRepository } from "../../domain/repositories/JobsRepository";
 import { filterJobs } from "../../domain/policies/search";
 
 export class JobsQueries {
-  private loaded: JobCatalog | null = null;
-  constructor(private readonly repository: JobsRepository) {}
+  constructor(
+    private readonly repository: JobsRepository,
+    private loaded: JobCatalog | null = null,
+  ) {}
   async load() {
     this.loaded = await this.repository.load();
   }

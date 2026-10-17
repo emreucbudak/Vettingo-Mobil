@@ -277,7 +277,7 @@ export default function AuthScreen({
                     ? "employer"
                     : "hr";
                 openTemporaryWorkspace(destination);
-                router.replace("/");
+                // Protected routes redirect after the new session is committed.
                 return;
               }
               void handleSubmit(submit)();

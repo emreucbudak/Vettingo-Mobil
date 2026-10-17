@@ -45,9 +45,7 @@ async function renderApp(
       <AppProvider>{element}</AppProvider>
     ),
   );
-  await waitFor(() =>
-    expect(view.queryByRole("progressbar")).toBeNull(),
-  );
+  await waitFor(() => expect(view.queryByRole("progressbar")).toBeNull());
   return view;
 }
 beforeEach(async () => {
@@ -95,7 +93,7 @@ test.each([
         destination,
       ),
     );
-    expect(router.replace).toHaveBeenCalledWith("/");
+    expect(router.replace).not.toHaveBeenCalled();
     expect(signIn).not.toHaveBeenCalled();
     expect(saveWorkspace).not.toHaveBeenCalled();
     expect(view.queryByText("Geçerli bir e-posta adresi girin.")).toBeNull();
@@ -302,8 +300,34 @@ test("job search and filter dialog change actual results", async () => {
   const view = await signedIn(<JobSearchScreen />);
   await waitFor(() => expect(view.getByText("VP of Engineering")).toBeTruthy());
   fireEvent.press(view.getByRole("button", { name: "Filtreler" }));
-  fireEvent.press(view.getByRole("button", { name: "Filtreleri Temizle" }));
-  fireEvent.press(view.getByRole("button", { name: "Sonuçları Göster" }));
+  expect(view.getByText("Çalışma Tercihi")).toBeTruthy();
+  expect(view.getByText("Maaş")).toBeTruthy();
+  expect(view.getByText("Deneyim")).toBeTruthy();
+  expect(view.queryByText("İşleri Filtrele")).toBeNull();
+  expect(view.queryByText("Filtreleri Temizle")).toBeNull();
+  expect(view.queryByText("Sonuçları Göster")).toBeNull();
+  for (const label of [
+    "Ofisten",
+    "Hybrid",
+    "Uzaktan",
+    "0–50.000",
+    "50.000–100.000",
+    "100.000+",
+    "0–5 yıl",
+    "5–10 yıl",
+    "10+ yıl",
+  ])
+    expect(view.getByRole("button", { name: label })).toBeTruthy();
+  fireEvent.press(view.getByRole("button", { name: "100.000+" }));
+  fireEvent.press(view.getByRole("button", { name: "10+ yıl" }));
+  fireEvent.press(view.getByRole("button", { name: "Kapat" }));
+  expect(view.getByText("VP of Engineering")).toBeTruthy();
+  expect(view.queryByText("Head of Platform Engineering")).toBeNull();
+  fireEvent.press(view.getByRole("button", { name: "Filtreler" }));
+  fireEvent.press(view.getByRole("button", { name: "100.000+" }));
+  fireEvent.press(view.getByRole("button", { name: "10+ yıl" }));
+  fireEvent.press(view.getByRole("button", { name: "Hybrid" }));
+  fireEvent.press(view.getByRole("button", { name: "Kapat" }));
   fireEvent.changeText(
     view.getByLabelText("Pozisyon veya şirket ara"),
     "Globex",

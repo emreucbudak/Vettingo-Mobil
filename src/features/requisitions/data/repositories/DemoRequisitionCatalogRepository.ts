@@ -3,6 +3,9 @@ import { catalog } from "../fixtures/catalog";
 import { RequisitionCatalog } from "../../domain/entities/RequisitionCatalog";
 export class DemoRequisitionCatalogRepository implements RequisitionCatalogRepository {
   async load() {
+    return this.snapshot();
+  }
+  snapshot() {
     return JSON.parse(JSON.stringify(catalog)) as RequisitionCatalog;
   }
 }

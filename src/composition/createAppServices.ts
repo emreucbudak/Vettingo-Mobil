@@ -24,25 +24,29 @@ import { ApplicationUseCases } from "../features/applications/application/usecas
 export function createAppServices(): AppServices {
   const storage = new AsyncStorageSource(),
     clock = new SystemClock();
-  const jobs = new JobsQueries(new DemoJobsRepository());
-  const candidates = new CandidatesQueries(new DemoCandidatesRepository());
-  const questions = new AssessmentQueries(new DemoAssessmentRepository());
+  const jobsRepository = new DemoJobsRepository();
+  const candidatesRepository = new DemoCandidatesRepository();
+  const assessmentRepository = new DemoAssessmentRepository();
+  const requisitionRepository = new DemoRequisitionCatalogRepository();
+  // Bundled demo data is available immediately for screen design and navigation.
+  const jobs = new JobsQueries(jobsRepository, jobsRepository.snapshot());
+  const candidates = new CandidatesQueries(
+    candidatesRepository,
+    candidatesRepository.snapshot(),
+  );
+  const questions = new AssessmentQueries(
+    assessmentRepository,
+    assessmentRepository.snapshot(),
+  );
   const requisitionCatalog = new RequisitionQueries(
-    new DemoRequisitionCatalogRepository(),
+    requisitionRepository,
+    requisitionRepository.snapshot(),
   );
   return {
     jobs,
     candidates,
     questions,
     requisitionCatalog,
-    async loadCatalogs() {
-      await Promise.all([
-        jobs.load(),
-        candidates.load(),
-        questions.load(),
-        requisitionCatalog.load(),
-      ]);
-    },
     sessions: new SessionUseCases(
       new AuthUseCases(new LocalAuthRepository(storage)),
       new LocalWorkspaceRepository(storage),

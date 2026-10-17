@@ -8,8 +8,10 @@ import { CandidatesRepository } from "../../domain/repositories/CandidatesReposi
 import { matchesText } from "../../../../shared/domain/policies/search";
 import { candidateStage } from "../../domain/policies/stage";
 export class CandidatesQueries {
-  private loaded: CandidateCatalog | null = null;
-  constructor(private readonly repository: CandidatesRepository) {}
+  constructor(
+    private readonly repository: CandidatesRepository,
+    private loaded: CandidateCatalog | null = null,
+  ) {}
   async load() {
     this.loaded = await this.repository.load();
   }

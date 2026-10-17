@@ -2,8 +2,10 @@ import { RequisitionCatalog } from "../../domain/entities/RequisitionCatalog";
 import { RequisitionCatalogRepository } from "../../domain/repositories/RequisitionCatalogRepository";
 
 export class RequisitionQueries {
-  private loaded: RequisitionCatalog | null = null;
-  constructor(private readonly repository: RequisitionCatalogRepository) {}
+  constructor(
+    private readonly repository: RequisitionCatalogRepository,
+    private loaded: RequisitionCatalog | null = null,
+  ) {}
   async load() {
     this.loaded = await this.repository.load();
   }

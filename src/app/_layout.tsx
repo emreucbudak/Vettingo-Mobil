@@ -1,14 +1,18 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo } from "react";
 import { createAppServices } from "../composition/createAppServices";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import * as SplashScreen from "expo-splash-screen";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { AppProvider, useApp } from "../core/presentation/state/AppProvider";
-import { Loading } from "../shared/presentation/components/ui";
+
+void SplashScreen.preventAutoHideAsync();
 
 function Routes() {
-  const { session, ready } = useApp();
-  if (!ready) return <Loading />;
+  const { session } = useApp();
+  useEffect(() => {
+    SplashScreen.hide();
+  }, []);
   return (
     <>
       <StatusBar style="dark" />
@@ -37,7 +41,8 @@ function Routes() {
   );
 }
 export default function RootLayout() {
-  const [services] = useState(createAppServices);
+  // Fast Refresh must rebuild services when their composition changes.
+  const services = useMemo(() => createAppServices(), []);
   return (
     <SafeAreaProvider>
       <AppProvider services={services}>
