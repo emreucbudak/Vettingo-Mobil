@@ -6,9 +6,11 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import { Loading } from "../../../shared/presentation/components/ui";
+import { WorkspaceCatalogGate } from "../layout/WorkspaceCatalogGate";
 import {
   AuthenticationInput,
+  Role,
   Session,
 } from "../../../features/auth/domain/entities/Session";
 import { Workspace } from "../../domain/entities/Workspace";
@@ -22,6 +24,7 @@ interface AppContext {
   services: AppServices;
   signIn: (input: AuthenticationInput) => Promise<void>;
   signOut: () => Promise<void>;
+  openTemporaryWorkspace: (role: Role) => void;
   dispatch: (command: WorkspaceCommand) => void;
 }
 const Context = createContext<AppContext | null>(null);
@@ -33,18 +36,10 @@ export function AppProvider({
   const [state, setState] = useState(() => services.sessions.createWorkspace());
   const [ready, setReady] = useState(false);
   const [storageError, setStorageError] = useState("");
-  const [catalogError, setCatalogError] = useState(false);
-  const [attempt, setAttempt] = useState(0);
   const loadedSession = useRef<Session | null>(null);
   useEffect(() => {
     let mounted = true;
     async function restore() {
-      try {
-        await services.loadCatalogs();
-      } catch {
-        if (mounted) setCatalogError(true);
-        return;
-      }
       try {
         const restored = await services.sessions.restore();
         if (!mounted) return;
@@ -63,7 +58,7 @@ export function AppProvider({
     return () => {
       mounted = false;
     };
-  }, [services, attempt]);
+  }, [services]);
   useEffect(() => {
     if (!ready || !session || loadedSession.current !== session) return;
     void services.sessions
@@ -83,43 +78,21 @@ export function AppProvider({
     setSession(null);
     setState(fresh);
   }
+  function openTemporaryWorkspace(role: Role) {
+    if (!__DEV__ || !ready) return;
+    const temporary = services.sessions.createTemporaryWorkspace(role);
+    loadedSession.current = null;
+    setSession(temporary.session);
+    setState(temporary.state);
+    setStorageError("");
+  }
   const dispatch = useCallback(
     (command: WorkspaceCommand) =>
       setState((current) => services.workspace.execute(current, command)),
     [services],
   );
-  // Screens mount after catalog and persisted state have been restored.
-  if (!ready)
-    return (
-      <View
-        style={{
-          flex: 1,
-          alignItems: "center",
-          justifyContent: "center",
-          gap: 16,
-        }}
-      >
-        {catalogError ? (
-          <>
-            <Text>Veriler yüklenemedi.</Text>
-            <Pressable
-              accessibilityRole="button"
-              onPress={() => {
-                setCatalogError(false);
-                setAttempt((value) => value + 1);
-              }}
-            >
-              <Text>Tekrar Dene</Text>
-            </Pressable>
-          </>
-        ) : (
-          <>
-            <ActivityIndicator />
-            <Text>Vettingo yükleniyor…</Text>
-          </>
-        )}
-      </View>
-    );
+  // The startup logo only waits for the persisted session and its local state.
+  if (!ready) return <Loading />;
   return (
     <Context.Provider
       value={{
@@ -130,10 +103,17 @@ export function AppProvider({
         services,
         signIn,
         signOut,
+        openTemporaryWorkspace,
         dispatch,
       }}
     >
-      {children}
+      {session ? (
+        <WorkspaceCatalogGate services={services}>
+          {children}
+        </WorkspaceCatalogGate>
+      ) : (
+        children
+      )}
     </Context.Provider>
   );
 }

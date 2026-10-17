@@ -34,10 +34,12 @@ import { legal } from "../content/legal";
 
 export default function AuthScreen({
   register = false,
+  dashboardShortcuts = __DEV__,
 }: {
   register?: boolean;
+  dashboardShortcuts?: boolean;
 }) {
-  const { signIn } = useApp();
+  const { signIn, openTemporaryWorkspace } = useApp();
   const {
     control,
     handleSubmit,
@@ -157,6 +159,7 @@ export default function AuthScreen({
             control={control}
             name="password"
             label="Şifre"
+            placeholder={register ? undefined : "Şifrenizi girin"}
             secureTextEntry={!visible}
             autoCapitalize="none"
             autoComplete={register ? "new-password" : "current-password"}
@@ -266,7 +269,19 @@ export default function AuthScreen({
           )}
           <Button
             label={register ? "Kayıt Ol" : "Giriş Yap"}
-            onPress={() => void handleSubmit(submit)()}
+            onPress={() => {
+              if (__DEV__ && dashboardShortcuts) {
+                const destination: Role = !register
+                  ? "candidate"
+                  : role === "candidate"
+                    ? "employer"
+                    : "hr";
+                openTemporaryWorkspace(destination);
+                router.replace("/");
+                return;
+              }
+              void handleSubmit(submit)();
+            }}
             loading={isSubmitting}
           />
           {!register && (

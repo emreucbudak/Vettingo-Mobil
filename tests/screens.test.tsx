@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Text } from "react-native";
 import {
   act,
   fireEvent,
@@ -45,7 +46,7 @@ async function renderApp(
     ),
   );
   await waitFor(() =>
-    expect(view.queryByText("Vettingo yükleniyor…")).toBeNull(),
+    expect(view.queryByRole("progressbar")).toBeNull(),
   );
   return view;
 }
@@ -60,9 +61,55 @@ async function signedIn(element: React.ReactElement, role = "candidate") {
   );
   return renderApp(element);
 }
+function SessionRole() {
+  const { session } = useApp();
+  return (
+    <Text testID="active-session-role">{session?.role ?? "signed-out"}</Text>
+  );
+}
+
+test.each([
+  { register: false, employer: false, destination: "candidate" },
+  { register: true, employer: false, destination: "employer" },
+  { register: true, employer: true, destination: "hr" },
+])(
+  "empty form shortcut opens $destination workspace without authentication",
+  async ({ register, employer, destination }) => {
+    const services = createAppServices();
+    const signIn = jest.spyOn(services.sessions, "signIn");
+    const saveWorkspace = jest.spyOn(services.sessions, "saveWorkspace");
+    const view = await renderApp(
+      <>
+        <AuthScreen register={register} dashboardShortcuts />
+        <SessionRole />
+      </>,
+      services,
+    );
+    if (employer)
+      fireEvent.press(view.getByRole("button", { name: "İşveren" }));
+    fireEvent.press(
+      view.getByRole("button", { name: register ? "Kayıt Ol" : "Giriş Yap" }),
+    );
+    await waitFor(() =>
+      expect(view.getByTestId("active-session-role").props.children).toBe(
+        destination,
+      ),
+    );
+    expect(router.replace).toHaveBeenCalledWith("/");
+    expect(signIn).not.toHaveBeenCalled();
+    expect(saveWorkspace).not.toHaveBeenCalled();
+    expect(view.queryByText("Geçerli bir e-posta adresi girin.")).toBeNull();
+    expect(await AsyncStorage.getAllKeys()).toEqual([]);
+    await view.unmountAsync();
+  },
+  30000,
+);
+
 test("login reports errors without showing account role buttons", async () => {
-  const view = await renderApp(<AuthScreen />);
-  fireEvent.press(view.getByRole("button", { name: "Giriş Yap" }));
+  const view = await renderApp(<AuthScreen dashboardShortcuts={false} />);
+  await act(async () => {
+    fireEvent.press(view.getByRole("button", { name: "Giriş Yap" }));
+  });
   await waitFor(() =>
     expect(view.getByText("Geçerli bir e-posta adresi girin.")).toBeTruthy(),
   );
@@ -80,10 +127,11 @@ test("login reports errors without showing account role buttons", async () => {
   fireEvent.press(view.getByRole("button", { name: "Şifreyi gizle" }));
   expect(view.getByLabelText("Şifre").props.secureTextEntry).toBe(true);
   expect(view.queryByText("Şifreyi göster")).toBeNull();
-  // The first async native mount also initializes the React Native mocks.
 }, 15000);
 test("registration shows company field only for hiring roles and enforces consent", async () => {
-  const view = await renderApp(<AuthScreen register />);
+  const view = await renderApp(
+    <AuthScreen register dashboardShortcuts={false} />,
+  );
   expect(view.queryByRole("button", { name: "İK" })).toBeNull();
   expect(view.queryByLabelText("Şirket Adı")).toBeNull();
   fireEvent.press(view.getByRole("button", { name: "İşveren" }));
@@ -103,7 +151,10 @@ test("registration shows company field only for hiring roles and enforces consen
 test("login submits RHF values and respects the remember switch", async () => {
   const services = createAppServices();
   const signIn = jest.spyOn(services.sessions, "signIn");
-  const view = await renderApp(<AuthScreen />, services);
+  const view = await renderApp(
+    <AuthScreen dashboardShortcuts={false} />,
+    services,
+  );
   fireEvent.changeText(
     view.getByLabelText("E-posta Adresi"),
     "alex@vettingo.com",
@@ -131,7 +182,10 @@ test.each(["candidate", "employer"] as const)(
   async (role) => {
     const services = createAppServices();
     const signIn = jest.spyOn(services.sessions, "signIn");
-    const view = await renderApp(<AuthScreen register />, services);
+    const view = await renderApp(
+      <AuthScreen register dashboardShortcuts={false} />,
+      services,
+    );
     if (role === "employer") {
       fireEvent.press(view.getByRole("button", { name: "İşveren" }));
       fireEvent.changeText(view.getByLabelText("Şirket Adı"), "Vettingo");
@@ -175,7 +229,10 @@ test("login shows a submission error and allows retry", async () => {
   jest
     .spyOn(services.sessions, "signIn")
     .mockRejectedValueOnce(new Error("Offline"));
-  const view = await renderApp(<AuthScreen />, services);
+  const view = await renderApp(
+    <AuthScreen dashboardShortcuts={false} />,
+    services,
+  );
   fireEvent.changeText(
     view.getByLabelText("E-posta Adresi"),
     "alex@vettingo.com",
@@ -214,7 +271,10 @@ test("login disables repeat submission while sign-in is pending", async () => {
   const signIn = jest
     .spyOn(services.sessions, "signIn")
     .mockReturnValueOnce(pending);
-  const view = await renderApp(<AuthScreen />, services);
+  const view = await renderApp(
+    <AuthScreen dashboardShortcuts={false} />,
+    services,
+  );
   fireEvent.changeText(
     view.getByLabelText("E-posta Adresi"),
     "alex@vettingo.com",

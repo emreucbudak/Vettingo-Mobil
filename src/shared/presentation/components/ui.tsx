@@ -1,6 +1,7 @@
 import React from "react";
 import {
   ActivityIndicator,
+  Image,
   KeyboardAvoidingView,
   Modal,
   Platform,
@@ -13,7 +14,6 @@ import {
   View,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 export const colors = {
   primary: "#091426",
@@ -473,14 +473,19 @@ export function Dialog({
 }
 export function Loading() {
   return (
-    <SafeAreaView
+    <View
+      accessibilityRole="progressbar"
+      accessibilityLabel="Vettingo yükleniyor…"
       style={[
         styles.page,
-        { justifyContent: "center", alignItems: "center", gap: 14 },
+        { justifyContent: "center", alignItems: "center" },
       ]}
     >
-      <ActivityIndicator color={colors.blue} />
-      <Label muted>Vettingo yükleniyor…</Label>
-    </SafeAreaView>
+      <Image
+        source={require("../../../../assets/images/vettingo_splash_logo.png")}
+        style={{ width: 220, height: 220 }}
+        resizeMode="contain"
+      />
+    </View>
   );
 }
