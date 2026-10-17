@@ -13,10 +13,10 @@ import { roleLabels } from "../../../auth/presentation/formatters/labels";
 import { useApp } from "../../../../core/presentation/state/AppProvider";
 import { ProfileMenuGroup, ProfileMenuRow } from "../components/ProfileMenu";
 
-const employerPages: Record<string, string> = {
-  Şirket: "/employer-company",
-  Güvenlik: "/employer-security",
-  "Yardım Merkezi": "/employer-help",
+const accountPages: Record<string, string> = {
+  Şirket: "company",
+  Güvenlik: "security",
+  "Yardım Merkezi": "help",
 };
 
 export default function ProfileScreen() {
@@ -33,9 +33,9 @@ export default function ProfileScreen() {
       router.push("/scout");
       return;
     }
-    const page = employerPages[label];
-    if (session?.role === "employer" && page) {
-      router.push(page as Href);
+    const page = accountPages[label];
+    if ((session?.role === "employer" || session?.role === "hr") && page) {
+      router.push(`/${session.role}-${page}` as Href);
       return;
     }
     unavailable(label);
