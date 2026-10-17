@@ -1,6 +1,6 @@
 import React from "react";
 import { Alert, Switch, View } from "react-native";
-import { router } from "expo-router";
+import { router, Href } from "expo-router";
 import { AppShell } from "../../../../core/presentation/layout/AppShell";
 import {
   Avatar,
@@ -13,6 +13,12 @@ import { roleLabels } from "../../../auth/presentation/formatters/labels";
 import { useApp } from "../../../../core/presentation/state/AppProvider";
 import { ProfileMenuGroup, ProfileMenuRow } from "../components/ProfileMenu";
 
+const employerPages: Record<string, string> = {
+  Şirket: "/employer-company",
+  Güvenlik: "/employer-security",
+  "Yardım Merkezi": "/employer-help",
+};
+
 export default function ProfileScreen() {
   const { session, state, dispatch, signOut } = useApp();
   if (!session) return null;
@@ -22,6 +28,18 @@ export default function ProfileScreen() {
       label,
       "Bu özellik backend bağlantısı tamamlandığında kullanıma sunulacak.",
     );
+  function openMenuItem(label: string) {
+    if (label === "Scout") {
+      router.push("/scout");
+      return;
+    }
+    const page = employerPages[label];
+    if (session?.role === "employer" && page) {
+      router.push(page as Href);
+      return;
+    }
+    unavailable(label);
+  }
   async function logout() {
     try {
       await signOut();
@@ -58,13 +76,11 @@ export default function ProfileScreen() {
             />
           ))
         ) : (
-          ["Şirket Profili", "Ekip ve Yetkiler", "Scout"].map((label) => (
+          ["Şirket", "Ekip ve Yetkiler", "Scout"].map((label) => (
             <ProfileMenuRow
               key={label}
               label={label}
-              onPress={() =>
-                label === "Scout" ? router.push("/scout") : unavailable(label)
-              }
+              onPress={() => openMenuItem(label)}
             />
           ))
         )}
@@ -86,7 +102,7 @@ export default function ProfileScreen() {
           <ProfileMenuRow
             key={label}
             label={label}
-            onPress={() => unavailable(label)}
+            onPress={() => openMenuItem(label)}
           />
         ))}
       </ProfileMenuGroup>
