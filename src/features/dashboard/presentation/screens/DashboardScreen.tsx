@@ -8,7 +8,6 @@ import {
   Card,
   colors,
   Label,
-  Progress,
   Section,
   styles,
   Title,
@@ -48,40 +47,6 @@ export default function DashboardScreen() {
           .map((item) => (
             <ApplicationCard key={item.id} item={item} />
           ))}
-        <Section title="Pazar Profilin" />
-        <View
-          style={[
-            styles.card,
-            { backgroundColor: colors.primary, borderColor: colors.primary },
-          ]}
-        >
-          <View style={[styles.row, { justifyContent: "space-between" }]}>
-            <View style={{ flex: 1 }}>
-              <Text style={{ color: "#fff", fontSize: 19, fontWeight: "700" }}>
-                Strong Match Profile
-              </Text>
-              <Text
-                style={{
-                  color: "#B7C6DF",
-                  fontSize: 13,
-                  lineHeight: 20,
-                  marginTop: 8,
-                }}
-              >
-                React ve TypeScript yeteneklerin bu hafta en çok aranan %15
-                arasında.
-              </Text>
-            </View>
-            <Text style={{ fontSize: 44, color: "#fff", fontWeight: "800" }}>
-              85
-            </Text>
-          </View>
-          <Progress value={0.85} />
-          <View style={styles.row}>
-            <Badge>React 98%</Badge>
-            <Badge>TypeScript 92%</Badge>
-          </View>
-        </View>
         <Section
           title="Önerilen Eşleşmeler"
           action="Keşfet"
