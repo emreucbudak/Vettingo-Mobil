@@ -50,10 +50,13 @@ export default function ProfileScreen() {
       </Card>
       <ProfileMenuGroup>
         {candidate ? (
-          <ProfileMenuRow
-            label="Profil ve CV Düzenle"
-            onPress={() => router.push("/cv-review")}
-          />
+          ["Profil", "CV"].map((label) => (
+            <ProfileMenuRow
+              key={label}
+              label={label}
+              onPress={() => router.push("/cv-review")}
+            />
+          ))
         ) : (
           ["Şirket Profili", "Ekip ve Yetkiler", "Scout"].map((label) => (
             <ProfileMenuRow
