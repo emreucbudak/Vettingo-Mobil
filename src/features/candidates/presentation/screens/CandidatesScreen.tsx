@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { View } from "react-native";
 import { AppShell } from "../../../../core/presentation/layout/AppShell";
 import {
-  Button,
   Chip,
   Dialog,
   Empty,
@@ -45,9 +44,9 @@ export function CandidatesScreen() {
       ))}
       {!items.length && <Empty />}
       <Dialog
-        title={employer ? "" : "Adayları Filtrele"}
+        title=""
         closeIcon
-        headerBottomPadding={employer ? 0 : 20}
+        headerBottomPadding={0}
         visible={open}
         onClose={() => setOpen(false)}
       >
@@ -67,9 +66,6 @@ export function CandidatesScreen() {
             />
           ))}
         </View>
-        {!employer && (
-          <Button label="Sonuçları Göster" onPress={() => setOpen(false)} />
-        )}
       </Dialog>
     </AppShell>
   );

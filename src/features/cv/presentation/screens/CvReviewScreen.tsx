@@ -1,14 +1,14 @@
 import React, { useState } from "react";
-import { Alert, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { AppShell } from "../../../../core/presentation/layout/AppShell";
 import {
   Badge,
   Button,
   Card,
   Chip,
-  Dialog,
   Field,
   Label,
+  Section,
   styles,
   Title,
 } from "../../../../shared/presentation/components/ui";
@@ -41,26 +41,8 @@ export default function CvReviewScreen() {
     dispatch({ type: "cv", cv: saved });
     setError("");
   }
-  async function chooseDocument() {
-    try {
-      const result = await services.workspace.cv.pickDocument();
-      if (!result) return;
-      if ("error" in result) {
-        Alert.alert("Dosya boyutu", result.error);
-        return;
-      }
-      update({ ...cv, fileName: result.name });
-      Alert.alert(
-        "Belge seçildi",
-        "Demo modunda belge ayrıştırılmaz veya sunucuya yüklenmez. Aşağıdaki bilgileri elle düzenleyebilirsiniz.",
-      );
-    } catch {
-      Alert.alert("Dosya seçimi", "Belge seçilemedi. Lütfen tekrar deneyin.");
-    }
-  }
   return (
     <AppShell
-      title="Review Parsed Data"
       actions={
         <Button
           label={
@@ -71,26 +53,21 @@ export default function CvReviewScreen() {
         />
       }
     >
-      <Label muted>
-        Verify Candidate Info · Demo CV verilerini doğrulayın ve düzenleyin.
-      </Label>
       {cv.completed && <Badge>Profil Kaydedildi</Badge>}
-      <Button
-        label="CV Yeniden Seç"
-        secondary
-        onPress={() => void chooseDocument()}
-      />
       {!!cv.fileName && <Label muted>Seçilen belge: {cv.fileName}</Label>}
       <Card>
         <Field
-          label="Profesyonel Özet"
+          label="Hedef Rol"
           value={cv.summary}
-          multiline
           onChangeText={(summary) => update({ ...cv, summary })}
         />
       </Card>
       <Card>
-        <Title small>Temel Yetenekler</Title>
+        <Section
+          title="Temel Yetenekler"
+          action="Yetenek Ekle"
+          onPress={() => setSkillOpen(true)}
+        />
         <View style={styles.wrap}>
           {cv.skills.map((item) => (
             <Chip
@@ -105,11 +82,16 @@ export default function CvReviewScreen() {
             />
           ))}
         </View>
-        <Button
-          label="Yetenek Ekle"
-          secondary
-          onPress={() => setSkillOpen(true)}
-        />
+        {skillOpen && (
+          <Field
+            label="Yetenek"
+            value={skill}
+            onChangeText={setSkill}
+            autoFocus
+            returnKeyType="done"
+            onSubmitEditing={addSkill}
+          />
+        )}
       </Card>
       <Title small>Deneyim</Title>
       {cv.experiences.map((experience, index) => (
@@ -161,19 +143,6 @@ export default function CvReviewScreen() {
         ))}
       </Card>
       {!!error && <Text style={styles.error}>{error}</Text>}
-      <Dialog
-        title="Yetenek Ekle"
-        visible={skillOpen}
-        onClose={() => setSkillOpen(false)}
-      >
-        <Field
-          label="Yetenek"
-          value={skill}
-          onChangeText={setSkill}
-          onSubmitEditing={addSkill}
-        />
-        <Button label="Kaydet" onPress={addSkill} />
-      </Dialog>
     </AppShell>
   );
 }
