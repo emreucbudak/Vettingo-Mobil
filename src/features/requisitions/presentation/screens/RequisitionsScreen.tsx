@@ -17,15 +17,16 @@ export function RequisitionsScreen() {
   const items = state.requisitions.filter(
     (job) => filter === "all" || job.status === filter,
   );
+  const employer = session?.role === "employer";
+  const newRequisitionButton = (
+    <Button
+      label="Yeni İlan"
+      onPress={() => router.push("/new-requisition")}
+    />
+  );
   return (
-    <AppShell
-      actions={
-        <Button
-          label="Yeni İlan"
-          onPress={() => router.push("/new-requisition")}
-        />
-      }
-    >
+    <AppShell actions={employer ? undefined : newRequisitionButton}>
+      {employer && newRequisitionButton}
       {session?.role === "hr" && (
         <View style={styles.wrap}>
           {[
