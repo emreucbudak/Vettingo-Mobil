@@ -357,11 +357,11 @@ test("requisition form exposes conditional office selection and validates title"
 test("CV review adds a skill and saves the edited profile", async () => {
   const view = await signedIn(<CvReviewScreen />);
   await waitFor(() =>
-    expect(view.getByText("Review Parsed Data")).toBeTruthy(),
+    expect(view.getByLabelText("Hedef Rol")).toBeTruthy(),
   );
   fireEvent.press(view.getByRole("button", { name: "Yetenek Ekle" }));
   fireEvent.changeText(view.getByLabelText("Yetenek"), "React Native");
-  fireEvent.press(view.getByRole("button", { name: "Kaydet" }));
+  fireEvent(view.getByLabelText("Yetenek"), "submitEditing");
   expect(view.getByText("React Native ×")).toBeTruthy();
   fireEvent.press(
     view.getByRole("button", { name: "Doğrula ve Profili Kaydet" }),
