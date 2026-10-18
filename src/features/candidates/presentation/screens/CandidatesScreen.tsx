@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import { View } from "react-native";
+import { ScrollView } from "react-native";
 import { AppShell } from "../../../../core/presentation/layout/AppShell";
 import {
   Chip,
-  Dialog,
   Empty,
   Label,
   Search,
@@ -19,7 +18,6 @@ export function CandidatesScreen() {
   const employer = session?.role === "employer";
   const [query, setQuery] = useState("");
   const [stage, setStage] = useState<Stage | "all">("all");
-  const [open, setOpen] = useState(false);
   const items = services.candidates.search(query, stage, state.decisions);
   return (
     <AppShell>
@@ -27,46 +25,34 @@ export function CandidatesScreen() {
         value={query}
         onChangeText={setQuery}
         placeholder={employer ? "Aday ara" : "Aday, pozisyon veya yetenek ara"}
-        onFilter={() => setOpen(true)}
       />
-      <View style={styles.row}>
-        <Label muted>{items.length} aday</Label>
-        {stage !== "all" && (
-          <Chip
-            label={stageLabels[stage]}
-            active
-            onPress={() => setStage("all")}
-          />
-        )}
-      </View>
-      {items.map((candidate) => (
-        <CandidateCard key={candidate.id} candidate={candidate} />
-      ))}
-      {!items.length && <Empty />}
-      <Dialog
-        title=""
-        closeIcon
-        headerBottomPadding={0}
-        visible={open}
-        onClose={() => setOpen(false)}
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+        contentContainerStyle={styles.row}
       >
-        <Label muted>Başvuru aşaması</Label>
-        <View style={styles.wrap}>
-          <Chip
-            label="Tümü"
-            active={stage === "all"}
-            onPress={() => setStage("all")}
-          />
-          {(Object.keys(stageLabels) as Stage[]).map((item) => (
+        <Chip
+          label="Tümü"
+          active={stage === "all"}
+          onPress={() => setStage("all")}
+        />
+        {(["assessment", "interview", "offer", "rejected"] as const).map(
+          (item) => (
             <Chip
               key={item}
               label={stageLabels[item]}
               active={stage === item}
               onPress={() => setStage(item)}
             />
-          ))}
-        </View>
-      </Dialog>
+          ),
+        )}
+      </ScrollView>
+      <Label muted>{items.length} aday</Label>
+      {items.map((candidate) => (
+        <CandidateCard key={candidate.id} candidate={candidate} />
+      ))}
+      {!items.length && <Empty />}
     </AppShell>
   );
 }
