@@ -347,7 +347,7 @@ test("candidate search resolves a different candidate and stage filters", async 
 });
 test("requisition form exposes conditional office selection and validates title", async () => {
   const view = await signedIn(<RequisitionScreen />, "employer");
-  await waitFor(() => expect(view.getByText("New Requisition")).toBeTruthy());
+  await waitFor(() => expect(view.getByLabelText("Pozisyon Adı")).toBeTruthy());
   expect(view.queryByText("Ofis")).toBeNull();
   fireEvent.press(view.getByRole("button", { name: "Hybrid" }));
   expect(view.getByText("Ofis")).toBeTruthy();

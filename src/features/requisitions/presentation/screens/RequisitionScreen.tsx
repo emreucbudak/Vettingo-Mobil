@@ -16,10 +16,10 @@ import { Requisition } from "../../domain/entities/Requisition";
 import { useApp } from "../../../../core/presentation/state/AppProvider";
 
 export default function RequisitionScreen() {
-  const { state, session, dispatch, services } = useApp();
+  const { session, dispatch, services } = useApp();
   const catalog = services.requisitionCatalog.catalog;
   const [draft, setDraft] = useState<Requisition>(
-    () => state.draft || services.workspace.requisitions.create(),
+    () => services.workspace.requisitions.create(),
   );
   const [step, setStep] = useState(0);
   const [message, setMessage] = useState("");
@@ -27,17 +27,12 @@ export default function RequisitionScreen() {
     setDraft(next);
     setMessage("");
   }
-  function saveDraft() {
-    dispatch({ type: "draft", draft });
-    setMessage("Taslak cihazda kaydedildi.");
-  }
   function next() {
     const error = services.workspace.requisitions.validate(draft);
     if (error) {
       setMessage(error);
       return;
     }
-    dispatch({ type: "draft", draft });
     setStep(step + 1);
     setMessage("");
   }
@@ -57,31 +52,7 @@ export default function RequisitionScreen() {
     update(services.workspace.requisitions.generateDescription(draft));
   }
   return (
-    <AppShell
-      title="New Requisition"
-      actions={
-        <View style={{ gap: 10 }}>
-          <View style={styles.row}>
-            <View style={{ flex: 1 }}>
-              <Button label="Taslağı Kaydet" secondary onPress={saveDraft} />
-            </View>
-            <View style={{ flex: 1 }}>
-              <Button
-                label={step === 2 ? "İlanı Oluştur" : "Devam Et"}
-                onPress={step === 2 ? publish : next}
-              />
-            </View>
-          </View>
-          {step > 0 && (
-            <Button
-              label="Önceki Adım"
-              secondary
-              onPress={() => setStep(step - 1)}
-            />
-          )}
-        </View>
-      }
-    >
+    <AppShell>
       <View style={styles.wrap}>
         {["Role Definition", "Job Description", "Review"].map(
           (label, index) => (
@@ -232,11 +203,24 @@ export default function RequisitionScreen() {
       {!!message && (
         <Text
           accessibilityRole="alert"
-          style={message.includes("kaydedildi") ? styles.muted : styles.error}
+          style={styles.error}
         >
           {message}
         </Text>
       )}
+      <View style={{ gap: 10 }}>
+        <Button
+          label={step === 2 ? "İlanı Oluştur" : "Devam Et"}
+          onPress={step === 2 ? publish : next}
+        />
+        {step > 0 && (
+          <Button
+            label="Önceki Adım"
+            secondary
+            onPress={() => setStep(step - 1)}
+          />
+        )}
+      </View>
     </AppShell>
   );
 }
