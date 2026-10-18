@@ -86,6 +86,7 @@ export function JobSearchScreen() {
       <Dialog
         title=""
         closeIcon
+        headerBottomPadding={0}
         visible={filterOpen}
         onClose={() => setFilterOpen(false)}
       >

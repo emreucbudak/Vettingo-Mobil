@@ -153,7 +153,11 @@ export function AppShell({
         {tabs.map((tab) => {
           const active =
             path === tab.path ||
-            (tab.label === "Profil" && path === "/cv-review");
+            (tab.label === "Profil" &&
+              (path === "/cv-review" ||
+                path === "/candidate-profile-details" ||
+                path === "/candidate-security" ||
+                path === "/candidate-help"));
           return (
             <Pressable
               key={tab.path}
