@@ -61,8 +61,8 @@ export default function DashboardScreen() {
   const hr = session.role === "hr";
   const metrics = hr
     ? [
+        ["Toplam Başvuru", "1,248"],
         ["Açık Pozisyon", String(14 + state.requisitions.length - 3)],
-        ["Yeni Başvuru", "36"],
         ["Mülakat", "8"],
         ["Teklif Aşaması", "5"],
       ]
@@ -88,8 +88,7 @@ export default function DashboardScreen() {
                   justifyContent: "center",
                 }}
               >
-                {!hr &&
-                (label === "Toplam Başvuru" || label === "Açık Pozisyon") ? (
+                {label === "Toplam Başvuru" || label === "Açık Pozisyon" ? (
                   <MaterialIcons
                     name={label === "Toplam Başvuru" ? "groups" : "search"}
                     size={22}
