@@ -34,6 +34,10 @@ export default function ProfileScreen() {
       return;
     }
     const page = accountPages[label];
+    if (session?.role === "candidate" && (page === "security" || page === "help")) {
+      router.push(`/candidate-${page}` as Href);
+      return;
+    }
     if ((session?.role === "employer" || session?.role === "hr") && page) {
       router.push(`/${session.role}-${page}` as Href);
       return;
@@ -72,7 +76,13 @@ export default function ProfileScreen() {
             <ProfileMenuRow
               key={label}
               label={label}
-              onPress={() => router.push("/cv-review")}
+              onPress={() =>
+                router.push(
+                  (label === "Profil"
+                    ? "/candidate-profile-details"
+                    : "/cv-review") as Href,
+                )
+              }
             />
           ))
         ) : (
