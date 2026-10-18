@@ -1,5 +1,6 @@
 export const stageLabels = {
   screening: "Ön Eleme",
+  assessment: "Sınav",
   interview: "Mülakat",
   offer: "Teklif",
   rejected: "Reddedildi",

@@ -3,7 +3,8 @@ import {
   Education,
 } from "../../../../shared/domain/entities/Profile";
 
-export type Stage = "screening" | "interview" | "offer" | "rejected";
+export type Stage =
+  "screening" | "assessment" | "interview" | "offer" | "rejected";
 export type Decision =
   "pending" | "advanced" | "rejected" | "interviewScheduled";
 export interface Candidate {
