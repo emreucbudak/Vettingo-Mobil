@@ -1,6 +1,7 @@
 import React from "react";
 import { Text, View } from "react-native";
 import { router, Href } from "expo-router";
+import { MaterialIcons } from "@expo/vector-icons";
 import { useApp } from "../../../../core/presentation/state/AppProvider";
 import { AppShell } from "../../../../core/presentation/layout/AppShell";
 import {
@@ -87,7 +88,16 @@ export default function DashboardScreen() {
                   justifyContent: "center",
                 }}
               >
-                <Text style={{ color: colors.blue }}>↗</Text>
+                {!hr &&
+                (label === "Toplam Başvuru" || label === "Açık Pozisyon") ? (
+                  <MaterialIcons
+                    name={label === "Toplam Başvuru" ? "groups" : "search"}
+                    size={22}
+                    color={colors.blue}
+                  />
+                ) : (
+                  <Text style={{ color: colors.blue }}>↗</Text>
+                )}
               </View>
               <Text
                 style={{ color: colors.ink, fontSize: 29, fontWeight: "800" }}
