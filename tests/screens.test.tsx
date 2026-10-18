@@ -364,7 +364,7 @@ test("CV review adds a skill and saves the edited profile", async () => {
   fireEvent(view.getByLabelText("Yetenek"), "submitEditing");
   expect(view.getByText("React Native ×")).toBeTruthy();
   fireEvent.press(
-    view.getByRole("button", { name: "Doğrula ve Profili Kaydet" }),
+    view.getByRole("button", { name: "CV’yi Kaydet" }),
   );
   await waitFor(async () =>
     expect(

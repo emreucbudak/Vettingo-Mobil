@@ -6,6 +6,7 @@ import {
   Button,
   Card,
   Chip,
+  colors,
   Field,
   Label,
   Section,
@@ -42,17 +43,7 @@ export default function CvReviewScreen() {
     setError("");
   }
   return (
-    <AppShell
-      actions={
-        <Button
-          label={
-            cv.completed ? "Profil Kaydedildi" : "Doğrula ve Profili Kaydet"
-          }
-          disabled={cv.completed}
-          onPress={save}
-        />
-      }
-    >
+    <AppShell>
       {cv.completed && <Badge>Profil Kaydedildi</Badge>}
       {!!cv.fileName && <Label muted>Seçilen belge: {cv.fileName}</Label>}
       <Card>
@@ -62,12 +53,12 @@ export default function CvReviewScreen() {
           onChangeText={(summary) => update({ ...cv, summary })}
         />
       </Card>
+      <Section
+        title="Temel Yetenekler"
+        action="Yetenek Ekle"
+        onPress={() => setSkillOpen(true)}
+      />
       <Card>
-        <Section
-          title="Temel Yetenekler"
-          action="Yetenek Ekle"
-          onPress={() => setSkillOpen(true)}
-        />
         <View style={styles.wrap}>
           {cv.skills.map((item) => (
             <Chip
@@ -93,7 +84,19 @@ export default function CvReviewScreen() {
           />
         )}
       </Card>
-      <Title small>Deneyim</Title>
+      <View style={[styles.row, { justifyContent: "space-between" }]}>
+        <Title small>Deneyim</Title>
+        <Text
+          style={{
+            color: colors.blue,
+            fontWeight: "600",
+            fontSize: 12,
+            padding: 8,
+          }}
+        >
+          Deneyim Ekle
+        </Text>
+      </View>
       {cv.experiences.map((experience, index) => (
         <Card key={index}>
           {(["role", "company", "period", "description"] as const).map(
@@ -123,8 +126,20 @@ export default function CvReviewScreen() {
           )}
         </Card>
       ))}
-      <Card>
+      <View style={[styles.row, { justifyContent: "space-between" }]}>
         <Title small>Eğitim</Title>
+        <Text
+          style={{
+            color: colors.blue,
+            fontWeight: "600",
+            fontSize: 12,
+            padding: 8,
+          }}
+        >
+          Eğitim Ekle
+        </Text>
+      </View>
+      <Card>
         {(["degree", "institution", "period"] as const).map((key) => (
           <Field
             key={key}
@@ -143,6 +158,7 @@ export default function CvReviewScreen() {
         ))}
       </Card>
       {!!error && <Text style={styles.error}>{error}</Text>}
+      <Button label="CV’yi Kaydet" disabled={cv.completed} onPress={save} />
     </AppShell>
   );
 }
