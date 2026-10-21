@@ -21,6 +21,7 @@ function Routes() {
         <Stack.Protected guard={!session}>
           <Stack.Screen name="login" />
           <Stack.Screen name="register" />
+          <Stack.Screen name="forgot-password" />
         </Stack.Protected>
         <Stack.Protected guard={session?.role === "candidate"}>
           <Stack.Screen name="(candidate)" />

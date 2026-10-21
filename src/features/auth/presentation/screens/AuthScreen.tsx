@@ -87,12 +87,20 @@ export default function AuthScreen({
         behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
         <ScrollView
+          style={{ flex: 1 }}
           keyboardShouldPersistTaps="handled"
-          contentContainerStyle={{
-            ...styles.content,
-            maxWidth: 460,
-            paddingTop: 36,
-          }}
+          contentContainerStyle={[
+            styles.content,
+            { maxWidth: 460 },
+            register
+              ? { paddingTop: 36 }
+              : {
+                  flexGrow: 1,
+                  justifyContent: "center",
+                  paddingTop: 24,
+                  paddingBottom: 24,
+                },
+          ]}
         >
           <Image
             source={require("../../../../../assets/images/vettingo_splash_logo.png")}
@@ -254,7 +262,7 @@ export default function AuthScreen({
               </View>
               <Pressable
                 accessibilityRole="button"
-                onPress={() => unavailable("Şifre sıfırlama")}
+                onPress={() => router.push("/forgot-password")}
               >
                 <Text style={{ color: colors.blue, fontSize: 12 }}>
                   Şifrenizi mi unuttunuz?
