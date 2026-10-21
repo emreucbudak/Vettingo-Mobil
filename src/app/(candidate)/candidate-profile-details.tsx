@@ -1,1 +1,1 @@
-export { default } from "../../features/account/presentation/screens/CandidateAccountPage";
+export { default } from "../../features/account/presentation/screens/CandidateProfileDetailsScreen";
