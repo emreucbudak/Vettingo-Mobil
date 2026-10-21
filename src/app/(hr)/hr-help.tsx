@@ -1,1 +1,1 @@
-export { default } from "../../features/account/presentation/screens/HrAccountPage";
+export { default } from "../../features/account/presentation/screens/HrHelpScreen";
