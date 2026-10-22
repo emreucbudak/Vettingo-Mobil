@@ -14,12 +14,11 @@ export default function ScoutScreen() {
   const candidates = services.candidates.search(query, "all", state.decisions);
 
   return (
-    <AppShell title="Scout">
-      <Label muted>Ekibin için yeni yetenekleri keşfet.</Label>
+    <AppShell>
       <Search
         value={query}
         onChangeText={setQuery}
-        placeholder="İsim, pozisyon veya yetenek ara"
+        placeholder="Yetenek Ara"
       />
       <Label muted>{candidates.length} yetenek</Label>
       {candidates.map((candidate) => (

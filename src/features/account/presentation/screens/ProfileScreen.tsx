@@ -30,7 +30,7 @@ export default function ProfileScreen() {
     );
   function openMenuItem(label: string) {
     if (label === "Scout") {
-      router.push("/scout");
+      router.push({ pathname: "/scout", params: { tab: "profile" } });
       return;
     }
     const page = accountPages[label];

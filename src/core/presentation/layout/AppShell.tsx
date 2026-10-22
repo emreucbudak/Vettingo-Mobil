@@ -8,7 +8,7 @@ import {
   View,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { router, Href, usePathname } from "expo-router";
+import { router, Href, useLocalSearchParams, usePathname } from "expo-router";
 import {
   SafeAreaView,
   useSafeAreaInsets,
@@ -28,6 +28,7 @@ export function AppShell({
 }: React.PropsWithChildren<{ title?: string; actions?: React.ReactNode }>) {
   const { session, storageError } = useApp();
   const path = usePathname();
+  const { tab: sourceTab } = useLocalSearchParams<{ tab?: string }>();
   const insets = useSafeAreaInsets();
   if (!session) return null;
   const role = session.role;
@@ -78,6 +79,16 @@ export function AppShell({
           },
         ];
   const main = tabs.some((tab) => tab.path === path);
+  const profilePage =
+    [
+      `/${role}-profile-details`,
+      `/${role}-company`,
+      `/${role}-security`,
+      `/${role}-help`,
+    ].includes(path) ||
+    (role === "candidate" && path === "/cv-review") ||
+    (sourceTab === "profile" &&
+      (path === "/scout" || path === "/candidate-detail"));
   return (
     <SafeAreaView style={styles.page} edges={["top"]}>
       <View
@@ -159,11 +170,7 @@ export function AppShell({
           const active =
             path === tab.path ||
             (tab.path === "/job-search" && path === "/job-detail") ||
-            (tab.label === "Profil" &&
-              (path === "/cv-review" ||
-                path === "/candidate-profile-details" ||
-                path === "/candidate-security" ||
-                path === "/candidate-help"));
+            (tab.label === "Profil" && profilePage);
           return (
             <Pressable
               key={tab.path}

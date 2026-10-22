@@ -17,7 +17,7 @@ export function ApplicationsScreen() {
     (item) => filter === "Tümü" || item.status === filter,
   );
   return (
-    <AppShell title="Başvurularım">
+    <AppShell>
       <View style={styles.wrap}>
         {[
           ["Tümü", "Tümü"],

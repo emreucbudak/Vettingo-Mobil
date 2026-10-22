@@ -1,6 +1,7 @@
 jest.unmock("expo-router");
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Alert } from "react-native";
 import {
   act,
   fireEvent,
@@ -14,6 +15,7 @@ beforeEach(async () => {
 });
 
 afterEach(() => {
+  jest.restoreAllMocks();
   jest.useRealTimers();
 });
 
@@ -75,3 +77,80 @@ test("job search cards open a blank candidate detail page and allow going back",
   await waitFor(() => expect(view.getPathname()).toBe("/job-search"));
   expect(screen.getByPlaceholderText("Pozisyon ara")).toBeTruthy();
 }, 30000);
+
+test.each(["candidate", "employer", "hr"])(
+  "%s keeps Profile selected throughout its profile menu pages",
+  async (role) => {
+    await AsyncStorage.setItem(
+      "vettingo:demo-session:v1",
+      JSON.stringify({
+        email: "profile-navigation@vettingo.com",
+        name: "Alex",
+        role,
+        company: "Vettingo",
+        remember: true,
+      }),
+    );
+    const profilePath = `/${role}-profile`;
+    const view = renderRouter("src/app", { initialUrl: profilePath });
+    const expectProfileSelected = () => {
+      expect(screen.getByRole("tab", { name: "Profil" })).toBeSelected();
+      expect(screen.getAllByRole("tab", { selected: true })).toHaveLength(1);
+    };
+    await waitFor(expectProfileSelected);
+
+    const pages = [
+      ...(role === "candidate"
+        ? [
+            ["Profil", "/candidate-profile-details"],
+            ["CV", "/cv-review"],
+          ]
+        : [
+            ["Şirket", `/${role}-company`],
+            ["Scout", "/scout"],
+          ]),
+      ["Güvenlik", `/${role}-security`],
+      ["Yardım Merkezi", `/${role}-help`],
+    ];
+    for (const [label, path] of pages) {
+      fireEvent.press(screen.getByRole("button", { name: label }));
+      await waitFor(() => expect(view.getPathname()).toBe(path));
+      expectProfileSelected();
+      if (label === "Scout") {
+        fireEvent.press(
+          screen.getByRole("button", { name: "Sarah Jenkins profilini aç" }),
+        );
+        await waitFor(() =>
+          expect(view.getPathname()).toBe("/candidate-detail"),
+        );
+        expectProfileSelected();
+        fireEvent.press(screen.getByRole("button", { name: "Geri" }));
+        await waitFor(() => expect(view.getPathname()).toBe("/scout"));
+        expectProfileSelected();
+      }
+      fireEvent.press(screen.getByRole("button", { name: "Geri" }));
+      await waitFor(() => expect(view.getPathname()).toBe(profilePath));
+      expectProfileSelected();
+    }
+
+    fireEvent(
+      screen.getByRole("switch", { name: "Bildirim tercihi" }),
+      "valueChange",
+      true,
+    );
+    expectProfileSelected();
+    if (role !== "candidate") {
+      const alert = jest.spyOn(Alert, "alert").mockImplementation(() => {});
+      fireEvent.press(screen.getByRole("button", { name: "Ekip ve Yetkiler" }));
+      expect(alert).toHaveBeenCalled();
+      expectProfileSelected();
+    }
+    const otherTab = role === "candidate" ? "Başvurularım" : "İlanlar";
+    fireEvent.press(screen.getByRole("tab", { name: otherTab }));
+    await waitFor(() =>
+      expect(screen.getByRole("tab", { name: otherTab })).toBeSelected(),
+    );
+    expect(screen.getByRole("tab", { name: "Profil" })).not.toBeSelected();
+  },
+  60000,
+);
