@@ -328,10 +328,7 @@ test("job search and filter dialog change actual results", async () => {
   fireEvent.press(view.getByRole("button", { name: "10+ yıl" }));
   fireEvent.press(view.getByRole("button", { name: "Hybrid" }));
   fireEvent.press(view.getByRole("button", { name: "Kapat" }));
-  fireEvent.changeText(
-    view.getByLabelText("Pozisyon veya şirket ara"),
-    "Globex",
-  );
+  fireEvent.changeText(view.getByLabelText("Pozisyon ara"), "Globex");
   expect(view.getByText("Director of Engineering")).toBeTruthy();
   expect(view.queryByText("VP of Engineering")).toBeNull();
 });

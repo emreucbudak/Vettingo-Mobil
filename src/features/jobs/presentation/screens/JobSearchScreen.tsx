@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Pressable, Text, View } from "react-native";
+import { router } from "expo-router";
 import { AppShell } from "../../../../core/presentation/layout/AppShell";
 import {
   Chip,
@@ -59,7 +60,7 @@ export function JobSearchScreen() {
       <Search
         value={query}
         onChangeText={setQuery}
-        placeholder="Pozisyon veya şirket ara"
+        placeholder="Pozisyon ara"
         onFilter={() => setFilterOpen(true)}
       />
       <View style={styles.wrap}>
@@ -74,13 +75,18 @@ export function JobSearchScreen() {
           />
         ))}
       </View>
-      <View style={styles.row}>
-        <Text style={styles.heading}>Önerilen Eşleşmeler</Text>
-        <View style={{ flex: 1 }} />
+      <View style={[styles.row, { justifyContent: "flex-end" }]}>
         <Label muted>{items.length} sonuç</Label>
       </View>
       {items.map((job) => (
-        <JobCard key={job.id} job={job} />
+        <JobCard
+          key={job.id}
+          job={job}
+          showMatch={false}
+          onPress={() =>
+            router.push({ pathname: "/job-detail", params: { id: job.id } })
+          }
+        />
       ))}
       {!items.length && <Empty />}
       <Dialog

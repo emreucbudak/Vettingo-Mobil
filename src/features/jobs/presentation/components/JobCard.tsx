@@ -1,5 +1,5 @@
 import React from "react";
-import { View } from "react-native";
+import { Pressable, View } from "react-native";
 import { Job } from "../../domain/entities/Job";
 import { useApp } from "../../../../core/presentation/state/AppProvider";
 import {
@@ -12,10 +12,18 @@ import {
   Title,
 } from "../../../../shared/presentation/components/ui";
 
-export function JobCard({ job }: { job: Job }) {
+export function JobCard({
+  job,
+  onPress,
+  showMatch = true,
+}: {
+  job: Job;
+  onPress?: () => void;
+  showMatch?: boolean;
+}) {
   const { state, dispatch } = useApp();
   const applied = state.applications.some((item) => item.id === job.id);
-  return (
+  const card = (
     <Card>
       <View
         style={[
@@ -29,7 +37,7 @@ export function JobCard({ job }: { job: Job }) {
             {job.company} · {job.location}
           </Label>
         </View>
-        <Badge>{job.match}% Uyum</Badge>
+        {showMatch && <Badge>{job.match}% Uyum</Badge>}
       </View>
       <Label>{job.salary}</Label>
       <View style={styles.wrap}>
@@ -37,12 +45,25 @@ export function JobCard({ job }: { job: Job }) {
           <Chip key={tag} label={tag} />
         ))}
       </View>
-      <Button
-        label={applied ? "Başvuru Gönderildi" : "Başvur"}
-        disabled={applied}
-        secondary
-        onPress={() => dispatch({ type: "apply", job })}
-      />
+      {!onPress && (
+        <Button
+          label={applied ? "Başvuru Gönderildi" : "Başvur"}
+          disabled={applied}
+          secondary
+          onPress={() => dispatch({ type: "apply", job })}
+        />
+      )}
     </Card>
+  );
+  return onPress ? (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={`${job.title} ilan detayını aç`}
+      onPress={onPress}
+    >
+      {card}
+    </Pressable>
+  ) : (
+    card
   );
 }
