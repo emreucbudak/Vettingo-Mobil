@@ -135,6 +135,7 @@ export function AppShell({
         behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
         <ScrollView
+          style={{ flex: 1 }}
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={styles.content}
         >

@@ -373,24 +373,28 @@ test("CV review adds a skill and saves the edited profile", async () => {
     ).toContain("React Native"),
   );
 });
-test("comparison keeps separate decisions when changing candidates", async () => {
-  const view = await signedIn(<ComparisonScreen />, "employer");
-  await waitFor(() =>
-    expect(view.getByText("Yetenek Karşılaştırma")).toBeTruthy(),
-  );
-  fireEvent.press(view.getByRole("button", { name: "Adayı İlerlet" }));
-  fireEvent.press(view.getByRole("button", { name: "Marcus Chen" }));
-  fireEvent.press(view.getByRole("button", { name: "Adayı Reddet" }));
-  await waitFor(async () => {
-    const data = JSON.parse(
-      (await AsyncStorage.getItem(
-        "vettingo:workspace:v1:employer:test@vettingo.com",
-      ))!,
+test.each(["employer", "hr"])(
+  "%s listing details show a centered listing title without candidate comparisons",
+  async (role) => {
+    const view = await signedIn(<ComparisonScreen />, role);
+    await waitFor(() =>
+      expect(view.getByText("Senior Frontend Engineer")).toBeTruthy(),
     );
-    expect(data.decisions["sarah-jenkins"].action).toBe("advanced");
-    expect(data.decisions["marcus-chen"].action).toBe("rejected");
-  });
-});
+    expect(
+      view.getByRole("header", { name: "Senior Frontend Engineer" }),
+    ).toHaveStyle({ textAlign: "center" });
+    expect(view.queryByText("San Francisco, CA · Remote")).toBeNull();
+    expect(view.queryByText("Active")).toBeNull();
+    expect(view.queryByText("Yetenek Karşılaştırma")).toBeNull();
+    expect(view.queryByText("Karşılaştırma Özeti")).toBeNull();
+    expect(view.queryByText("Sarah Jenkins")).toBeNull();
+    expect(view.queryByText("Marcus Chen")).toBeNull();
+    expect(view.queryByRole("button", { name: "Profili Gör" })).toBeNull();
+    expect(view.queryByRole("button", { name: "Adayı Reddet" })).toBeNull();
+    expect(view.queryByRole("button", { name: "Adayı İlerlet" })).toBeNull();
+    await view.unmountAsync();
+  },
+);
 test("assessment accepts an answer, advances and locks after submission", async () => {
   const view = await signedIn(<AssessmentScreen />);
   await waitFor(() => expect(view.getByText("Soru 4 / 20")).toBeTruthy());
