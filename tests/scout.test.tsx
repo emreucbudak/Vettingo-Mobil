@@ -49,7 +49,10 @@ test.each(["employer", "hr"])(
 
     const profile = await signedIn(<ProfileScreen />, role);
     fireEvent.press(profile.getByRole("button", { name: "Scout" }));
-    expect(router.push).toHaveBeenLastCalledWith("/scout");
+    expect(router.push).toHaveBeenLastCalledWith({
+      pathname: "/scout",
+      params: { tab: "profile" },
+    });
     await profile.unmountAsync();
 
     const jobs = await signedIn(<RequisitionsScreen />, role);
@@ -62,7 +65,7 @@ test.each(["employer", "hr"])(
 
 test("Scout searches skills, opens talent profiles and handles empty results", async () => {
   const view = await signedIn(<ScoutScreen />, "employer");
-  const search = view.getByLabelText("İsim, pozisyon veya yetenek ara");
+  const search = view.getByLabelText("Yetenek Ara");
   fireEvent.changeText(search, "TypeScript");
   expect(view.getByText("Michael Ross")).toBeTruthy();
   expect(view.queryByText("Zeynep Kaya")).toBeNull();

@@ -1,6 +1,6 @@
 import React from "react";
 import { Pressable, View } from "react-native";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { Candidate } from "../../domain/entities/Candidate";
 import { candidateStage } from "../../domain/policies/stage";
 import { stageLabels } from "../formatters/labels";
@@ -17,6 +17,7 @@ import {
 
 export function CandidateCard({ candidate }: { candidate: Candidate }) {
   const { state } = useApp();
+  const { tab } = useLocalSearchParams<{ tab?: string }>();
   const stage = candidateStage(candidate, state.decisions);
   return (
     <Pressable
@@ -25,7 +26,10 @@ export function CandidateCard({ candidate }: { candidate: Candidate }) {
       onPress={() =>
         router.push({
           pathname: "/candidate-detail",
-          params: { id: candidate.id },
+          params: {
+            id: candidate.id,
+            ...(tab === "profile" ? { tab } : {}),
+          },
         })
       }
     >
