@@ -17,12 +17,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
   Button,
-  Chip,
   colors,
   Dialog,
   Label,
   styles,
-  Title,
 } from "../../../../shared/presentation/components/ui";
 import { AuthenticationInput, Role } from "../../domain/entities/Session";
 import { authenticationSchema } from "../../domain/policies/validation";
@@ -113,26 +111,55 @@ export default function AuthScreen({
             resizeMode="contain"
           />
           {register && (
-            <View style={{ gap: 6, marginBottom: 6 }}>
-              <Title>Hesabınızı oluşturun</Title>
-            </View>
-          )}
-          {register && (
             <Controller
               control={control}
               name="role"
               render={({ field: { value, onChange } }) => (
-                <View style={styles.wrap}>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    gap: 0,
+                    width: "100%",
+                    maxWidth: 380,
+                    alignSelf: "center",
+                    borderRadius: 12,
+                    borderWidth: 1,
+                    borderColor: colors.border,
+                    overflow: "hidden",
+                  }}
+                >
                   {(["candidate", "employer"] as Role[]).map((item) => (
-                    <Chip
+                    <Pressable
                       key={item}
-                      label={roleLabels[item]}
-                      active={value === item}
+                      accessibilityRole="button"
+                      accessibilityLabel={roleLabels[item]}
+                      accessibilityState={{ selected: value === item }}
                       onPress={() => {
                         onChange(item);
                         clearErrors("company");
                       }}
-                    />
+                      style={({ pressed }) => ({
+                        flex: 1,
+                        minHeight: 48,
+                        paddingHorizontal: 16,
+                        paddingVertical: 10,
+                        alignItems: "center",
+                        justifyContent: "center",
+                        backgroundColor: value === item ? "#000" : "#fff",
+                        opacity: pressed ? 0.8 : 1,
+                      })}
+                    >
+                      <Text
+                        style={{
+                          fontSize: 15,
+                          fontWeight: "700",
+                          textAlign: "center",
+                          color: value === item ? "#fff" : colors.ink,
+                        }}
+                      >
+                        {roleLabels[item]}
+                      </Text>
+                    </Pressable>
                   ))}
                 </View>
               )}
@@ -144,12 +171,14 @@ export default function AuthScreen({
                 control={control}
                 name="name"
                 label="Ad"
+                placeholder="Adınızı girin"
                 autoComplete="given-name"
               />
               <AuthField
                 control={control}
                 name="surname"
                 label="Soyad"
+                placeholder="Soyadınızı girin"
                 autoComplete="family-name"
               />
             </>
@@ -167,7 +196,7 @@ export default function AuthScreen({
             control={control}
             name="password"
             label="Şifre"
-            placeholder={register ? undefined : "Şifrenizi girin"}
+            placeholder={register ? "Şifrenizi oluşturun" : "Şifrenizi girin"}
             secureTextEntry={!visible}
             autoCapitalize="none"
             autoComplete={register ? "new-password" : "current-password"}
@@ -195,7 +224,12 @@ export default function AuthScreen({
             }
           />
           {register && role !== "candidate" && (
-            <AuthField control={control} name="company" label="Şirket Adı" />
+            <AuthField
+              control={control}
+              name="company"
+              label="Şirket Adı"
+              placeholder="Şirket adını girin"
+            />
           )}
           {register ? (
             <>

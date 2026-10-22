@@ -63,13 +63,13 @@ export default function DashboardScreen() {
     ? [
         ["Toplam Başvuru", "1,248"],
         ["Açık Pozisyon", String(14 + state.requisitions.length - 3)],
-        ["Mülakat", "8"],
+        ["Aktif Aday", "8"],
         ["Teklif Aşaması", "5"],
       ]
     : [
         ["Toplam Başvuru", "1,248"],
         ["Açık Pozisyon", String(14 + state.requisitions.length - 3)],
-        ["AI ile İşlenen", "842"],
+        ["Aktif Aday", "842"],
         ["Büyüme", "+12%"],
       ];
   return (
@@ -88,9 +88,17 @@ export default function DashboardScreen() {
                   justifyContent: "center",
                 }}
               >
-                {label === "Toplam Başvuru" || label === "Açık Pozisyon" ? (
+                {label === "Toplam Başvuru" ||
+                label === "Açık Pozisyon" ||
+                label === "Aktif Aday" ? (
                   <MaterialIcons
-                    name={label === "Toplam Başvuru" ? "groups" : "search"}
+                    name={
+                      label === "Toplam Başvuru"
+                        ? "groups"
+                        : label === "Aktif Aday"
+                          ? "person"
+                          : "search"
+                    }
                     size={22}
                     color={colors.blue}
                   />
