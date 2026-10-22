@@ -9,7 +9,10 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { router, Href, usePathname } from "expo-router";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 import { useApp } from "../state/AppProvider";
 import { homeFor } from "../../../features/auth/presentation/navigation/routes";
 import {
@@ -25,6 +28,7 @@ export function AppShell({
 }: React.PropsWithChildren<{ title?: string; actions?: React.ReactNode }>) {
   const { session, storageError } = useApp();
   const path = usePathname();
+  const insets = useSafeAreaInsets();
   if (!session) return null;
   const role = session.role;
   const tabs: {
@@ -75,7 +79,7 @@ export function AppShell({
         ];
   const main = tabs.some((tab) => tab.path === path);
   return (
-    <SafeAreaView style={styles.page} edges={["top", "bottom"]}>
+    <SafeAreaView style={styles.page} edges={["top"]}>
       <View
         style={{
           height: 60,
@@ -147,7 +151,8 @@ export function AppShell({
           borderTopWidth: 1,
           borderTopColor: colors.border,
           paddingTop: 10,
-          paddingBottom: 8,
+          // Extend the bar to the screen edge while keeping tabs above system gestures.
+          paddingBottom: Math.max(insets.bottom, 8),
         }}
       >
         {tabs.map((tab) => {
