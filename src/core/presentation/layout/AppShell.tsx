@@ -158,6 +158,7 @@ export function AppShell({
         {tabs.map((tab) => {
           const active =
             path === tab.path ||
+            (tab.path === "/job-search" && path === "/job-detail") ||
             (tab.label === "Profil" &&
               (path === "/cv-review" ||
                 path === "/candidate-profile-details" ||
