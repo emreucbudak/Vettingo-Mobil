@@ -15,14 +15,14 @@ export default function ScoutScreen() {
 
   return (
     <AppShell>
-      <Search
-        value={query}
-        onChangeText={setQuery}
-        placeholder="Yetenek Ara"
-      />
+      <Search value={query} onChangeText={setQuery} placeholder="Yetenek Ara" />
       <Label muted>{candidates.length} yetenek</Label>
       {candidates.map((candidate) => (
-        <CandidateCard key={candidate.id} candidate={candidate} />
+        <CandidateCard
+          key={candidate.id}
+          candidate={candidate}
+          showMatch={false}
+        />
       ))}
       {!candidates.length && (
         <Empty label="Aramana uygun yetenek bulunamadı." />

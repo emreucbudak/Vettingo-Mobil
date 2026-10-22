@@ -1,133 +1,169 @@
-import React, { useState } from "react";
-import { View } from "react-native";
-import { router, useLocalSearchParams } from "expo-router";
+import React from "react";
+import { Alert, ScrollView, Text, View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { useLocalSearchParams } from "expo-router";
 import { AppShell } from "../../../../core/presentation/layout/AppShell";
 import {
-  Avatar,
-  Badge,
   Button,
-  Card,
-  Chip,
-  Label,
-  Progress,
+  colors,
   styles,
-  Title,
 } from "../../../../shared/presentation/components/ui";
-import { decisionLabels } from "../formatters/labels";
-import { useApp } from "../../../../core/presentation/state/AppProvider";
 
 export default function ComparisonScreen() {
   const { jobTitle } = useLocalSearchParams<{ jobTitle?: string }>();
-  const { state, dispatch, services } = useApp();
-  const { comparisonCandidates } = services.candidates.catalog;
-  const [index, setIndex] = useState(0);
-  const current = comparisonCandidates[index];
-  const decision = state.decisions[current.id]?.action || "pending";
   return (
-    <AppShell
-      title="Yetenek Karşılaştırma"
-      actions={
-        <View style={styles.row}>
-          <View style={{ flex: 1 }}>
-            <Button
-              label="Adayı Reddet"
-              danger
-              disabled={decision === "rejected"}
-              onPress={() =>
-                dispatch({
-                  type: "decision",
-                  candidateId: current.id,
-                  action: "rejected",
-                })
-              }
-            />
-          </View>
-          <View style={{ flex: 1 }}>
-            <Button
-              label="Adayı İlerlet"
-              disabled={decision === "advanced"}
-              onPress={() =>
-                dispatch({
-                  type: "decision",
-                  candidateId: current.id,
-                  action: "advanced",
-                })
-              }
-            />
-          </View>
-        </View>
-      }
-    >
-      <Card>
-        <Title small>{jobTitle || "Senior Frontend Engineer"}</Title>
-        <Label muted>San Francisco, CA · Remote</Label>
-        <Badge>Active</Badge>
-      </Card>
-      <View style={styles.wrap}>
-        {comparisonCandidates.map((candidate, candidateIndex) => (
-          <Chip
-            key={candidate.id}
-            label={candidate.name}
-            active={candidateIndex === index}
-            onPress={() => setIndex(candidateIndex)}
+    <AppShell>
+      <View style={[styles.card, { gap: 24 }]}>
+        <Text
+          accessibilityRole="header"
+          style={[styles.title, { textAlign: "center", width: "100%" }]}
+        >
+          {jobTitle || "Senior Frontend Engineer"}
+        </Text>
+        <View style={{ gap: 10 }}>
+          <Text style={styles.label}>Rol</Text>
+          <View
+            style={{
+              minHeight: 50,
+              borderRadius: 12,
+              borderWidth: 1,
+              borderColor: colors.border,
+              backgroundColor: "#fff",
+              paddingHorizontal: 14,
+              paddingVertical: 12,
+            }}
           />
-        ))}
-      </View>
-      <Card>
-        <View style={styles.row}>
-          <Avatar initials={current.initials} />
-          <View style={{ flex: 1 }}>
-            <Title small>{current.name}</Title>
-            <Label muted>{current.role}</Label>
+        </View>
+        <View style={{ gap: 10 }}>
+          <Text style={styles.label}>Tecrübe</Text>
+          <View
+            style={{
+              minHeight: 50,
+              borderRadius: 12,
+              borderWidth: 1,
+              borderColor: colors.border,
+              backgroundColor: "#fff",
+              paddingHorizontal: 14,
+              paddingVertical: 12,
+            }}
+          />
+        </View>
+        <View style={{ gap: 10 }}>
+          <Text style={styles.label}>Çalışma Tipi</Text>
+          <View
+            style={{
+              minHeight: 50,
+              borderRadius: 12,
+              borderWidth: 1,
+              borderColor: colors.border,
+              backgroundColor: "#fff",
+              paddingHorizontal: 14,
+              paddingVertical: 12,
+            }}
+          />
+        </View>
+        <View style={{ gap: 10 }}>
+          <Text style={styles.label}>Konum</Text>
+          <View
+            style={{
+              minHeight: 50,
+              borderRadius: 12,
+              borderWidth: 1,
+              borderColor: colors.border,
+              backgroundColor: "#fff",
+              paddingHorizontal: 14,
+              paddingVertical: 12,
+            }}
+          />
+        </View>
+        <View style={{ gap: 10 }}>
+          <Text style={styles.label}>Çalışma</Text>
+          <View
+            style={{
+              minHeight: 50,
+              borderRadius: 12,
+              borderWidth: 1,
+              borderColor: colors.border,
+              backgroundColor: "#fff",
+              paddingHorizontal: 14,
+              paddingVertical: 12,
+            }}
+          />
+        </View>
+        <View style={{ gap: 10 }}>
+          <Text style={styles.label}>Maaş</Text>
+          <View
+            style={{
+              minHeight: 50,
+              borderRadius: 12,
+              borderWidth: 1,
+              borderColor: colors.border,
+              backgroundColor: "#fff",
+              paddingHorizontal: 14,
+              paddingVertical: 12,
+            }}
+          />
+        </View>
+        <View style={{ gap: 10 }}>
+          <Text style={styles.label}>İstenen Yetenekler</Text>
+          <ScrollView
+            nestedScrollEnabled
+            style={{
+              height: 120,
+              borderRadius: 12,
+              borderWidth: 1,
+              borderColor: colors.border,
+              backgroundColor: "#fff",
+            }}
+            contentContainerStyle={{
+              paddingHorizontal: 14,
+              paddingVertical: 12,
+            }}
+          />
+        </View>
+        <View style={[styles.wrap, { gap: 12 }]}>
+          <View style={{ flex: 1, minWidth: 160 }}>
+            <Button
+              label="İlanı Düzenle"
+              secondary
+              icon={
+                <Ionicons
+                  name="create-outline"
+                  size={20}
+                  color={colors.primary}
+                  accessible={false}
+                />
+              }
+              onPress={() =>
+                Alert.alert(
+                  "İlanı Düzenle",
+                  "Bu özellik henüz kullanıma açık değil.",
+                )
+              }
+            />
+          </View>
+          <View style={{ flex: 1, minWidth: 160 }}>
+            <Button
+              label="İlanı Sil"
+              danger
+              icon={
+                <Ionicons
+                  name="trash-outline"
+                  size={20}
+                  color="#fff"
+                  accessible={false}
+                />
+              }
+              onPress={() =>
+                Alert.alert(
+                  "İlanı Sil",
+                  "Bu özellik henüz kullanıma açık değil.",
+                )
+              }
+            />
           </View>
         </View>
-        <Badge>{current.match}% Uyum</Badge>
-        <Badge success={decision !== "rejected"}>
-          {decisionLabels[decision]}
-        </Badge>
-        {current.skills.map((skill) => (
-          <View key={skill.name} style={{ gap: 6 }}>
-            <View style={[styles.row, { justifyContent: "space-between" }]}>
-              <Label>{skill.name}</Label>
-              <Label muted>
-                {skill.level} · {Math.round(skill.score * 100)}%
-              </Label>
-            </View>
-            <Progress value={skill.score} />
-          </View>
-        ))}
-        <Title small>Öne Çıkan Güçlü Yön</Title>
-        <Label>{current.summary}</Label>
-        <Button
-          label="Profili Gör"
-          secondary
-          onPress={() =>
-            router.push({
-              pathname: "/candidate-detail",
-              params: { id: current.id },
-            })
-          }
-        />
-      </Card>
-      <Card>
-        <Title small>Karşılaştırma Özeti</Title>
-        {comparisonCandidates.map((candidate) => (
-          <View key={candidate.id} style={{ gap: 5 }}>
-            <View style={[styles.row, { justifyContent: "space-between" }]}>
-              <Label>{candidate.name}</Label>
-              <Label muted>
-                {candidate.match}% ·{" "}
-                {
-                  decisionLabels[
-                    state.decisions[candidate.id]?.action || "pending"
-                  ]
-                }
-              </Label>
-            </View>
-            <Progress value={candidate.match / 100} />
-          </View>
-        ))}
-      </Card>
+      </View>
     </AppShell>
   );
 }
