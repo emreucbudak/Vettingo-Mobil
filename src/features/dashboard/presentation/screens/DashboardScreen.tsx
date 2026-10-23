@@ -132,14 +132,18 @@ export default function DashboardScreen() {
           ))}
         </>
       )}
-      <Section
-        title={hr ? "Öne Çıkan Adaylar" : "En İyi AI Eşleşmeleri"}
-        action="Tümünü Gör"
-        onPress={() => router.push(`/${session.role}-candidates` as Href)}
-      />
-      {candidates.slice(0, 2).map((candidate) => (
-        <DashboardCandidateCard key={candidate.id} candidate={candidate} />
-      ))}
+      {hr && (
+        <>
+          <Section
+            title="Öne Çıkan Adaylar"
+            action="Tümünü Gör"
+            onPress={() => router.push(`/${session.role}-candidates` as Href)}
+          />
+          {candidates.slice(0, 2).map((candidate) => (
+            <DashboardCandidateCard key={candidate.id} candidate={candidate} />
+          ))}
+        </>
+      )}
       {!hr && (
         <>
           <Section
