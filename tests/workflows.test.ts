@@ -169,12 +169,12 @@ describe("Clean Architecture use cases and migration behavior", () => {
     ).toBeNull();
     expect(validateRequisition({ ...draft, office: "London, UK" })).toBeNull();
     expect(validateRequisition({ ...draft, title: "" })).toContain("pozisyon");
-    expect(validateRequisition({ ...draft, department: "" })).toContain(
-      "departman",
-    );
+    expect(
+      validateRequisition({ ...draft, department: "", office: "London, UK" }),
+    ).toBeNull();
   });
   test("draft and publication retain role requirements", () => {
-    const complete = { ...draft, office: "London, UK" };
+    const complete = { ...draft, department: "", office: "London, UK" };
     const state = workspaceReducer(initialWorkspace(), {
       type: "draft",
       draft: complete,

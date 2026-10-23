@@ -337,15 +337,64 @@ test("candidate search resolves a different candidate and stage filters", async 
   expect(view.getByText("Zeynep Kaya")).toBeTruthy();
   expect(view.queryByText("Sarah Jenkins")).toBeNull();
 });
-test("requisition form exposes conditional office selection and validates title", async () => {
-  const view = await signedIn(<RequisitionScreen />, "employer");
-  await waitFor(() => expect(view.getByLabelText("Pozisyon Adı")).toBeTruthy());
-  expect(view.queryByText("Ofis")).toBeNull();
-  await fireEvent.press(view.getByRole("button", { name: "Hybrid" }));
-  expect(view.getByText("Ofis")).toBeTruthy();
-  await fireEvent.press(view.getByRole("button", { name: "Devam Et" }));
-  expect(view.getByText("Devam etmek için pozisyon adını girin.")).toBeTruthy();
-});
+test.each(["employer", "hr"])(
+  "%s can create a requisition without a department",
+  async (role) => {
+    const view = await signedIn(<RequisitionScreen />, role);
+    await waitFor(() =>
+      expect(view.getByLabelText("Pozisyon Adı")).toBeTruthy(),
+    );
+    expect(view.queryByText("Role Definition")).toBeNull();
+    expect(view.queryByText("Departman")).toBeNull();
+    expect(view.queryByRole("button", { name: "Engineering" })).toBeNull();
+    expect(view.getByText("Yetenekler")).toBeTruthy();
+    await fireEvent.press(view.getByRole("button", { name: "Yetenek Ekle" }));
+    await fireEvent.changeText(view.getByLabelText("Yetenek"), "   ");
+    expect(view.getByRole("button", { name: "Ekle" })).toBeDisabled();
+    await fireEvent.changeText(
+      view.getByLabelText("Yetenek"),
+      "  React Native  ",
+    );
+    await fireEvent.press(view.getByRole("button", { name: "Ekle" }));
+    expect(view.getByRole("button", { name: "React Native" })).toBeSelected();
+    await fireEvent.press(view.getByRole("button", { name: "React Native" }));
+    expect(
+      view.getByRole("button", { name: "React Native" }),
+    ).not.toBeSelected();
+    await fireEvent.press(view.getByRole("button", { name: "Yetenek Ekle" }));
+    await fireEvent.changeText(view.getByLabelText("Yetenek"), "react native");
+    await fireEvent(view.getByLabelText("Yetenek"), "submitEditing");
+    expect(view.getAllByRole("button", { name: "React Native" })).toHaveLength(
+      1,
+    );
+    expect(view.getByRole("button", { name: "React Native" })).toBeSelected();
+    expect(view.queryByText("Ofis")).toBeNull();
+    await fireEvent.press(view.getByRole("button", { name: "Hybrid" }));
+    expect(view.getByText("Ofis")).toBeTruthy();
+    await fireEvent.press(view.getByRole("button", { name: "Devam Et" }));
+    expect(
+      view.getByText("Devam etmek için pozisyon adını girin."),
+    ).toBeTruthy();
+    await fireEvent.changeText(
+      view.getByLabelText("Pozisyon Adı"),
+      "Backend Engineer",
+    );
+    await fireEvent.press(view.getByRole("button", { name: "Devam Et" }));
+    expect(view.getByText("Devam etmek için ofis seçin.")).toBeTruthy();
+    await fireEvent.press(view.getByRole("button", { name: "Remote" }));
+    await fireEvent.press(view.getByRole("button", { name: "Devam Et" }));
+    expect(view.queryByText("Job Description")).toBeNull();
+    expect(view.queryByText("İş Tanımı")).toBeNull();
+    expect(view.queryByRole("button", { name: "Taslak Oluştur" })).toBeNull();
+    expect(view.getByLabelText("İş Tanımı")).toHaveDisplayValue("");
+    await fireEvent.changeText(view.getByLabelText("İş Tanımı"), "Build APIs");
+    await fireEvent.press(view.getByRole("button", { name: "Devam Et" }));
+    expect(view.getByText("React Native")).toBeTruthy();
+    await fireEvent.press(view.getByRole("button", { name: "İlanı Oluştur" }));
+    expect(router.replace).toHaveBeenCalledWith(`/${role}-jobs`);
+    await view.unmount();
+  },
+);
 test("CV review adds a skill and saves the edited profile", async () => {
   const view = await signedIn(<CvReviewScreen />);
   await waitFor(() => expect(view.getByLabelText("Hedef Rol")).toBeTruthy());

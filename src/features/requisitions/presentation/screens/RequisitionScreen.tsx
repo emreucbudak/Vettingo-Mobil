@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Text, View } from "react-native";
+import { Text, TextInput, View } from "react-native";
 import { router, Href } from "expo-router";
 import { AppShell } from "../../../../core/presentation/layout/AppShell";
 import {
@@ -9,6 +9,7 @@ import {
   Chip,
   Field,
   Label,
+  Section,
   styles,
   Title,
 } from "../../../../shared/presentation/components/ui";
@@ -18,11 +19,14 @@ import { useApp } from "../../../../core/presentation/state/AppProvider";
 export default function RequisitionScreen() {
   const { session, dispatch, services } = useApp();
   const catalog = services.requisitionCatalog.catalog;
-  const [draft, setDraft] = useState<Requisition>(
-    () => services.workspace.requisitions.create(),
+  const [draft, setDraft] = useState<Requisition>(() =>
+    services.workspace.requisitions.create(),
   );
   const [step, setStep] = useState(0);
   const [message, setMessage] = useState("");
+  const [skill, setSkill] = useState("");
+  const [skillOpen, setSkillOpen] = useState(false);
+  const [skillOptions, setSkillOptions] = useState(() => [...catalog.skills]);
   function update(next: Requisition) {
     setDraft(next);
     setMessage("");
@@ -48,8 +52,19 @@ export default function RequisitionScreen() {
     });
     router.replace(`/${session!.role}-jobs` as Href);
   }
-  function autoDraft() {
-    update(services.workspace.requisitions.generateDescription(draft));
+  function addSkill() {
+    const value = skill.trim();
+    if (!value) return;
+    const existing = skillOptions.find(
+      (item) => item.toLowerCase() === value.toLowerCase(),
+    );
+    const selected = existing ?? value;
+    if (!existing) setSkillOptions([...skillOptions, selected]);
+    if (!draft.skills.includes(selected)) {
+      update({ ...draft, skills: [...draft.skills, selected] });
+    }
+    setSkill("");
+    setSkillOpen(false);
   }
   return (
     <AppShell>
@@ -67,24 +82,12 @@ export default function RequisitionScreen() {
       {step === 0 && (
         <>
           <Card>
-            <Title small>Role Definition</Title>
             <Field
               label="Pozisyon Adı"
               value={draft.title}
               onChangeText={(title) => update({ ...draft, title })}
               placeholder="Senior Backend Engineer"
             />
-            <Label>Departman</Label>
-            <View style={styles.wrap}>
-              {catalog.departments.map((department) => (
-                <Chip
-                  key={department}
-                  label={department}
-                  active={draft.department === department}
-                  onPress={() => update({ ...draft, department })}
-                />
-              ))}
-            </View>
             <Label>Çalışma Modeli</Label>
             <View style={styles.wrap}>
               {(["remote", "hybrid", "onsite"] as const).map((locationType) => (
@@ -123,9 +126,13 @@ export default function RequisitionScreen() {
             )}
           </Card>
           <Card>
-            <Title small>Önerilen Yetenekler</Title>
+            <Section
+              title="Yetenekler"
+              action="Yetenek Ekle"
+              onPress={() => setSkillOpen(true)}
+            />
             <View style={styles.wrap}>
-              {catalog.skills.map((skill) => (
+              {skillOptions.map((skill) => (
                 <Chip
                   key={skill}
                   label={skill}
@@ -141,6 +148,32 @@ export default function RequisitionScreen() {
                 />
               ))}
             </View>
+            {skillOpen && (
+              <View style={{ gap: 10 }}>
+                <Field
+                  label="Yetenek"
+                  placeholder="Yetenek adı"
+                  value={skill}
+                  onChangeText={setSkill}
+                  autoFocus
+                  returnKeyType="done"
+                  onSubmitEditing={addSkill}
+                />
+                <Button
+                  label="Ekle"
+                  disabled={!skill.trim()}
+                  onPress={addSkill}
+                />
+                <Button
+                  label="Vazgeç"
+                  secondary
+                  onPress={() => {
+                    setSkill("");
+                    setSkillOpen(false);
+                  }}
+                />
+              </View>
+            )}
           </Card>
           <Card>
             <Title small>Market Compensation</Title>
@@ -165,23 +198,23 @@ export default function RequisitionScreen() {
       )}
       {step === 1 && (
         <Card>
-          <Title small>Job Description</Title>
-          <Label muted>
-            Demo asistanı düzenlenebilir bir metin şablonu oluşturur.
-          </Label>
-          <Button label="Taslak Oluştur" secondary onPress={autoDraft} />
-          <Field
-            label="İş Tanımı"
+          <TextInput
+            accessibilityLabel="İş Tanımı"
             multiline
             value={draft.description}
             onChangeText={(description) => update({ ...draft, description })}
+            underlineColorAndroid="transparent"
+            style={[
+              styles.text,
+              { minHeight: 220, textAlignVertical: "top", padding: 0 },
+            ]}
           />
         </Card>
       )}
       {step === 2 && (
         <Card>
           <Title small>{draft.title}</Title>
-          <Label>{draft.department}</Label>
+          {!!draft.department && <Label>{draft.department}</Label>}
           <Label muted>
             {draft.locationType} {draft.office}
           </Label>
@@ -201,10 +234,7 @@ export default function RequisitionScreen() {
         </Card>
       )}
       {!!message && (
-        <Text
-          accessibilityRole="alert"
-          style={styles.error}
-        >
+        <Text accessibilityRole="alert" style={styles.error}>
           {message}
         </Text>
       )}
