@@ -81,6 +81,53 @@ test("Scout searches skills, opens talent profiles and handles empty results", a
   await view.unmount();
 });
 
+test.each(["employer", "hr"])(
+  "%s Scout filters combine, replace and clear selections without a talent counter",
+  async (role) => {
+    const view = await signedIn(<ScoutScreen />, role);
+    expect(view.queryByText(/^\d+ yetenek$/)).toBeNull();
+    await fireEvent.press(view.getByRole("button", { name: "Filtreler" }));
+    for (const name of ["Tecrübe", "Maaş", "Çalışma Tercihi"])
+      expect(view.getByRole("header", { name })).toBeTruthy();
+    await fireEvent.press(view.getByRole("button", { name: "0–5 yıl" }));
+    await fireEvent.press(view.getByRole("button", { name: "50.000–100.000" }));
+    await fireEvent.press(view.getByRole("button", { name: "Uzaktan" }));
+    await fireEvent.press(view.getByRole("button", { name: "Kapat" }));
+    expect(view.getByText("Michael Ross")).toBeTruthy();
+    expect(view.queryByText("Sarah Jenkins")).toBeNull();
+    expect(view.queryByText("Can Demir")).toBeNull();
+    expect(view.queryByText("Zeynep Kaya")).toBeNull();
+
+    await fireEvent.press(view.getByRole("button", { name: "Filtreler" }));
+    expect(view.getByRole("button", { name: "0–5 yıl" })).toBeSelected();
+    expect(view.getByRole("button", { name: "Uzaktan" })).toBeSelected();
+    await fireEvent.press(view.getByRole("button", { name: "5–10 yıl" }));
+    await fireEvent.press(view.getByRole("button", { name: "100.000+" }));
+    expect(view.getByRole("button", { name: "0–5 yıl" })).not.toBeSelected();
+    expect(
+      view.getByRole("button", { name: "50.000–100.000" }),
+    ).not.toBeSelected();
+    await fireEvent.press(view.getByRole("button", { name: "Kapat" }));
+    expect(view.getByText("Can Demir")).toBeTruthy();
+    expect(view.queryByText("Michael Ross")).toBeNull();
+
+    await fireEvent.press(view.getByRole("button", { name: "Filtreler" }));
+    await fireEvent.press(view.getByRole("button", { name: "5–10 yıl" }));
+    await fireEvent.press(view.getByRole("button", { name: "100.000+" }));
+    await fireEvent.press(view.getByRole("button", { name: "Uzaktan" }));
+    await fireEvent.press(view.getByRole("button", { name: "Kapat" }));
+    for (const name of [
+      "Sarah Jenkins",
+      "Michael Ross",
+      "Zeynep Kaya",
+      "Can Demir",
+    ])
+      expect(view.getByText(name)).toBeTruthy();
+    await view.unmount();
+  },
+  30000,
+);
+
 test("candidate home and profile do not show Scout entry points", async () => {
   for (const screen of [
     <DashboardScreen key="home" />,

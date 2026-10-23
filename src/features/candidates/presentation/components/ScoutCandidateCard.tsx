@@ -2,12 +2,8 @@ import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { Candidate } from "../../domain/entities/Candidate";
-import { candidateStage } from "../../domain/policies/stage";
-import { stageLabels } from "../formatters/labels";
-import { useApp } from "../../../../core/presentation/state/AppProvider";
 import {
   Avatar,
-  Badge,
   Card,
   Chip,
   colors,
@@ -15,10 +11,10 @@ import {
   Title,
 } from "../../../../shared/presentation/components/ui";
 
+const salaryFormatter = new Intl.NumberFormat("tr-TR");
+
 export function ScoutCandidateCard({ candidate }: { candidate: Candidate }) {
-  const { state } = useApp();
   const { tab } = useLocalSearchParams<{ tab?: string }>();
-  const stage = candidateStage(candidate, state.decisions);
 
   return (
     <Pressable
@@ -40,18 +36,38 @@ export function ScoutCandidateCard({ candidate }: { candidate: Candidate }) {
             <Avatar initials={candidate.initials} />
             <View style={scoutStyles.identity}>
               <Title small>{candidate.name}</Title>
-              <Label muted>{candidate.role}</Label>
             </View>
-            <Badge success={stage === "offer"}>{stageLabels[stage]}</Badge>
           </View>
-          <Label muted>
-            Başvurulan Pozisyon:{" "}
-            <Text style={scoutStyles.appliedRole}>{candidate.appliedRole}</Text>
-          </Label>
-          <View style={scoutStyles.skills}>
-            {candidate.skills.slice(0, 3).map((skill) => (
-              <Chip key={skill.name} label={skill.name} />
-            ))}
+          <View style={scoutStyles.details}>
+            <Label muted>
+              Rol: <Text style={scoutStyles.detailValue}>{candidate.role}</Text>
+            </Label>
+            <Label muted>
+              Tecrübe:{" "}
+              <Text style={scoutStyles.detailValue}>
+                {candidate.experienceYears !== undefined
+                  ? `${candidate.experienceYears} yıl`
+                  : "Belirtilmedi"}
+              </Text>
+            </Label>
+            <Label muted>
+              İstenen Maaş:{" "}
+              <Text style={scoutStyles.detailValue}>
+                {candidate.salaryExpectation !== undefined
+                  ? salaryFormatter.format(candidate.salaryExpectation)
+                  : "Belirtilmedi"}
+              </Text>
+            </Label>
+          </View>
+          <View style={scoutStyles.skillsSection}>
+            <Text accessibilityRole="header" style={scoutStyles.skillsTitle}>
+              Yetenekler
+            </Text>
+            <View style={scoutStyles.skills}>
+              {candidate.skills.slice(0, 3).map((skill) => (
+                <Chip key={skill.name} label={skill.name} />
+              ))}
+            </View>
           </View>
         </View>
       </Card>
@@ -65,8 +81,16 @@ const scoutStyles = StyleSheet.create({
     justifyContent: "space-between",
     gap: 20,
   },
-  header: { flexDirection: "row", alignItems: "flex-start", gap: 10 },
+  header: { flexDirection: "row", alignItems: "center", gap: 10 },
   identity: { flex: 1, minWidth: 0 },
-  appliedRole: { color: colors.ink, fontWeight: "600" },
+  details: { gap: 8 },
+  detailValue: { color: colors.ink, fontWeight: "600" },
+  skillsSection: {
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+    paddingTop: 12,
+    gap: 8,
+  },
+  skillsTitle: { color: colors.ink, fontSize: 13, fontWeight: "600" },
   skills: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
 });
