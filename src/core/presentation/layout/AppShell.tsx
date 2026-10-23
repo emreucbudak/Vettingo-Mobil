@@ -86,9 +86,10 @@ export function AppShell({
       `/${role}-security`,
       `/${role}-help`,
     ].includes(path) ||
-    (role === "candidate" && path === "/cv-review") ||
+    (role === "candidate" &&
+      ["/cv-review", "/candidate-personalized-jobs"].includes(path)) ||
     (sourceTab === "profile" &&
-      (path === "/scout" || path === "/candidate-detail"));
+      ["/scout", "/candidate-detail", "/job-detail"].includes(path));
   return (
     <SafeAreaView style={styles.page} edges={["top"]}>
       <View
@@ -170,7 +171,9 @@ export function AppShell({
         {tabs.map((tab) => {
           const active =
             path === tab.path ||
-            (tab.path === "/job-search" && path === "/job-detail") ||
+            (tab.path === "/job-search" &&
+              path === "/job-detail" &&
+              sourceTab !== "profile") ||
             (tab.label === "Profil" && profilePage);
           return (
             <Pressable

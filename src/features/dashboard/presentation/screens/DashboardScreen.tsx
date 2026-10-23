@@ -41,7 +41,7 @@ export default function DashboardScreen() {
         <Section
           title="Önerilen İlanlar"
           action="Tümünü Gör"
-          onPress={() => router.push("/job-search")}
+          onPress={() => router.push("/candidate-personalized-jobs")}
         />
         {recommendations.map((job) => (
           <JobSearchCard
