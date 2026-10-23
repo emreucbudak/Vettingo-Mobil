@@ -3,8 +3,12 @@ export interface Job {
   title: string;
   company: string;
   location: string;
+  office?: string;
+  locationType?: "remote" | "hybrid" | "onsite";
   salary: string;
   experienceYears?: number;
+  experienceRange?: { min: number; max: number };
+  skills?: string[];
   match: number;
   tags: string[];
 }

@@ -296,7 +296,7 @@ test("job search and filter dialog change actual results", async () => {
   await waitFor(() => expect(view.getByText("VP of Engineering")).toBeTruthy());
   await fireEvent.press(view.getByRole("button", { name: "Filtreler" }));
   expect(view.getByText("Çalışma Tercihi")).toBeTruthy();
-  expect(view.getByText("Maaş")).toBeTruthy();
+  expect(view.getByRole("header", { name: "Maaş" })).toBeTruthy();
   expect(view.getByText("Deneyim")).toBeTruthy();
   expect(view.queryByText("İşleri Filtrele")).toBeNull();
   expect(view.queryByText("Filtreleri Temizle")).toBeNull();

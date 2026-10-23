@@ -7,11 +7,10 @@ import {
   colors,
   Dialog,
   Empty,
-  Label,
   Search,
   styles,
 } from "../../../../shared/presentation/components/ui";
-import { JobCard } from "../components/JobCard";
+import { JobSearchCard } from "../components/JobSearchCard";
 import { useApp } from "../../../../core/presentation/state/AppProvider";
 
 const filterGroups = [
@@ -75,14 +74,10 @@ export function JobSearchScreen() {
           />
         ))}
       </View>
-      <View style={[styles.row, { justifyContent: "flex-end" }]}>
-        <Label muted>{items.length} sonuç</Label>
-      </View>
       {items.map((job) => (
-        <JobCard
+        <JobSearchCard
           key={job.id}
           job={job}
-          showMatch={false}
           onPress={() =>
             router.push({ pathname: "/job-detail", params: { id: job.id } })
           }
@@ -98,7 +93,9 @@ export function JobSearchScreen() {
       >
         {filterGroups.map((group) => (
           <View key={group.title} style={{ gap: 12 }}>
-            <Text style={styles.heading}>{group.title}</Text>
+            <Text accessibilityRole="header" style={styles.heading}>
+              {group.title}
+            </Text>
             <View style={styles.wrap}>
               {group.options.map((option) => {
                 const selected = filters.includes(option.value);
