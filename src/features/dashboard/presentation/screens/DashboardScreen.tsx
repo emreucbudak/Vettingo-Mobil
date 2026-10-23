@@ -147,7 +147,7 @@ export default function DashboardScreen() {
       {!hr && (
         <>
           <Section
-            title="Aktif Pozisyonlar"
+            title="Aktif İlanlar"
             action="Tümünü Gör"
             onPress={() => router.push("/employer-jobs")}
           />

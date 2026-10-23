@@ -24,7 +24,7 @@ const questions = [
     id: "jobs",
     question: "İlanlarımı ve aday sayılarını nereden takip edebilirim?",
     answer:
-      "İlanlar sekmesinde pozisyonlarınızı listeleyebilirsiniz. İlan kartlarında çalışma modeli, süreç durumu ve aday bilgisi bulunur. Ana Sayfa üzerindeki Aktif Pozisyonlar bölümünden de ilanlarınıza ulaşabilirsiniz.",
+      "İlanlar sekmesinde pozisyonlarınızı listeleyebilirsiniz. İlan kartlarında çalışma modeli, süreç durumu, tecrübe, maaş ve istenen yetenekler bulunur. Ana Sayfa üzerindeki Aktif İlanlar bölümünden de ilanlarınıza ulaşabilirsiniz.",
   },
   {
     id: "candidates",
