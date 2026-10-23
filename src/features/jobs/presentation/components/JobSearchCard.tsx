@@ -23,7 +23,7 @@ export function JobSearchCard({
       : /hybrid/i.test(job.location)
         ? "hybrid"
         : "onsite");
-  const skills = job.skills ?? [];
+  const skills = job.skills ?? job.tags;
 
   return (
     <Pressable
