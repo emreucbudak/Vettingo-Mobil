@@ -9,6 +9,7 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  TextInputInstance,
   TextInputProps,
   View,
 } from "react-native";
@@ -229,7 +230,7 @@ export function Field({
   label: string;
   error?: string;
   trailingAccessory?: React.ReactNode;
-  ref?: React.Ref<TextInput>;
+  ref?: React.Ref<TextInputInstance>;
 }) {
   return (
     <View style={{ gap: 6 }}>

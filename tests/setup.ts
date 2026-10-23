@@ -4,9 +4,11 @@ jest.mock("@react-native-async-storage/async-storage", () =>
 jest.mock("@expo/vector-icons", () => {
   const { Text } = require("react-native");
   const React = require("react");
+  const MockIcon = (props: { name: string }) =>
+    React.createElement(Text, null, props.name);
   return {
-    Ionicons: (props: { name: string }) =>
-      React.createElement(Text, null, props.name),
+    Ionicons: MockIcon,
+    MaterialIcons: MockIcon,
   };
 });
 jest.mock("expo-router", () => ({

@@ -1,17 +1,17 @@
 # Vettingo Mobile
 
-Vettingo'nun **React Native + TypeScript** mobil uygulaması. Flutter uygulamasındaki aday, işveren ve İK akışları Expo SDK 57 ile yeniden yazıldı. Android, iOS ve web aynı kaynak kodunu kullanır.
+Vettingo'nun **React Native + TypeScript** mobil uygulaması. Flutter uygulamasındaki aday, işveren ve İK akışları Expo SDK 58 üzerinde çalışır. Android, iOS ve web aynı kaynak kodunu kullanır.
 
 ## Çalıştırma
 
-Node.js 22.13 veya üstü gerekir (Node 22 LTS önerilir).
+Node.js 22.13+, 24.3+ veya 26+ gerekir (Node 24 LTS önerilir). Node 23 ve 25 desteklenmez.
 
 ```bash
 npm ci
 npm start
 ```
 
-Expo Go'nun SDK 57 ile uyumlu sürümünde QR kodunu açın. Alternatif olarak:
+Expo Go'nun SDK 58 ile uyumlu sürümünde QR kodunu açın. SDK geçişinden sonra Metro önbelleğini temizlemek için `npm start -- --clear` kullanın. Alternatif olarak:
 
 ```bash
 npm run android
@@ -108,4 +108,4 @@ Flutter kaynakları aktif projeden ayrılmıştır. Geçiş sırasında yerel ka
 
 İlgili projeler: [Backend](https://github.com/emreucbudak/Vettingo), [Web frontend](https://github.com/emreucbudak/Vettingo-Frontend).
 
-Teknik kaynaklar: [Expo SDK 57](https://docs.expo.dev/versions/v57.0.0/), [Expo Router](https://docs.expo.dev/router/introduction/), [React Native](https://reactnative.dev/docs/getting-started).
+Teknik kaynaklar: [Expo SDK 58](https://docs.expo.dev/versions/v58.0.0/), [Expo Router](https://docs.expo.dev/router/introduction/), [React Native](https://reactnative.dev/docs/getting-started).

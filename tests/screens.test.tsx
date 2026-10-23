@@ -1,11 +1,6 @@
 import React, { useState } from "react";
 import { Text } from "react-native";
-import {
-  act,
-  fireEvent,
-  renderAsync,
-  waitFor,
-} from "@testing-library/react-native";
+import { act, fireEvent, render, waitFor } from "@testing-library/react-native";
 import { createAppServices } from "../src/composition/createAppServices";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
@@ -38,7 +33,7 @@ async function renderApp(
   element: React.ReactElement,
   services?: ReturnType<typeof createAppServices>,
 ) {
-  const view = await renderAsync(
+  const view = await render(
     services ? (
       <InjectedAppProvider services={services}>{element}</InjectedAppProvider>
     ) : (
@@ -84,8 +79,8 @@ test.each([
       services,
     );
     if (employer)
-      fireEvent.press(view.getByRole("button", { name: "İşveren" }));
-    fireEvent.press(
+      await fireEvent.press(view.getByRole("button", { name: "İşveren" }));
+    await fireEvent.press(
       view.getByRole("button", { name: register ? "Kayıt Ol" : "Giriş Yap" }),
     );
     await waitFor(() =>
@@ -98,7 +93,7 @@ test.each([
     expect(saveWorkspace).not.toHaveBeenCalled();
     expect(view.queryByText("Geçerli bir e-posta adresi girin.")).toBeNull();
     expect(await AsyncStorage.getAllKeys()).toEqual([]);
-    await view.unmountAsync();
+    await view.unmount();
   },
   30000,
 );
@@ -106,7 +101,7 @@ test.each([
 test("login reports errors without showing account role buttons", async () => {
   const view = await renderApp(<AuthScreen dashboardShortcuts={false} />);
   await act(async () => {
-    fireEvent.press(view.getByRole("button", { name: "Giriş Yap" }));
+    await fireEvent.press(view.getByRole("button", { name: "Giriş Yap" }));
   });
   await waitFor(() =>
     expect(view.getByText("Geçerli bir e-posta adresi girin.")).toBeTruthy(),
@@ -114,15 +109,15 @@ test("login reports errors without showing account role buttons", async () => {
   expect(view.getByText("Şifre en az 6 karakter olmalıdır.")).toBeTruthy();
   for (const role of ["İş Arayan", "İşveren", "İK"])
     expect(view.queryByRole("button", { name: role })).toBeNull();
-  fireEvent.changeText(view.getByLabelText("Şifre"), "secret");
+  await fireEvent.changeText(view.getByLabelText("Şifre"), "secret");
   await waitFor(() =>
     expect(view.queryByText("Şifre en az 6 karakter olmalıdır.")).toBeNull(),
   );
   expect(view.getByLabelText("Şifre").props.secureTextEntry).toBe(true);
-  fireEvent.press(view.getByRole("button", { name: "Şifreyi göster" }));
+  await fireEvent.press(view.getByRole("button", { name: "Şifreyi göster" }));
   expect(view.getByLabelText("Şifre").props.secureTextEntry).toBe(false);
   expect(view.getByLabelText("Şifre").props.value).toBe("secret");
-  fireEvent.press(view.getByRole("button", { name: "Şifreyi gizle" }));
+  await fireEvent.press(view.getByRole("button", { name: "Şifreyi gizle" }));
   expect(view.getByLabelText("Şifre").props.secureTextEntry).toBe(true);
   expect(view.queryByText("Şifreyi göster")).toBeNull();
 }, 15000);
@@ -132,16 +127,16 @@ test("registration shows company field only for hiring roles and enforces consen
   );
   expect(view.queryByRole("button", { name: "İK" })).toBeNull();
   expect(view.queryByLabelText("Şirket Adı")).toBeNull();
-  fireEvent.press(view.getByRole("button", { name: "İşveren" }));
+  await fireEvent.press(view.getByRole("button", { name: "İşveren" }));
   expect(view.getByLabelText("Şirket Adı")).toBeTruthy();
-  fireEvent.press(view.getByRole("button", { name: "Kayıt Ol" }));
+  await fireEvent.press(view.getByRole("button", { name: "Kayıt Ol" }));
   await waitFor(() =>
     expect(
       view.getByText("Devam etmek için koşulları kabul edin."),
     ).toBeTruthy(),
   );
   expect(view.getByText("Şirket adı en az 2 karakter olmalıdır.")).toBeTruthy();
-  fireEvent.press(view.getByRole("button", { name: "İş Arayan" }));
+  await fireEvent.press(view.getByRole("button", { name: "İş Arayan" }));
   expect(view.queryByLabelText("Şirket Adı")).toBeNull();
   expect(view.queryByText("Şirket adı en az 2 karakter olmalıdır.")).toBeNull();
 });
@@ -153,13 +148,13 @@ test("login submits RHF values and respects the remember switch", async () => {
     <AuthScreen dashboardShortcuts={false} />,
     services,
   );
-  fireEvent.changeText(
+  await fireEvent.changeText(
     view.getByLabelText("E-posta Adresi"),
     "alex@vettingo.com",
   );
-  fireEvent.changeText(view.getByLabelText("Şifre"), "secret");
-  fireEvent(view.getByLabelText("Beni hatırla"), "valueChange", false);
-  fireEvent.press(view.getByRole("button", { name: "Giriş Yap" }));
+  await fireEvent.changeText(view.getByLabelText("Şifre"), "secret");
+  await fireEvent(view.getByLabelText("Beni hatırla"), "valueChange", false);
+  await fireEvent.press(view.getByRole("button", { name: "Giriş Yap" }));
   await waitFor(() =>
     expect(router.replace).toHaveBeenCalledWith("/candidate-dashboard"),
   );
@@ -172,7 +167,7 @@ test("login submits RHF values and respects the remember switch", async () => {
     }),
   );
   expect(await AsyncStorage.getItem("vettingo:demo-session:v1")).toBeNull();
-  await view.unmountAsync();
+  await view.unmount();
 });
 
 test.each(["candidate", "employer"] as const)(
@@ -185,22 +180,22 @@ test.each(["candidate", "employer"] as const)(
       services,
     );
     if (role === "employer") {
-      fireEvent.press(view.getByRole("button", { name: "İşveren" }));
-      fireEvent.changeText(view.getByLabelText("Şirket Adı"), "Vettingo");
+      await fireEvent.press(view.getByRole("button", { name: "İşveren" }));
+      await fireEvent.changeText(view.getByLabelText("Şirket Adı"), "Vettingo");
     }
-    fireEvent.changeText(view.getByLabelText("Ad"), "Alex");
-    fireEvent.changeText(view.getByLabelText("Soyad"), "Test");
-    fireEvent.changeText(
+    await fireEvent.changeText(view.getByLabelText("Ad"), "Alex");
+    await fireEvent.changeText(view.getByLabelText("Soyad"), "Test");
+    await fireEvent.changeText(
       view.getByLabelText("E-posta Adresi"),
       "alex@vettingo.com",
     );
-    fireEvent.changeText(view.getByLabelText("Şifre"), "secret");
-    fireEvent(
+    await fireEvent.changeText(view.getByLabelText("Şifre"), "secret");
+    await fireEvent(
       view.getByLabelText("Koşulları kabul ediyorum"),
       "valueChange",
       true,
     );
-    fireEvent.press(view.getByRole("button", { name: "Kayıt Ol" }));
+    await fireEvent.press(view.getByRole("button", { name: "Kayıt Ol" }));
     await waitFor(() =>
       expect(router.replace).toHaveBeenCalledWith(`/${role}-dashboard`),
     );
@@ -218,7 +213,7 @@ test.each(["candidate", "employer"] as const)(
     );
     expect(saved).toMatchObject({ name: "Alex Test", role });
     expect(saved).not.toHaveProperty("password");
-    await view.unmountAsync();
+    await view.unmount();
   },
 );
 
@@ -231,12 +226,12 @@ test("login shows a submission error and allows retry", async () => {
     <AuthScreen dashboardShortcuts={false} />,
     services,
   );
-  fireEvent.changeText(
+  await fireEvent.changeText(
     view.getByLabelText("E-posta Adresi"),
     "alex@vettingo.com",
   );
-  fireEvent.changeText(view.getByLabelText("Şifre"), "secret");
-  fireEvent.press(view.getByRole("button", { name: "Giriş Yap" }));
+  await fireEvent.changeText(view.getByLabelText("Şifre"), "secret");
+  await fireEvent.press(view.getByRole("button", { name: "Giriş Yap" }));
   await waitFor(() =>
     expect(
       view.getByText("Oturum açılamadı. Lütfen tekrar deneyin."),
@@ -249,14 +244,14 @@ test("login shows a submission error and allows retry", async () => {
         .disabled,
     ).toBe(false),
   );
-  fireEvent.press(view.getByRole("button", { name: "Giriş Yap" }));
+  await fireEvent.press(view.getByRole("button", { name: "Giriş Yap" }));
   await waitFor(() =>
     expect(router.replace).toHaveBeenCalledWith("/candidate-dashboard"),
   );
   expect(
     view.queryByText("Oturum açılamadı. Lütfen tekrar deneyin."),
   ).toBeNull();
-  await view.unmountAsync();
+  await view.unmount();
 });
 
 test("login disables repeat submission while sign-in is pending", async () => {
@@ -273,19 +268,19 @@ test("login disables repeat submission while sign-in is pending", async () => {
     <AuthScreen dashboardShortcuts={false} />,
     services,
   );
-  fireEvent.changeText(
+  await fireEvent.changeText(
     view.getByLabelText("E-posta Adresi"),
     "alex@vettingo.com",
   );
-  fireEvent.changeText(view.getByLabelText("Şifre"), "secret");
-  fireEvent.press(view.getByRole("button", { name: "Giriş Yap" }));
+  await fireEvent.changeText(view.getByLabelText("Şifre"), "secret");
+  await fireEvent.press(view.getByRole("button", { name: "Giriş Yap" }));
   await waitFor(() =>
     expect(
       view.getByRole("button", { name: "Giriş Yap" }).props.accessibilityState
         .disabled,
     ).toBe(true),
   );
-  fireEvent.press(view.getByRole("button", { name: "Giriş Yap" }));
+  await fireEvent.press(view.getByRole("button", { name: "Giriş Yap" }));
   expect(signIn).toHaveBeenCalledTimes(1);
   await act(async () => {
     finishSignIn({
@@ -294,12 +289,12 @@ test("login disables repeat submission while sign-in is pending", async () => {
     });
   });
   expect(router.replace).toHaveBeenCalledWith("/candidate-dashboard");
-  await view.unmountAsync();
+  await view.unmount();
 });
 test("job search and filter dialog change actual results", async () => {
   const view = await signedIn(<JobSearchScreen />);
   await waitFor(() => expect(view.getByText("VP of Engineering")).toBeTruthy());
-  fireEvent.press(view.getByRole("button", { name: "Filtreler" }));
+  await fireEvent.press(view.getByRole("button", { name: "Filtreler" }));
   expect(view.getByText("Çalışma Tercihi")).toBeTruthy();
   expect(view.getByText("Maaş")).toBeTruthy();
   expect(view.getByText("Deneyim")).toBeTruthy();
@@ -318,24 +313,24 @@ test("job search and filter dialog change actual results", async () => {
     "10+ yıl",
   ])
     expect(view.getByRole("button", { name: label })).toBeTruthy();
-  fireEvent.press(view.getByRole("button", { name: "100.000+" }));
-  fireEvent.press(view.getByRole("button", { name: "10+ yıl" }));
-  fireEvent.press(view.getByRole("button", { name: "Kapat" }));
+  await fireEvent.press(view.getByRole("button", { name: "100.000+" }));
+  await fireEvent.press(view.getByRole("button", { name: "10+ yıl" }));
+  await fireEvent.press(view.getByRole("button", { name: "Kapat" }));
   expect(view.getByText("VP of Engineering")).toBeTruthy();
   expect(view.queryByText("Head of Platform Engineering")).toBeNull();
-  fireEvent.press(view.getByRole("button", { name: "Filtreler" }));
-  fireEvent.press(view.getByRole("button", { name: "100.000+" }));
-  fireEvent.press(view.getByRole("button", { name: "10+ yıl" }));
-  fireEvent.press(view.getByRole("button", { name: "Hybrid" }));
-  fireEvent.press(view.getByRole("button", { name: "Kapat" }));
-  fireEvent.changeText(view.getByLabelText("Pozisyon ara"), "Globex");
+  await fireEvent.press(view.getByRole("button", { name: "Filtreler" }));
+  await fireEvent.press(view.getByRole("button", { name: "100.000+" }));
+  await fireEvent.press(view.getByRole("button", { name: "10+ yıl" }));
+  await fireEvent.press(view.getByRole("button", { name: "Hybrid" }));
+  await fireEvent.press(view.getByRole("button", { name: "Kapat" }));
+  await fireEvent.changeText(view.getByLabelText("Pozisyon ara"), "Globex");
   expect(view.getByText("Director of Engineering")).toBeTruthy();
   expect(view.queryByText("VP of Engineering")).toBeNull();
 });
 test("candidate search resolves a different candidate and stage filters", async () => {
   const view = await signedIn(<CandidatesScreen />, "hr");
   await waitFor(() => expect(view.getByText("Zeynep Kaya")).toBeTruthy());
-  fireEvent.changeText(
+  await fireEvent.changeText(
     view.getByLabelText("Aday, pozisyon veya yetenek ara"),
     "Zeynep",
   );
@@ -346,23 +341,19 @@ test("requisition form exposes conditional office selection and validates title"
   const view = await signedIn(<RequisitionScreen />, "employer");
   await waitFor(() => expect(view.getByLabelText("Pozisyon Adı")).toBeTruthy());
   expect(view.queryByText("Ofis")).toBeNull();
-  fireEvent.press(view.getByRole("button", { name: "Hybrid" }));
+  await fireEvent.press(view.getByRole("button", { name: "Hybrid" }));
   expect(view.getByText("Ofis")).toBeTruthy();
-  fireEvent.press(view.getByRole("button", { name: "Devam Et" }));
+  await fireEvent.press(view.getByRole("button", { name: "Devam Et" }));
   expect(view.getByText("Devam etmek için pozisyon adını girin.")).toBeTruthy();
 });
 test("CV review adds a skill and saves the edited profile", async () => {
   const view = await signedIn(<CvReviewScreen />);
-  await waitFor(() =>
-    expect(view.getByLabelText("Hedef Rol")).toBeTruthy(),
-  );
-  fireEvent.press(view.getByRole("button", { name: "Yetenek Ekle" }));
-  fireEvent.changeText(view.getByLabelText("Yetenek"), "React Native");
-  fireEvent(view.getByLabelText("Yetenek"), "submitEditing");
+  await waitFor(() => expect(view.getByLabelText("Hedef Rol")).toBeTruthy());
+  await fireEvent.press(view.getByRole("button", { name: "Yetenek Ekle" }));
+  await fireEvent.changeText(view.getByLabelText("Yetenek"), "React Native");
+  await fireEvent(view.getByLabelText("Yetenek"), "submitEditing");
   expect(view.getByText("React Native ×")).toBeTruthy();
-  fireEvent.press(
-    view.getByRole("button", { name: "CV’yi Kaydet" }),
-  );
+  await fireEvent.press(view.getByRole("button", { name: "CV’yi Kaydet" }));
   await waitFor(async () =>
     expect(
       JSON.parse(
@@ -392,21 +383,23 @@ test.each(["employer", "hr"])(
     expect(view.queryByRole("button", { name: "Profili Gör" })).toBeNull();
     expect(view.queryByRole("button", { name: "Adayı Reddet" })).toBeNull();
     expect(view.queryByRole("button", { name: "Adayı İlerlet" })).toBeNull();
-    await view.unmountAsync();
+    await view.unmount();
   },
 );
 test("assessment accepts an answer, advances and locks after submission", async () => {
   const view = await signedIn(<AssessmentScreen />);
   await waitFor(() => expect(view.getByText("Soru 4 / 20")).toBeTruthy());
-  fireEvent.press(view.getByRole("radio", { name: /API 404/ }));
-  fireEvent.press(view.getByRole("button", { name: "Sonraki" }));
+  await fireEvent.press(view.getByRole("radio", { name: /API 404/ }));
+  await fireEvent.press(view.getByRole("button", { name: "Sonraki" }));
   expect(view.getByText("Soru 5 / 20")).toBeTruthy();
-  fireEvent.press(view.getByRole("button", { name: "Değerlendirmeyi Bitir" }));
-  fireEvent.press(
+  await fireEvent.press(
+    view.getByRole("button", { name: "Değerlendirmeyi Bitir" }),
+  );
+  await fireEvent.press(
     view.getByRole("button", { name: "Yanıtları Kaydet ve Bitir" }),
   );
   expect(view.getByText("Değerlendirme tamamlandı")).toBeTruthy();
-  await view.unmountAsync();
+  await view.unmount();
 });
 test("signing into another role resets workspace and never stores password", async () => {
   let app: ReturnType<typeof useApp>;
@@ -423,7 +416,7 @@ test("signing into another role resets workspace and never stores password", asy
       register: false,
     } as Parameters<typeof app.signIn>[0]);
   });
-  act(() =>
+  await act(async () =>
     app!.dispatch({
       type: "decision",
       candidateId: "sarah",
@@ -446,5 +439,5 @@ test("signing into another role resets workspace and never stores password", asy
     await app!.signOut();
   });
   expect(await AsyncStorage.getItem("vettingo:demo-session:v1")).toBeNull();
-  await view.unmountAsync();
+  await view.unmount();
 });

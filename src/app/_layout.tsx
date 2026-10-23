@@ -5,6 +5,7 @@ import { StatusBar } from "expo-status-bar";
 import * as SplashScreen from "expo-splash-screen";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { AppProvider, useApp } from "../core/presentation/state/AppProvider";
+import { homeFor } from "../features/auth/presentation/navigation/routes";
 
 void SplashScreen.preventAutoHideAsync();
 
@@ -18,7 +19,10 @@ function Routes() {
       <StatusBar style="dark" />
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="index" />
-        <Stack.Protected guard={!session}>
+        <Stack.Protected
+          guard={!session}
+          redirectTo={session ? homeFor(session.role) : "/login"}
+        >
           <Stack.Screen name="login" />
           <Stack.Screen name="register" />
           <Stack.Screen name="forgot-password" />

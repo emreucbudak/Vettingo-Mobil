@@ -1,6 +1,6 @@
 import React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { fireEvent, renderAsync, waitFor } from "@testing-library/react-native";
+import { fireEvent, render, waitFor } from "@testing-library/react-native";
 import { router } from "expo-router";
 import { createAppServices } from "../src/composition/createAppServices";
 import { AppProvider } from "../src/core/presentation/state/AppProvider";
@@ -20,12 +20,10 @@ async function signedIn(element: React.ReactElement, role: string) {
       remember: true,
     }),
   );
-  const view = await renderAsync(
+  const view = await render(
     <AppProvider services={createAppServices()}>{element}</AppProvider>,
   );
-  await waitFor(() =>
-    expect(view.queryByRole("progressbar")).toBeNull(),
-  );
+  await waitFor(() => expect(view.queryByRole("progressbar")).toBeNull());
   return view;
 }
 
@@ -41,24 +39,24 @@ test.each(["employer", "hr"])(
     expect(
       home.queryByRole("button", { name: "Yeni İlan Oluştur" }),
     ).toBeNull();
-    fireEvent.press(
+    await fireEvent.press(
       home.getByRole("button", { name: "Scout · Yetenek Keşfet" }),
     );
     expect(router.push).toHaveBeenLastCalledWith("/scout");
-    await home.unmountAsync();
+    await home.unmount();
 
     const profile = await signedIn(<ProfileScreen />, role);
-    fireEvent.press(profile.getByRole("button", { name: "Scout" }));
+    await fireEvent.press(profile.getByRole("button", { name: "Scout" }));
     expect(router.push).toHaveBeenLastCalledWith({
       pathname: "/scout",
       params: { tab: "profile" },
     });
-    await profile.unmountAsync();
+    await profile.unmount();
 
     const jobs = await signedIn(<RequisitionsScreen />, role);
-    fireEvent.press(jobs.getByRole("button", { name: "Yeni İlan" }));
+    await fireEvent.press(jobs.getByRole("button", { name: "Yeni İlan" }));
     expect(router.push).toHaveBeenLastCalledWith("/new-requisition");
-    await jobs.unmountAsync();
+    await jobs.unmount();
   },
   30000,
 );
@@ -66,21 +64,21 @@ test.each(["employer", "hr"])(
 test("Scout searches skills, opens talent profiles and handles empty results", async () => {
   const view = await signedIn(<ScoutScreen />, "employer");
   const search = view.getByLabelText("Yetenek Ara");
-  fireEvent.changeText(search, "TypeScript");
+  await fireEvent.changeText(search, "TypeScript");
   expect(view.getByText("Michael Ross")).toBeTruthy();
   expect(view.queryByText("Zeynep Kaya")).toBeNull();
-  fireEvent.press(
+  await fireEvent.press(
     view.getByRole("button", { name: "Michael Ross profilini aç" }),
   );
   expect(router.push).toHaveBeenLastCalledWith({
     pathname: "/candidate-detail",
     params: { id: "michael-ross" },
   });
-  fireEvent.changeText(search, "olmayan-yetenek");
+  await fireEvent.changeText(search, "olmayan-yetenek");
   expect(view.getByText("Aramana uygun yetenek bulunamadı.")).toBeTruthy();
-  fireEvent.press(view.getByRole("button", { name: "Aramayı temizle" }));
+  await fireEvent.press(view.getByRole("button", { name: "Aramayı temizle" }));
   expect(view.getByText("Zeynep Kaya")).toBeTruthy();
-  await view.unmountAsync();
+  await view.unmount();
 });
 
 test("candidate home and profile do not show Scout entry points", async () => {
@@ -93,6 +91,6 @@ test("candidate home and profile do not show Scout entry points", async () => {
       view.queryByRole("button", { name: "Scout · Yetenek Keşfet" }),
     ).toBeNull();
     expect(view.queryByRole("button", { name: "Scout" })).toBeNull();
-    await view.unmountAsync();
+    await view.unmount();
   }
 });
