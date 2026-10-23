@@ -6,7 +6,7 @@ import {
   Label,
   Search,
 } from "../../../../shared/presentation/components/ui";
-import { CandidateCard } from "../components/CandidateCard";
+import { ScoutCandidateCard } from "../components/ScoutCandidateCard";
 
 export default function ScoutScreen() {
   const { state, services } = useApp();
@@ -18,11 +18,7 @@ export default function ScoutScreen() {
       <Search value={query} onChangeText={setQuery} placeholder="Yetenek Ara" />
       <Label muted>{candidates.length} yetenek</Label>
       {candidates.map((candidate) => (
-        <CandidateCard
-          key={candidate.id}
-          candidate={candidate}
-          showMatch={false}
-        />
+        <ScoutCandidateCard key={candidate.id} candidate={candidate} />
       ))}
       {!candidates.length && (
         <Empty label="Aramana uygun yetenek bulunamadı." />
