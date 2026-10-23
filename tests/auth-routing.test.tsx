@@ -44,6 +44,56 @@ test.each([
   60000,
 );
 
+test("password reset preview opens each form with empty fields and supports going back", async () => {
+  const view = await renderRouter("src/app", { initialUrl: "/login" });
+  await waitFor(() =>
+    expect(
+      screen.getByRole("button", { name: "Şifrenizi mi unuttunuz?" }),
+    ).toBeTruthy(),
+  );
+  await fireEvent.press(
+    screen.getByRole("button", { name: "Şifrenizi mi unuttunuz?" }),
+  );
+  await waitFor(() => expect(view.getPathname()).toBe("/forgot-password"));
+  expect(screen.getByLabelText("Vettingo logosu")).toBeTruthy();
+  expect(screen.getByLabelText("E-posta Adresi")).toHaveDisplayValue("");
+  await fireEvent.press(screen.getByRole("button", { name: "Kod Gönder" }));
+  await waitFor(() => expect(view.getPathname()).toBe("/verify-reset-code"));
+  expect(screen.getByLabelText("Vettingo logosu")).toBeTruthy();
+  expect(screen.getByLabelText("Kod")).toHaveDisplayValue("");
+  await fireEvent.changeText(screen.getByLabelText("Kod"), "123456");
+  expect(screen.getByLabelText("Kod")).toHaveDisplayValue("123456");
+  await fireEvent.changeText(screen.getByLabelText("Kod"), "");
+  await fireEvent.press(screen.getByRole("button", { name: "Kod Gir" }));
+  await waitFor(() => expect(view.getPathname()).toBe("/reset-password"));
+  expect(screen.getByLabelText("Vettingo logosu")).toBeTruthy();
+  for (const label of ["Yeni Şifre", "Yeni Şifre Tekrar"]) {
+    const field = screen.getByLabelText(label);
+    expect(field).toHaveDisplayValue("");
+    expect(field.props.secureTextEntry).toBe(true);
+    await fireEvent.changeText(field, "preview-password");
+    expect(screen.getByLabelText(label)).toHaveDisplayValue("preview-password");
+    await fireEvent.changeText(screen.getByLabelText(label), "");
+  }
+  await fireEvent.press(
+    screen.getByRole("button", { name: "Kod ekranına dön" }),
+  );
+  await waitFor(() => expect(view.getPathname()).toBe("/verify-reset-code"));
+  await fireEvent.press(
+    screen.getByRole("button", { name: "E-posta ekranına dön" }),
+  );
+  await waitFor(() => expect(view.getPathname()).toBe("/forgot-password"));
+  await fireEvent.press(screen.getByRole("button", { name: "Kod Gönder" }));
+  await waitFor(() => expect(view.getPathname()).toBe("/verify-reset-code"));
+  await fireEvent.press(screen.getByRole("button", { name: "Kod Gir" }));
+  await waitFor(() => expect(view.getPathname()).toBe("/reset-password"));
+  await fireEvent.press(
+    screen.getByRole("button", { name: "Şifreni Değiştir" }),
+  );
+  await waitFor(() => expect(view.getPathname()).toBe("/login"));
+  expect(await AsyncStorage.getAllKeys()).toEqual([]);
+}, 60000);
+
 test("job search cards open a blank candidate detail page and allow going back", async () => {
   const view = await renderRouter("src/app", { initialUrl: "/login" });
   await waitFor(() =>
