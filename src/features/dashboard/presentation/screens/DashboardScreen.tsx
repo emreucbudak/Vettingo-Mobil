@@ -15,7 +15,7 @@ import {
 } from "../../../../shared/presentation/components/ui";
 import { ApplicationCard } from "../../../applications/presentation/components/ApplicationCard";
 import { DashboardCandidateCard } from "../components/DashboardCandidateCard";
-import { JobCard } from "../../../jobs/presentation/components/JobCard";
+import { JobSearchCard } from "../../../jobs/presentation/components/JobSearchCard";
 import { DashboardRequisitionCard } from "../components/DashboardRequisitionCard";
 import { ScoutEntryCard } from "../../../candidates/presentation/components/ScoutEntryCard";
 
@@ -27,16 +27,6 @@ export default function DashboardScreen() {
   if (session.role === "candidate")
     return (
       <AppShell>
-        <View style={{ gap: 6 }}>
-          <Title>Merhaba, {session.name.split(" ")[0]}</Title>
-          <Label muted>
-            {
-              state.applications.filter((item) => item.status !== "Rejected")
-                .length
-            }{" "}
-            aktif başvurun ve yeni önerilen rollerin var.
-          </Label>
-        </View>
         <Section
           title="Aktif Başvurular"
           action="Tümünü Gör"
@@ -49,12 +39,18 @@ export default function DashboardScreen() {
             <ApplicationCard key={item.id} item={item} />
           ))}
         <Section
-          title="Önerilen Eşleşmeler"
-          action="Keşfet"
+          title="Önerilen İlanlar"
+          action="Tümünü Gör"
           onPress={() => router.push("/job-search")}
         />
         {recommendations.map((job) => (
-          <JobCard key={job.id} job={job} />
+          <JobSearchCard
+            key={job.id}
+            job={job}
+            onPress={() =>
+              router.push({ pathname: "/job-detail", params: { id: job.id } })
+            }
+          />
         ))}
       </AppShell>
     );

@@ -111,7 +111,7 @@ test("restored sessions show the dashboard without a catalog loading screen", as
     </AppProvider>,
   );
 
-  await waitFor(() => expect(view.getByText("Merhaba, Alex")).toBeTruthy());
+  await waitFor(() => expect(view.getByText("Aktif Başvurular")).toBeTruthy());
   expect(view.queryByLabelText("Vettingo yükleniyor…")).toBeNull();
   expect(view.queryByLabelText("Veriler yükleniyor…")).toBeNull();
   expect(view.queryByRole("progressbar")).toBeNull();
