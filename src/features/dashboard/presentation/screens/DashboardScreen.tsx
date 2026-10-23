@@ -16,7 +16,7 @@ import {
 import { ApplicationCard } from "../../../applications/presentation/components/ApplicationCard";
 import { DashboardCandidateCard } from "../components/DashboardCandidateCard";
 import { JobCard } from "../../../jobs/presentation/components/JobCard";
-import { RequisitionCard } from "../../../requisitions/presentation/components/RequisitionCard";
+import { DashboardRequisitionCard } from "../components/DashboardRequisitionCard";
 import { ScoutEntryCard } from "../../../candidates/presentation/components/ScoutEntryCard";
 
 export default function DashboardScreen() {
@@ -152,7 +152,7 @@ export default function DashboardScreen() {
             onPress={() => router.push("/employer-jobs")}
           />
           {state.requisitions.slice(0, 3).map((job) => (
-            <RequisitionCard key={job.id} job={job} />
+            <DashboardRequisitionCard key={job.id} job={job} />
           ))}
         </>
       )}
