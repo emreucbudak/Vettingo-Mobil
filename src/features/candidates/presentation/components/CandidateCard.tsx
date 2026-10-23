@@ -1,5 +1,5 @@
 import React from "react";
-import { Pressable, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { Candidate } from "../../domain/entities/Candidate";
 import { candidateStage } from "../../domain/policies/stage";
@@ -10,10 +10,13 @@ import {
   Badge,
   Card,
   Chip,
+  colors,
   Label,
   styles,
   Title,
 } from "../../../../shared/presentation/components/ui";
+
+const salaryFormatter = new Intl.NumberFormat("tr-TR");
 
 export function CandidateCard({ candidate }: { candidate: Candidate }) {
   const { state } = useApp();
@@ -34,24 +37,55 @@ export function CandidateCard({ candidate }: { candidate: Candidate }) {
       }
     >
       <Card>
-        <View style={styles.row}>
+        <View style={[styles.row, { alignItems: "flex-start" }]}>
           <Avatar initials={candidate.initials} />
-          <View style={{ flex: 1 }}>
+          <View style={{ flex: 1, minWidth: 0, alignSelf: "center" }}>
             <Title small>{candidate.name}</Title>
-            <Label muted>{candidate.role}</Label>
           </View>
-          <Badge>{candidate.match}%</Badge>
+          <Badge success={stage === "offer"}>{stageLabels[stage]}</Badge>
         </View>
-        <Label muted>Başvurulan: {candidate.appliedRole}</Label>
-        <View style={[styles.row, { justifyContent: "space-between" }]}>
-          <View style={[styles.wrap, { flex: 1 }]}>
+        <View style={cardStyles.details}>
+          <Label muted>Başvurulan: {candidate.appliedRole}</Label>
+          <Label muted>
+            Tecrübe:{" "}
+            <Text style={cardStyles.detailValue}>
+              {candidate.experienceYears !== undefined
+                ? `${candidate.experienceYears} yıl`
+                : "Belirtilmedi"}
+            </Text>
+          </Label>
+          <Label muted>
+            Maaş:{" "}
+            <Text style={cardStyles.detailValue}>
+              {candidate.salaryExpectation !== undefined
+                ? salaryFormatter.format(candidate.salaryExpectation)
+                : "Belirtilmedi"}
+            </Text>
+          </Label>
+        </View>
+        <View style={cardStyles.skillsSection}>
+          <Text accessibilityRole="header" style={cardStyles.skillsTitle}>
+            Yetenekler
+          </Text>
+          <View style={styles.wrap}>
             {candidate.skills.slice(0, 3).map((skill) => (
               <Chip key={skill.name} label={skill.name} />
             ))}
           </View>
-          <Badge success={stage === "offer"}>{stageLabels[stage]}</Badge>
         </View>
       </Card>
     </Pressable>
   );
 }
+
+const cardStyles = StyleSheet.create({
+  details: { gap: 8 },
+  detailValue: { color: colors.ink, fontWeight: "600" },
+  skillsSection: {
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+    paddingTop: 12,
+    gap: 8,
+  },
+  skillsTitle: { color: colors.ink, fontSize: 13, fontWeight: "600" },
+});
