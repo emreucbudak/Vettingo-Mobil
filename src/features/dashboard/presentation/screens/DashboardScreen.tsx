@@ -14,7 +14,7 @@ import {
   Title,
 } from "../../../../shared/presentation/components/ui";
 import { ApplicationCard } from "../../../applications/presentation/components/ApplicationCard";
-import { CandidateCard } from "../../../candidates/presentation/components/CandidateCard";
+import { DashboardCandidateCard } from "../components/DashboardCandidateCard";
 import { JobCard } from "../../../jobs/presentation/components/JobCard";
 import { RequisitionCard } from "../../../requisitions/presentation/components/RequisitionCard";
 import { ScoutEntryCard } from "../../../candidates/presentation/components/ScoutEntryCard";
@@ -142,7 +142,7 @@ export default function DashboardScreen() {
         onPress={() => router.push(`/${session.role}-candidates` as Href)}
       />
       {candidates.slice(0, 2).map((candidate) => (
-        <CandidateCard key={candidate.id} candidate={candidate} />
+        <DashboardCandidateCard key={candidate.id} candidate={candidate} />
       ))}
       {!hr && (
         <>

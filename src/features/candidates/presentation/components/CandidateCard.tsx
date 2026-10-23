@@ -15,13 +15,7 @@ import {
   Title,
 } from "../../../../shared/presentation/components/ui";
 
-export function CandidateCard({
-  candidate,
-  showMatch = true,
-}: {
-  candidate: Candidate;
-  showMatch?: boolean;
-}) {
+export function CandidateCard({ candidate }: { candidate: Candidate }) {
   const { state } = useApp();
   const { tab } = useLocalSearchParams<{ tab?: string }>();
   const stage = candidateStage(candidate, state.decisions);
@@ -46,7 +40,7 @@ export function CandidateCard({
             <Title small>{candidate.name}</Title>
             <Label muted>{candidate.role}</Label>
           </View>
-          {showMatch && <Badge>{candidate.match}%</Badge>}
+          <Badge>{candidate.match}%</Badge>
         </View>
         <Label muted>Başvurulan: {candidate.appliedRole}</Label>
         <View style={[styles.row, { justifyContent: "space-between" }]}>
