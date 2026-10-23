@@ -72,17 +72,18 @@ export default function ProfileScreen() {
       </Card>
       <ProfileMenuGroup>
         {candidate ? (
-          ["Profil", "CV"].map((label) => (
+          [
+            { label: "Profil", path: "/candidate-profile-details" },
+            { label: "CV", path: "/cv-review" },
+            {
+              label: "Kişiselleştirilmiş İlanlar",
+              path: "/candidate-personalized-jobs",
+            },
+          ].map(({ label, path }) => (
             <ProfileMenuRow
               key={label}
               label={label}
-              onPress={() =>
-                router.push(
-                  (label === "Profil"
-                    ? "/candidate-profile-details"
-                    : "/cv-review") as Href,
-                )
-              }
+              onPress={() => router.push(path as Href)}
             />
           ))
         ) : (

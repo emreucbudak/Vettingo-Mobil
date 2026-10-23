@@ -154,6 +154,7 @@ test.each(["candidate", "employer", "hr"])(
         ? [
             ["Profil", "/candidate-profile-details"],
             ["CV", "/cv-review"],
+            ["Kişiselleştirilmiş İlanlar", "/candidate-personalized-jobs"],
           ]
         : [
             ["Şirket", `/${role}-company`],
@@ -166,6 +167,22 @@ test.each(["candidate", "employer", "hr"])(
       await fireEvent.press(screen.getByRole("button", { name: label }));
       await waitFor(() => expect(view.getPathname()).toBe(path));
       expectProfileSelected();
+      if (label === "Kişiselleştirilmiş İlanlar") {
+        expect(screen.getByText("Lead UI Developer")).toBeTruthy();
+        expect(screen.getByText("Senior Software Engineer")).toBeTruthy();
+        await fireEvent.press(
+          screen.getByRole("button", {
+            name: "Lead UI Developer ilan detayını aç",
+          }),
+        );
+        await waitFor(() => expect(view.getPathname()).toBe("/job-detail"));
+        expectProfileSelected();
+        await fireEvent.press(screen.getByRole("button", { name: "Geri" }));
+        await waitFor(() =>
+          expect(view.getPathname()).toBe("/candidate-personalized-jobs"),
+        );
+        expectProfileSelected();
+      }
       if (label === "Scout") {
         await fireEvent.press(
           screen.getByRole("button", { name: "Sarah Jenkins profilini aç" }),
