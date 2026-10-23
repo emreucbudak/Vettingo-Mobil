@@ -6,6 +6,8 @@ export interface Requisition {
   office: string;
   skills: string[];
   marketCompensation: boolean;
+  salaryRange?: { min: number; max: number };
+  experienceRange?: { min: number; max: number };
   description: string;
   status: "Sourcing" | "Interviewing";
   candidateLabel: string;
