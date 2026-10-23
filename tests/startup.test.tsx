@@ -1,14 +1,12 @@
 import React from "react";
 import { Pressable, Text } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {
-  act,
-  fireEvent,
-  renderAsync,
-  waitFor,
-} from "@testing-library/react-native";
+import { act, fireEvent, render, waitFor } from "@testing-library/react-native";
 import { createAppServices } from "../src/composition/createAppServices";
-import { AppProvider, useApp } from "../src/core/presentation/state/AppProvider";
+import {
+  AppProvider,
+  useApp,
+} from "../src/core/presentation/state/AppProvider";
 import AuthScreen from "../src/features/auth/presentation/screens/AuthScreen";
 import DashboardScreen from "../src/features/dashboard/presentation/screens/DashboardScreen";
 
@@ -37,7 +35,7 @@ test("startup only checks the session and opens login without async catalog load
   const loadJobs = jest
     .spyOn(services.jobs, "load")
     .mockRejectedValue(new Error("Catalog unavailable"));
-  const view = await renderAsync(
+  const view = await render(
     <AppProvider services={services}>
       <AuthScreen dashboardShortcuts={false} />
     </AppProvider>,
@@ -46,13 +44,16 @@ test("startup only checks the session and opens login without async catalog load
   expect(view.toJSON()).toBeNull();
   expect(loadJobs).not.toHaveBeenCalled();
   await act(async () => {
-    finishRestore({ session: null, state: services.sessions.createWorkspace() });
+    finishRestore({
+      session: null,
+      state: services.sessions.createWorkspace(),
+    });
   });
 
   expect(view.getByRole("button", { name: "Giriş Yap" })).toBeTruthy();
   expect(view.queryByRole("progressbar")).toBeNull();
   expect(loadJobs).not.toHaveBeenCalled();
-  await view.unmountAsync();
+  await view.unmount();
 });
 
 test("rebuilding services preserves the active preview instead of returning to login", async () => {
@@ -69,18 +70,18 @@ test("rebuilding services preserves the active preview instead of returning to l
       </>
     );
   }
-  const view = await renderAsync(
+  const view = await render(
     <AppProvider services={createAppServices()}>
       <Preview />
     </AppProvider>,
   );
   await waitFor(() => expect(view.getByText("login")).toBeTruthy());
-  fireEvent.press(view.getByRole("button", { name: "İK Aç" }));
+  await fireEvent.press(view.getByRole("button", { name: "İK Aç" }));
   expect(view.getByText("hr")).toBeTruthy();
 
   const refreshedServices = createAppServices();
   const restore = jest.spyOn(refreshedServices.sessions, "restore");
-  await view.rerenderAsync(
+  await view.rerender(
     <AppProvider services={refreshedServices}>
       <Preview />
     </AppProvider>,
@@ -88,11 +89,14 @@ test("rebuilding services preserves the active preview instead of returning to l
   expect(view.getByText("hr")).toBeTruthy();
   expect(restore).not.toHaveBeenCalled();
   expect(await AsyncStorage.getAllKeys()).toEqual([]);
-  await view.unmountAsync();
+  await view.unmount();
 });
 
 test("restored sessions show the dashboard without a catalog loading screen", async () => {
-  await AsyncStorage.setItem("vettingo:demo-session:v1", JSON.stringify(session));
+  await AsyncStorage.setItem(
+    "vettingo:demo-session:v1",
+    JSON.stringify(session),
+  );
   const services = createAppServices();
   const pending = new Promise<void>(() => {});
   const loads = [
@@ -101,7 +105,7 @@ test("restored sessions show the dashboard without a catalog loading screen", as
     jest.spyOn(services.questions, "load").mockReturnValue(pending),
     jest.spyOn(services.requisitionCatalog, "load").mockReturnValue(pending),
   ];
-  const view = await renderAsync(
+  const view = await render(
     <AppProvider services={services}>
       <DashboardScreen />
     </AppProvider>,
@@ -112,7 +116,7 @@ test("restored sessions show the dashboard without a catalog loading screen", as
   expect(view.queryByLabelText("Veriler yükleniyor…")).toBeNull();
   expect(view.queryByRole("progressbar")).toBeNull();
   for (const load of loads) expect(load).not.toHaveBeenCalled();
-  await view.unmountAsync();
+  await view.unmount();
 });
 
 test("demo catalogs are immediately available and isolated between service instances", () => {
@@ -122,7 +126,9 @@ test("demo catalogs are immediately available and isolated between service insta
   expect(first.jobs.catalog.jobs.length).toBeGreaterThan(0);
   expect(first.candidates.catalog.candidates.length).toBeGreaterThan(0);
   expect(first.questions.catalog.length).toBeGreaterThan(0);
-  expect(first.requisitionCatalog.catalog.departments.length).toBeGreaterThan(0);
+  expect(first.requisitionCatalog.catalog.departments.length).toBeGreaterThan(
+    0,
+  );
   expect(first.jobs.catalog.jobs[0]).not.toBe(second.jobs.catalog.jobs[0]);
   expect(first.questions.catalog[0]).not.toBe(second.questions.catalog[0]);
   expect(first.requisitionCatalog.catalog.departments).not.toBe(
@@ -135,9 +141,11 @@ test("demo catalogs are immediately available and isolated between service insta
 
 test("an unreadable saved session still opens login without loading catalogs", async () => {
   const services = createAppServices();
-  jest.spyOn(services.sessions, "restore").mockRejectedValueOnce(new Error("Disk"));
+  jest
+    .spyOn(services.sessions, "restore")
+    .mockRejectedValueOnce(new Error("Disk"));
   const loadJobs = jest.spyOn(services.jobs, "load");
-  const view = await renderAsync(
+  const view = await render(
     <AppProvider services={services}>
       <AuthScreen dashboardShortcuts={false} />
     </AppProvider>,
@@ -148,5 +156,5 @@ test("an unreadable saved session still opens login without loading catalogs", a
   );
   expect(view.queryByRole("progressbar")).toBeNull();
   expect(loadJobs).not.toHaveBeenCalled();
-  await view.unmountAsync();
+  await view.unmount();
 });

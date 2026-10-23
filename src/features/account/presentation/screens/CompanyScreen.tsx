@@ -12,6 +12,7 @@ const statistics = [
   { label: "Açık Pozisyon", value: "12" },
   { label: "Başvuru", value: "248" },
   { label: "Mülakat", value: "8" },
+  { label: "Görüşülen Aday", value: "0" },
 ];
 
 export default function CompanyScreen() {
@@ -89,11 +90,13 @@ const companyStyles = StyleSheet.create({
   },
   statistics: {
     flexDirection: "row",
+    flexWrap: "wrap",
     alignItems: "stretch",
     gap: 10,
   },
   statistic: {
-    flex: 1,
+    flexBasis: "48%",
+    flexGrow: 1,
     minWidth: 0,
     paddingHorizontal: 8,
     paddingVertical: 20,
