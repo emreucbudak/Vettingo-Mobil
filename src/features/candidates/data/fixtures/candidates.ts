@@ -31,6 +31,9 @@ const education = [
 export const candidates: Candidate[] = [
   {
     id: "sarah-jenkins",
+    experienceYears: 10,
+    salaryExpectation: 180000,
+    workingPreference: "hybrid",
     name: "Sarah Jenkins",
     initials: "SJ",
     role: "VP of Engineering at CloudScale Inc.",
@@ -56,6 +59,9 @@ export const candidates: Candidate[] = [
   },
   {
     id: "michael-ross",
+    experienceYears: 5,
+    salaryExpectation: 80000,
+    workingPreference: "remote",
     name: "Michael Ross",
     initials: "MR",
     role: "Frontend Engineer",
@@ -91,6 +97,9 @@ export const candidates: Candidate[] = [
   },
   {
     id: "zeynep-kaya",
+    experienceYears: 7,
+    salaryExpectation: 120000,
+    workingPreference: "onsite",
     name: "Zeynep Kaya",
     initials: "ZK",
     role: "Senior Data Analyst",
@@ -126,6 +135,9 @@ export const candidates: Candidate[] = [
   },
   {
     id: "can-demir",
+    experienceYears: 6,
+    salaryExpectation: 150000,
+    workingPreference: "remote",
     name: "Can Demir",
     initials: "CD",
     role: "Engineering Manager",
