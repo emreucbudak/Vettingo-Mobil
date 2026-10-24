@@ -168,11 +168,13 @@ test.each(["candidate", "employer", "hr"])(
       ...(role === "candidate"
         ? [
             ["Profil", "/candidate-profile-details"],
+            ["Bildirimler", "/notifications"],
             ["CV", "/cv-review"],
             ["Kişiselleştirilmiş İlanlar", "/candidate-personalized-jobs"],
           ]
         : [
             ["Şirket", `/${role}-company`],
+            ["Bildirimler", "/notifications"],
             ["Scout", "/scout"],
           ]),
       ["Güvenlik", `/${role}-security`],
@@ -210,7 +212,16 @@ test.each(["candidate", "employer", "hr"])(
         await waitFor(() => expect(view.getPathname()).toBe("/scout"));
         expectProfileSelected();
       }
-      await fireEvent.press(screen.getByRole("button", { name: "Geri" }));
+      if (label === "Bildirimler") {
+        expect(screen.getByText("Vettingo")).toBeTruthy();
+        expect(screen.getAllByRole("tab")).toHaveLength(4);
+        expect(screen.queryByRole("button")).toBeNull();
+        expect(screen.queryByText("Bildirimler")).toBeNull();
+        expect(screen.queryByText("Alex")).toBeNull();
+        await fireEvent.press(screen.getByRole("tab", { name: "Profil" }));
+      } else {
+        await fireEvent.press(screen.getByRole("button", { name: "Geri" }));
+      }
       await waitFor(() => expect(view.getPathname()).toBe(profilePath));
       expectProfileSelected();
     }

@@ -29,6 +29,10 @@ export default function ProfileScreen() {
       "Bu özellik backend bağlantısı tamamlandığında kullanıma sunulacak.",
     );
   function openMenuItem(label: string) {
+    if (label === "Bildirimler") {
+      router.push("/notifications" as Href);
+      return;
+    }
     if (label === "Scout") {
       router.push({ pathname: "/scout", params: { tab: "profile" } });
       return;
@@ -74,6 +78,7 @@ export default function ProfileScreen() {
         {candidate ? (
           [
             { label: "Profil", path: "/candidate-profile-details" },
+            { label: "Bildirimler", path: "/notifications" },
             { label: "CV", path: "/cv-review" },
             {
               label: "Kişiselleştirilmiş İlanlar",
@@ -87,7 +92,7 @@ export default function ProfileScreen() {
             />
           ))
         ) : (
-          ["Şirket", "Ekip ve Yetkiler", "Scout"].map((label) => (
+          ["Şirket", "Bildirimler", "Ekip ve Yetkiler", "Scout"].map((label) => (
             <ProfileMenuRow
               key={label}
               label={label}

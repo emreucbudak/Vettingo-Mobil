@@ -31,6 +31,9 @@ function Routes() {
           <Stack.Screen name="verify-reset-code" />
           <Stack.Screen name="reset-password" />
         </Stack.Protected>
+        <Stack.Protected guard={!!session}>
+          <Stack.Screen name="notifications" />
+        </Stack.Protected>
         <Stack.Protected guard={session?.role === "candidate"}>
           <Stack.Screen name="(candidate)" />
         </Stack.Protected>
