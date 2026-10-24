@@ -24,6 +24,7 @@ function Routes() {
           redirectTo={session ? homeFor(session.role) : "/login"}
         >
           <Stack.Screen name="login" />
+          <Stack.Screen name="verify-login-code" />
           <Stack.Screen name="register" />
           <Stack.Screen name="verify-email" />
           <Stack.Screen name="forgot-password" />
