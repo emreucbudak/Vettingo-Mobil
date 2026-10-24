@@ -1,19 +1,16 @@
 import React, { useState } from "react";
-import { Alert, Text } from "react-native";
+import { Text } from "react-native";
 import {
   Button,
   Field,
   styles,
 } from "../../../../shared/presentation/components/ui";
 import { PasswordResetLayout } from "../components/PasswordResetLayout";
+import { useAuthenticationCompletion } from "../hooks/useAuthenticationCompletion";
 
 export default function VerifyLoginCodeScreen() {
   const [code, setCode] = useState("");
-  const submitCode = () =>
-    Alert.alert(
-      "Giriş kodu doğrulaması",
-      "Giriş kodu doğrulaması şu anda kullanılamıyor. Lütfen daha sonra tekrar dene.",
-    );
+  const { submitCode, loading, error } = useAuthenticationCompletion(false);
 
   return (
     <PasswordResetLayout backLabel="Giriş ekranına dön" backHref="/login">
@@ -33,7 +30,12 @@ export default function VerifyLoginCodeScreen() {
         returnKeyType="done"
         onSubmitEditing={submitCode}
       />
-      <Button label="Giriş Kodunu Gir" onPress={submitCode} />
+      {error && (
+        <Text accessibilityRole="alert" style={styles.error}>
+          {error}
+        </Text>
+      )}
+      <Button label="Giriş Kodunu Gir" onPress={submitCode} loading={loading} />
     </PasswordResetLayout>
   );
 }

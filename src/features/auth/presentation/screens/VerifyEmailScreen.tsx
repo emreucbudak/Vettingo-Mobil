@@ -1,19 +1,16 @@
 import React, { useState } from "react";
-import { Alert, Text } from "react-native";
+import { Text } from "react-native";
 import {
   Button,
   Field,
   styles,
 } from "../../../../shared/presentation/components/ui";
 import { PasswordResetLayout } from "../components/PasswordResetLayout";
+import { useAuthenticationCompletion } from "../hooks/useAuthenticationCompletion";
 
 export default function VerifyEmailScreen() {
   const [code, setCode] = useState("");
-  const completeRegistration = () =>
-    Alert.alert(
-      "E-posta doğrulaması",
-      "E-posta doğrulaması şu anda kullanılamıyor. Lütfen daha sonra tekrar dene.",
-    );
+  const { submitCode, loading, error } = useAuthenticationCompletion(true);
 
   return (
     <PasswordResetLayout backLabel="Kayıt ekranına dön" backHref="/register">
@@ -31,9 +28,14 @@ export default function VerifyEmailScreen() {
         autoComplete="one-time-code"
         autoCorrect={false}
         returnKeyType="done"
-        onSubmitEditing={completeRegistration}
+        onSubmitEditing={submitCode}
       />
-      <Button label="Kaydını Tamamla" onPress={completeRegistration} />
+      {error && (
+        <Text accessibilityRole="alert" style={styles.error}>
+          {error}
+        </Text>
+      )}
+      <Button label="Kaydını Tamamla" onPress={submitCode} loading={loading} />
     </PasswordResetLayout>
   );
 }

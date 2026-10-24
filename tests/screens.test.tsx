@@ -5,6 +5,8 @@ import { createAppServices } from "../src/composition/createAppServices";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import AuthScreen from "../src/features/auth/presentation/screens/AuthScreen";
+import VerifyEmailScreen from "../src/features/auth/presentation/screens/VerifyEmailScreen";
+import VerifyLoginCodeScreen from "../src/features/auth/presentation/screens/VerifyLoginCodeScreen";
 import { CandidatesScreen } from "../src/features/candidates/presentation/screens/CandidatesScreen";
 import { JobSearchScreen } from "../src/features/jobs/presentation/screens/JobSearchScreen";
 import RequisitionScreen from "../src/features/requisitions/presentation/screens/RequisitionScreen";
@@ -61,6 +63,16 @@ function SessionRole() {
   );
 }
 
+function AuthFlow(props: React.ComponentProps<typeof AuthScreen>) {
+  return (
+    <>
+      <AuthScreen {...props} />
+      {props.register ? <VerifyEmailScreen /> : <VerifyLoginCodeScreen />}
+      <SessionRole />
+    </>
+  );
+}
+
 test.each([
   { register: false, employer: false, destination: "candidate" },
   { register: true, employer: false, destination: "employer" },
@@ -72,16 +84,25 @@ test.each([
     const signIn = jest.spyOn(services.sessions, "signIn");
     const saveWorkspace = jest.spyOn(services.sessions, "saveWorkspace");
     const view = await renderApp(
-      <>
-        <AuthScreen register={register} dashboardShortcuts />
-        <SessionRole />
-      </>,
+      <AuthFlow register={register} dashboardShortcuts />,
       services,
     );
     if (employer)
       await fireEvent.press(view.getByRole("button", { name: "İşveren" }));
     await fireEvent.press(
       view.getByRole("button", { name: register ? "Kayıt Ol" : "Giriş Yap" }),
+    );
+    expect(router.push).toHaveBeenCalledWith(
+      register ? "/verify-email" : "/verify-login-code",
+    );
+    expect(view.getByTestId("active-session-role").props.children).toBe(
+      "signed-out",
+    );
+    expect(signIn).not.toHaveBeenCalled();
+    await fireEvent.press(
+      view.getByRole("button", {
+        name: register ? "Kaydını Tamamla" : "Giriş Kodunu Gir",
+      }),
     );
     await waitFor(() =>
       expect(view.getByTestId("active-session-role").props.children).toBe(
@@ -145,7 +166,7 @@ test("login submits RHF values and respects the remember switch", async () => {
   const services = createAppServices();
   const signIn = jest.spyOn(services.sessions, "signIn");
   const view = await renderApp(
-    <AuthScreen dashboardShortcuts={false} />,
+    <AuthFlow dashboardShortcuts={false} />,
     services,
   );
   await fireEvent.changeText(
@@ -156,7 +177,17 @@ test("login submits RHF values and respects the remember switch", async () => {
   await fireEvent(view.getByLabelText("Beni hatırla"), "valueChange", false);
   await fireEvent.press(view.getByRole("button", { name: "Giriş Yap" }));
   await waitFor(() =>
-    expect(router.replace).toHaveBeenCalledWith("/candidate-dashboard"),
+    expect(router.push).toHaveBeenCalledWith("/verify-login-code"),
+  );
+  expect(signIn).not.toHaveBeenCalled();
+  expect(view.getByTestId("active-session-role").props.children).toBe(
+    "signed-out",
+  );
+  await fireEvent.press(view.getByRole("button", { name: "Giriş Kodunu Gir" }));
+  await waitFor(() =>
+    expect(view.getByTestId("active-session-role").props.children).toBe(
+      "candidate",
+    ),
   );
   expect(signIn).toHaveBeenCalledWith(
     expect.objectContaining({
@@ -176,7 +207,7 @@ test.each(["candidate", "employer"] as const)(
     const services = createAppServices();
     const signIn = jest.spyOn(services.sessions, "signIn");
     const view = await renderApp(
-      <AuthScreen register dashboardShortcuts={false} />,
+      <AuthFlow register dashboardShortcuts={false} />,
       services,
     );
     if (role === "employer") {
@@ -197,7 +228,15 @@ test.each(["candidate", "employer"] as const)(
     );
     await fireEvent.press(view.getByRole("button", { name: "Kayıt Ol" }));
     await waitFor(() =>
-      expect(router.replace).toHaveBeenCalledWith(`/${role}-dashboard`),
+      expect(router.push).toHaveBeenCalledWith("/verify-email"),
+    );
+    expect(signIn).not.toHaveBeenCalled();
+    expect(await AsyncStorage.getAllKeys()).toEqual([]);
+    await fireEvent.press(
+      view.getByRole("button", { name: "Kaydını Tamamla" }),
+    );
+    await waitFor(() =>
+      expect(view.getByTestId("active-session-role").props.children).toBe(role),
     );
     expect(signIn).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -223,7 +262,7 @@ test("login shows a submission error and allows retry", async () => {
     .spyOn(services.sessions, "signIn")
     .mockRejectedValueOnce(new Error("Offline"));
   const view = await renderApp(
-    <AuthScreen dashboardShortcuts={false} />,
+    <AuthFlow dashboardShortcuts={false} />,
     services,
   );
   await fireEvent.changeText(
@@ -233,6 +272,10 @@ test("login shows a submission error and allows retry", async () => {
   await fireEvent.changeText(view.getByLabelText("Şifre"), "secret");
   await fireEvent.press(view.getByRole("button", { name: "Giriş Yap" }));
   await waitFor(() =>
+    expect(router.push).toHaveBeenCalledWith("/verify-login-code"),
+  );
+  await fireEvent.press(view.getByRole("button", { name: "Giriş Kodunu Gir" }));
+  await waitFor(() =>
     expect(
       view.getByText("Oturum açılamadı. Lütfen tekrar deneyin."),
     ).toBeTruthy(),
@@ -240,13 +283,16 @@ test("login shows a submission error and allows retry", async () => {
   expect(router.replace).not.toHaveBeenCalled();
   await waitFor(() =>
     expect(
-      view.getByRole("button", { name: "Giriş Yap" }).props.accessibilityState
-        .disabled,
+      view.getByRole("button", { name: "Giriş Kodunu Gir" }).props
+        .accessibilityState.disabled,
     ).toBe(false),
   );
-  await fireEvent.press(view.getByRole("button", { name: "Giriş Yap" }));
+  await fireEvent.press(view.getByRole("button", { name: "Giriş Kodunu Gir" }));
+
   await waitFor(() =>
-    expect(router.replace).toHaveBeenCalledWith("/candidate-dashboard"),
+    expect(view.getByTestId("active-session-role").props.children).toBe(
+      "candidate",
+    ),
   );
   expect(
     view.queryByText("Oturum açılamadı. Lütfen tekrar deneyin."),
@@ -265,7 +311,7 @@ test("login disables repeat submission while sign-in is pending", async () => {
     .spyOn(services.sessions, "signIn")
     .mockReturnValueOnce(pending);
   const view = await renderApp(
-    <AuthScreen dashboardShortcuts={false} />,
+    <AuthFlow dashboardShortcuts={false} />,
     services,
   );
   await fireEvent.changeText(
@@ -275,12 +321,16 @@ test("login disables repeat submission while sign-in is pending", async () => {
   await fireEvent.changeText(view.getByLabelText("Şifre"), "secret");
   await fireEvent.press(view.getByRole("button", { name: "Giriş Yap" }));
   await waitFor(() =>
+    expect(router.push).toHaveBeenCalledWith("/verify-login-code"),
+  );
+  await fireEvent.press(view.getByRole("button", { name: "Giriş Kodunu Gir" }));
+  await waitFor(() =>
     expect(
-      view.getByRole("button", { name: "Giriş Yap" }).props.accessibilityState
-        .disabled,
+      view.getByRole("button", { name: "Giriş Kodunu Gir" }).props
+        .accessibilityState.disabled,
     ).toBe(true),
   );
-  await fireEvent.press(view.getByRole("button", { name: "Giriş Yap" }));
+  await fireEvent.press(view.getByRole("button", { name: "Giriş Kodunu Gir" }));
   expect(signIn).toHaveBeenCalledTimes(1);
   await act(async () => {
     finishSignIn({
@@ -288,7 +338,9 @@ test("login disables repeat submission while sign-in is pending", async () => {
       state: services.sessions.createWorkspace(),
     });
   });
-  expect(router.replace).toHaveBeenCalledWith("/candidate-dashboard");
+  expect(view.getByTestId("active-session-role").props.children).toBe(
+    "candidate",
+  );
   await view.unmount();
 });
 test("job search and filter dialog change actual results", async () => {
