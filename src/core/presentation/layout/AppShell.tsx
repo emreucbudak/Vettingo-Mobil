@@ -25,7 +25,12 @@ export function AppShell({
   children,
   title,
   actions,
-}: React.PropsWithChildren<{ title?: string; actions?: React.ReactNode }>) {
+  showBackButton = true,
+}: React.PropsWithChildren<{
+  title?: string;
+  actions?: React.ReactNode;
+  showBackButton?: boolean;
+}>) {
   const { session, storageError } = useApp();
   const path = usePathname();
   const { tab: sourceTab } = useLocalSearchParams<{ tab?: string }>();
@@ -80,6 +85,7 @@ export function AppShell({
         ];
   const main = tabs.some((tab) => tab.path === path);
   const profilePage =
+    path === "/notifications" ||
     [
       `/${role}-profile-details`,
       `/${role}-company`,
@@ -111,7 +117,7 @@ export function AppShell({
         >
           Vettingo
         </Text>
-        {!main && (
+        {!main && showBackButton && (
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Geri"
