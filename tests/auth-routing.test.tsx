@@ -36,6 +36,17 @@ test.each([
     await act(async () => {
       await fireEvent.press(screen.getByRole("button", { name: label }));
     });
+    const codePath =
+      start === "/login" ? "/verify-login-code" : "/verify-email";
+    await waitFor(() => expect(view.getPathname()).toBe(codePath));
+    expect(screen.queryByRole("tab", { name: "Ana Sayfa" })).toBeNull();
+    expect(await AsyncStorage.getAllKeys()).toEqual([]);
+    await fireEvent.changeText(screen.getByLabelText("Kod"), "123456");
+    await fireEvent.press(
+      screen.getByRole("button", {
+        name: start === "/login" ? "Giriş Kodunu Gir" : "Kaydını Tamamla",
+      }),
+    );
     await waitFor(() => expect(view.getPathname()).toBe(destination));
     expect(screen.getByRole("tab", { name: "Ana Sayfa" })).toBeTruthy();
     expect(screen.queryByRole("progressbar")).toBeNull();
@@ -102,6 +113,10 @@ test("job search cards open a blank candidate detail page and allow going back",
   await act(async () => {
     await fireEvent.press(screen.getByRole("button", { name: "Giriş Yap" }));
   });
+  await waitFor(() => expect(view.getPathname()).toBe("/verify-login-code"));
+  await fireEvent.press(
+    screen.getByRole("button", { name: "Giriş Kodunu Gir" }),
+  );
   await waitFor(() => expect(view.getPathname()).toBe("/candidate-dashboard"));
   await fireEvent.press(screen.getByRole("tab", { name: "Arama" }));
   await waitFor(() => expect(view.getPathname()).toBe("/job-search"));
@@ -223,3 +238,41 @@ test.each(["candidate", "employer", "hr"])(
   },
   60000,
 );
+
+test.each([
+  { path: "/verify-login-code", button: "Giriş Kodunu Gir", form: "/login" },
+  { path: "/verify-email", button: "Kaydını Tamamla", form: "/register" },
+])(
+  "opening $path directly cannot create a session",
+  async ({ path, button, form }) => {
+    const view = await renderRouter("src/app", { initialUrl: path });
+    await waitFor(() =>
+      expect(screen.getByRole("button", { name: button })).toBeTruthy(),
+    );
+    await fireEvent.press(screen.getByRole("button", { name: button }));
+    await waitFor(() => expect(view.getPathname()).toBe(form));
+    expect(await AsyncStorage.getAllKeys()).toEqual([]);
+  },
+  30000,
+);
+
+test("returning from registration verification allows changing the preview destination", async () => {
+  const view = await renderRouter("src/app", { initialUrl: "/register" });
+  await waitFor(() =>
+    expect(screen.getByRole("button", { name: "Kayıt Ol" })).toBeTruthy(),
+  );
+  await fireEvent.press(screen.getByRole("button", { name: "Kayıt Ol" }));
+  await waitFor(() => expect(view.getPathname()).toBe("/verify-email"));
+  await fireEvent.press(
+    screen.getByRole("button", { name: "Kayıt ekranına dön" }),
+  );
+  await waitFor(() => expect(view.getPathname()).toBe("/register"));
+  await fireEvent.press(screen.getByRole("button", { name: "İşveren" }));
+  await fireEvent.press(screen.getByRole("button", { name: "Kayıt Ol" }));
+  await waitFor(() => expect(view.getPathname()).toBe("/verify-email"));
+  await fireEvent.press(
+    screen.getByRole("button", { name: "Kaydını Tamamla" }),
+  );
+  await waitFor(() => expect(view.getPathname()).toBe("/hr-dashboard"));
+  expect(await AsyncStorage.getAllKeys()).toEqual([]);
+}, 30000);

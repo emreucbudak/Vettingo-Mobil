@@ -10,7 +10,7 @@ import {
   Text,
   View,
 } from "react-native";
-import { router, Href } from "expo-router";
+import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -25,7 +25,6 @@ import {
 import { AuthenticationInput, Role } from "../../domain/entities/Session";
 import { authenticationSchema } from "../../domain/policies/validation";
 import { AuthField } from "../components/AuthField";
-import { homeFor } from "../navigation/routes";
 import { roleLabels } from "../formatters/labels";
 import { useApp } from "../../../../core/presentation/state/AppProvider";
 import { legal } from "../content/legal";
@@ -37,11 +36,10 @@ export default function AuthScreen({
   register?: boolean;
   dashboardShortcuts?: boolean;
 }) {
-  const { signIn, openTemporaryWorkspace } = useApp();
+  const { beginAuthentication } = useApp();
   const {
     control,
     handleSubmit,
-    setError,
     clearErrors,
     formState: { errors, isSubmitting },
   } = useForm<AuthenticationInput>({
@@ -61,17 +59,10 @@ export default function AuthScreen({
   const role = useWatch({ control, name: "role" });
   const [visible, setVisible] = useState(false);
   const [document, setDocument] = useState<"terms" | "privacy" | null>(null);
-  async function submit(values: AuthenticationInput) {
-    clearErrors("root");
-    try {
-      await signIn(values);
-      router.replace(homeFor(values.role) as Href);
-    } catch {
-      setError("root", {
-        type: "server",
-        message: "Oturum açılamadı. Lütfen tekrar deneyin.",
-      });
-    }
+  const codeRoute = register ? "/verify-email" : "/verify-login-code";
+  function submit(values: AuthenticationInput) {
+    beginAuthentication(values);
+    router.push(codeRoute);
   }
   const unavailable = (label: string) =>
     Alert.alert(
@@ -304,11 +295,6 @@ export default function AuthScreen({
               </Pressable>
             </View>
           )}
-          {errors.root && (
-            <Text accessibilityRole="alert" style={styles.error}>
-              {errors.root.message}
-            </Text>
-          )}
           <Button
             label={register ? "Kayıt Ol" : "Giriş Yap"}
             onPress={() => {
@@ -318,8 +304,8 @@ export default function AuthScreen({
                   : role === "candidate"
                     ? "employer"
                     : "hr";
-                openTemporaryWorkspace(destination);
-                // Protected routes redirect after the new session is committed.
+                beginAuthentication({ register, previewRole: destination });
+                router.push(codeRoute);
                 return;
               }
               void handleSubmit(submit)();

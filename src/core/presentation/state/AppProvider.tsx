@@ -14,6 +14,9 @@ import {
 import { Workspace } from "../../domain/entities/Workspace";
 import { WorkspaceCommand } from "../../application/contracts/WorkspaceCommand";
 import { AppServices } from "../../application/AppServices";
+type PendingAuthentication =
+  AuthenticationInput | { register: boolean; previewRole: Role };
+
 interface AppContext {
   session: Session | null;
   state: Workspace;
@@ -21,6 +24,8 @@ interface AppContext {
   storageError: string;
   services: AppServices;
   signIn: (input: AuthenticationInput) => Promise<void>;
+  beginAuthentication: (input: PendingAuthentication) => void;
+  completeAuthentication: (register: boolean) => Promise<boolean>;
   signOut: () => Promise<void>;
   openTemporaryWorkspace: (role: Role) => void;
   dispatch: (command: WorkspaceCommand) => void;
@@ -36,6 +41,8 @@ export function AppProvider({
   const [storageError, setStorageError] = useState("");
   const loadedSession = useRef<Session | null>(null);
   const initialized = useRef(false);
+  // Form credentials stay in memory until the code screen is completed.
+  const pendingAuthentication = useRef<PendingAuthentication | null>(null);
   useEffect(() => {
     // Fast Refresh must not overwrite an active preview with the saved session.
     if (initialized.current) return;
@@ -71,6 +78,7 @@ export function AppProvider({
   }, [ready, session, state, services]);
   async function signIn(input: AuthenticationInput) {
     const restored = await services.sessions.signIn(input);
+    pendingAuthentication.current = null;
     loadedSession.current = restored.session;
     setState(restored.state);
     setSession(restored.session);
@@ -78,6 +86,7 @@ export function AppProvider({
   }
   async function signOut() {
     const fresh = await services.sessions.signOut();
+    pendingAuthentication.current = null;
     loadedSession.current = null;
     setSession(null);
     setState(fresh);
@@ -85,10 +94,25 @@ export function AppProvider({
   function openTemporaryWorkspace(role: Role) {
     if (!__DEV__ || !ready) return;
     const temporary = services.sessions.createTemporaryWorkspace(role);
+    pendingAuthentication.current = null;
     loadedSession.current = null;
     setSession(temporary.session);
     setState(temporary.state);
     setStorageError("");
+  }
+  function beginAuthentication(input: PendingAuthentication) {
+    pendingAuthentication.current = { ...input };
+  }
+  async function completeAuthentication(register: boolean) {
+    const pending = pendingAuthentication.current;
+    if (!pending || pending.register !== register) return false;
+    if ("previewRole" in pending) {
+      if (!__DEV__) return false;
+      openTemporaryWorkspace(pending.previewRole);
+    } else {
+      await signIn(pending);
+    }
+    return true;
   }
   const dispatch = useCallback(
     (command: WorkspaceCommand) =>
@@ -106,6 +130,8 @@ export function AppProvider({
         storageError,
         services,
         signIn,
+        beginAuthentication,
+        completeAuthentication,
         signOut,
         openTemporaryWorkspace,
         dispatch,
