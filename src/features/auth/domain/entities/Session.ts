@@ -1,5 +1,7 @@
 export type Role = "candidate" | "employer" | "hr";
 export interface Session {
+  userId?: string;
+  accessToken?: string;
   email: string;
   name: string;
   role: Role;

@@ -27,7 +27,7 @@ The application provides dedicated experiences for candidates, employers, and HR
 
 It is built with **React Native**, **TypeScript**, **Expo SDK 58**, and **Expo Router**, using a feature-first Clean Architecture.
 
-> The application currently runs with local demo data. Backend authentication, server-side recruitment operations, and notification delivery are pending integration. Some screens remain under active UI development.
+> The application currently runs with local demo data. Backend authentication, server-side recruitment operations, and push notification delivery are pending integration. The notification inbox supports the backend API when an authenticated session is available. Some screens remain under active UI development.
 
 ### Supported platforms
 
@@ -110,13 +110,19 @@ Selected documents are not uploaded or parsed by a backend.
 ### Notifications and account navigation
 
 - Shared notifications page for all three roles
-- Sample notification card for UI development
+- API-backed notification cards with title, message, creation date, and unread status
 - Notification preference control
 - Shared application header and back navigation
 - Profile-tab selection across account pages
 - Role-specific help content
 
-Notification content currently uses mock data. Push notifications and real-time delivery are pending integration.
+The notifications page requests the user's latest 80 notifications whenever it opens, with loading, empty, error, and retry states. Push notifications and real-time delivery are pending integration.
+
+The full request URL is written directly in the `list` method of `src/features/account/data/repositories/ApiNotificationsRepository.ts` and can be edited there. The current endpoint is `http://localhost:5149/api/notifications/user/{userId}`. On a physical device, replace `localhost` with the computer's LAN IP; on an Android emulator, use `10.0.2.2`.
+
+The endpoint requires a real backend `userId` and `accessToken` in the active `Session`; requests include the token in the `Authorization: Bearer ...` header. Demo login does not provide these fields, so demo sessions show a sign-in message. Connecting the authentication API remains a separate integration.
+
+The backend controls the newest-first order and 80-item limit. Cards display `title`, `message`, and `createdAt`; `isRead` controls the new-notification badge.
 
 ### Local persistence
 
@@ -373,7 +379,7 @@ When connecting the backend, add feature-specific data adapters and wire them th
 
 ## Backend integration status
 
-The mobile application is designed to connect to the Vettingo backend, but currently uses local repositories and bundled fixtures.
+The mobile application primarily uses local repositories and bundled fixtures. The notification inbox has an API repository that requires a backend-authenticated session.
 
 | Capability | Current behavior |
 |---|---|
@@ -385,7 +391,7 @@ The mobile application is designed to connect to the Vettingo backend, but curre
 | **CV documents** | Device selection without upload or parsing |
 | **Interview planning** | Local state without invitation delivery |
 | **Assessments** | Local answers and completion state |
-| **Notifications** | Sample content without server delivery |
+| **Notifications** | Latest 80 notifications via API; requires backend user ID and access token |
 | **Company information** | Demo presentation |
 
 Production integration requires server-side authentication, authorization, token handling, API-backed repositories, and synchronization.

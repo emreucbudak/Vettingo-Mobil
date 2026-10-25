@@ -20,6 +20,8 @@ jest.mock("expo-router", () => ({
   },
   usePathname: () => "/candidate-dashboard",
   useLocalSearchParams: () => ({}),
+  useFocusEffect: (effect: () => void | (() => void)) =>
+    require("react").useEffect(effect, [effect]),
 }));
 jest.mock(
   "react-native-safe-area-context",
