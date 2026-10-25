@@ -90,6 +90,14 @@ npx expo export --platform all
 
 GitHub Actions TypeScript, lint, test ve web paketleme kontrollerini her push/PR için çalıştırır.
 
+### Bağımlılık güvenliği
+
+25 Ekim 2026 kontrolünde Expo SDK 58.0.19 ile eski SDK 54 bağımlılıkları kaldırıldı; PostCSS ve image-size uyarıları giderildi. Expo CLI 58.1.15'in Zod 3 bağımlılığı, yalnızca bu CLI sürümü için `overrides` ile uygulamanın düzeltilmiş Zod 4 sürümüne yönlendirildi. CLI eklenti, komut ve çıktı şemalarının geçerli girdileri kabul ettiği ve hatalı girdileri reddettiği kontrol edildi. CLI güncellendiğinde bu yönlendirme tekrar değerlendirilmeli.
+
+`npm audit` hâlâ **4 high** uyarısı verir: `node-forge`, `@expo/code-signing-certificates`, `@expo/cli` ve `expo`. Bunlar aynı [node-forge imza doğrulama açığının](https://github.com/advisories/GHSA-86w9-cpqp-85rv) bağımlılık zincirindeki yansımalarıdır. `node-forge` 1.4.0 için henüz yayımlanmış bir düzeltme yoktur; bu açık giderilmiş değildir.
+
+`npm audit fix --force` kullanmayın: mevcut raporda Expo'yu SDK 44'e düşürmeyi önerir ve SDK 58 paketleriyle uyumu bozar. Yeni düzeltmeleri `npm audit` ile kontrol edin; Expo paketlerini `npx expo install` üzerinden güncelleyin. Bu rapor bir antivirüs taraması değildir.
+
 ## APK ve mağaza derlemeleri
 
 `eas.json` geliştirme, önizleme APK ve üretim profillerini içerir. Kendi Expo hesabınız ve imzalama yapılandırmanızla:
