@@ -13,11 +13,11 @@ export default function VerifyLoginCodeScreen() {
   const { submitCode, loading, error } = useAuthenticationCompletion(false);
 
   return (
-    <PasswordResetLayout backLabel="Giriş ekranına dön" backHref="/login">
-      <Text style={[styles.text, { textAlign: "center" }]}>
-        Giriş yapman için e-postana bir kod gönderdik. Bu kodu aşağıya girmen
-        gerekiyor.
-      </Text>
+    <PasswordResetLayout
+      backLabel="Giriş ekranına dön"
+      backHref="/login"
+      description="Giriş yapman için e-postana bir kod gönderdik. Bu kodu aşağıya girmen gerekiyor."
+    >
       <Field
         label="Kod"
         placeholder="Kodu girin"

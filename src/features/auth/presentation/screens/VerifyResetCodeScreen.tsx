@@ -11,6 +11,7 @@ export default function VerifyResetCodeScreen() {
     <PasswordResetLayout
       backLabel="E-posta ekranına dön"
       backHref="/forgot-password"
+      description="Şifreni sıfırlaman için e-postana bir kod gönderdik. Yeni şifreni belirlemek için bu kodu aşağıya girmen gerekiyor."
     >
       <Field
         label="Kod"
