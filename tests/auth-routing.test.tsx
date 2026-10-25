@@ -213,12 +213,20 @@ test.each(["candidate", "employer", "hr"])(
         expectProfileSelected();
       }
       if (label === "Bildirimler") {
-        expect(screen.getByText("Vettingo")).toBeTruthy();
+        expect(screen.getAllByText("Vettingo")).toHaveLength(1);
         expect(screen.getAllByRole("tab")).toHaveLength(4);
-        expect(screen.queryByRole("button")).toBeNull();
+        expect(screen.getByRole("button", { name: "Geri" })).toBeTruthy();
         expect(screen.queryByText("Bildirimler")).toBeNull();
+        await waitFor(() =>
+          expect(
+            screen.getByText(
+              "Bildirimleri görmek için hesabınıza yeniden giriş yapın.",
+            ),
+          ).toBeTruthy(),
+        );
+        expect(screen.queryByText("Vettingo’ya hoş geldin!")).toBeNull();
         expect(screen.queryByText("Alex")).toBeNull();
-        await fireEvent.press(screen.getByRole("tab", { name: "Profil" }));
+        await fireEvent.press(screen.getByRole("button", { name: "Geri" }));
       } else {
         await fireEvent.press(screen.getByRole("button", { name: "Geri" }));
       }

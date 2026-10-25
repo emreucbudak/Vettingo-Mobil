@@ -21,6 +21,8 @@ import { ReactNativeSummarySharer } from "../features/candidates/infrastructure/
 import { RequisitionUseCases } from "../features/requisitions/application/usecases/RequisitionUseCases";
 import { AssessmentUseCases } from "../features/assessment/application/usecases/AssessmentUseCases";
 import { ApplicationUseCases } from "../features/applications/application/usecases/ApplicationUseCases";
+import { NotificationQueries } from "../features/account/application/usecases/NotificationQueries";
+import { ApiNotificationsRepository } from "../features/account/data/repositories/ApiNotificationsRepository";
 export function createAppServices(): AppServices {
   const storage = new AsyncStorageSource(),
     clock = new SystemClock();
@@ -43,6 +45,9 @@ export function createAppServices(): AppServices {
     requisitionRepository.snapshot(),
   );
   return {
+    notifications: new NotificationQueries(
+      new ApiNotificationsRepository((input, init) => fetch(input, init)),
+    ),
     jobs,
     candidates,
     questions,
