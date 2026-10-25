@@ -6,6 +6,7 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
+  Text,
   View,
 } from "react-native";
 import { Href, router } from "expo-router";
@@ -20,7 +21,12 @@ export function PasswordResetLayout({
   children,
   backLabel,
   backHref,
-}: React.PropsWithChildren<{ backLabel: string; backHref: Href }>) {
+  description,
+}: React.PropsWithChildren<{
+  backLabel: string;
+  backHref: Href;
+  description?: string;
+}>) {
   const insets = useSafeAreaInsets();
 
   return (
@@ -58,6 +64,11 @@ export function PasswordResetLayout({
               resizeMode="contain"
               style={resetStyles.logo}
             />
+            {description && (
+              <Text style={[styles.text, resetStyles.description]}>
+                {description}
+              </Text>
+            )}
             {children}
           </View>
         </ScrollView>
@@ -67,6 +78,10 @@ export function PasswordResetLayout({
 }
 
 const resetStyles = StyleSheet.create({
+  description: {
+    fontWeight: "700",
+    textAlign: "center",
+  },
   header: { position: "absolute", left: 14, zIndex: 1 },
   backButton: {
     width: 44,

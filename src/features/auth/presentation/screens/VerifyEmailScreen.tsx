@@ -13,11 +13,11 @@ export default function VerifyEmailScreen() {
   const { submitCode, loading, error } = useAuthenticationCompletion(true);
 
   return (
-    <PasswordResetLayout backLabel="Kayıt ekranına dön" backHref="/register">
-      <Text style={[styles.text, { textAlign: "center" }]}>
-        E-posta adresini doğrulaman için e-postana bir kod gönderildi. Kaydını
-        tamamlamak için bu kodu aşağıya girmen gerekiyor.
-      </Text>
+    <PasswordResetLayout
+      backLabel="Kayıt ekranına dön"
+      backHref="/register"
+      description="E-posta adresini doğrulaman için e-postana bir kod gönderildi. Kaydını tamamlamak için bu kodu aşağıya girmen gerekiyor."
+    >
       <Field
         label="Kod"
         placeholder="Kodu girin"
