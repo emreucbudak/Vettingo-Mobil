@@ -107,6 +107,17 @@ Assessment answers and completion state are stored locally. Server-side submissi
 
 Selected documents are not uploaded or parsed by a backend.
 
+The dashboard checks CV existence through `GET http://localhost:5083/api/evaluations/cv/user/{userId}/exists`
+using the session's GUID `userId` and Bearer `accessToken`. A raw `false` response shows the
+non-dismissible “CV oluştur” card; `true` hides it. Loading, request failures, and missing backend
+credentials do not count as a missing CV. Failed checks show a retry action. The check runs
+again when the dashboard gains focus; locally saving a CV does not change the server result.
+
+The full URL is in `src/features/cv/data/repositories/ApiCvRepository.ts`. For a physical
+device use the server's LAN IP; for an Android emulator use `10.0.2.2` in place of `localhost`.
+Demo login does not supply backend credentials. EvaluationService's CV tables must
+exist in the database; schema changes follow the backend's migration process.
+
 ### Notifications and account navigation
 
 - Shared notifications page for all three roles

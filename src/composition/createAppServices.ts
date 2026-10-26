@@ -23,6 +23,8 @@ import { AssessmentUseCases } from "../features/assessment/application/usecases/
 import { ApplicationUseCases } from "../features/applications/application/usecases/ApplicationUseCases";
 import { NotificationQueries } from "../features/account/application/usecases/NotificationQueries";
 import { ApiNotificationsRepository } from "../features/account/data/repositories/ApiNotificationsRepository";
+import { CvQueries } from "../features/cv/application/usecases/CvQueries";
+import { ApiCvRepository } from "../features/cv/data/repositories/ApiCvRepository";
 export function createAppServices(): AppServices {
   const storage = new AsyncStorageSource(),
     clock = new SystemClock();
@@ -45,6 +47,7 @@ export function createAppServices(): AppServices {
     requisitionRepository.snapshot(),
   );
   return {
+    cv: new CvQueries(new ApiCvRepository((input, init) => fetch(input, init))),
     notifications: new NotificationQueries(
       new ApiNotificationsRepository((input, init) => fetch(input, init)),
     ),
