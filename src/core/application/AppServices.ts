@@ -5,6 +5,7 @@ import { CandidatesQueries } from "../../features/candidates/application/usecase
 import { AssessmentQueries } from "../../features/assessment/application/usecases/AssessmentQueries";
 import { RequisitionQueries } from "../../features/requisitions/application/usecases/RequisitionQueries";
 import { NotificationQueries } from "../../features/account/application/usecases/NotificationQueries";
+import { CvQueries } from "../../features/cv/application/usecases/CvQueries";
 export interface AppServices {
   sessions: SessionUseCases;
   workspace: WorkspaceUseCases;
@@ -13,4 +14,5 @@ export interface AppServices {
   questions: AssessmentQueries;
   requisitionCatalog: RequisitionQueries;
   notifications: NotificationQueries;
+  cv: CvQueries;
 }

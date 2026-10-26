@@ -18,7 +18,7 @@ import { DashboardCandidateCard } from "../components/DashboardCandidateCard";
 import { JobSearchCard } from "../../../jobs/presentation/components/JobSearchCard";
 import { DashboardRequisitionCard } from "../components/DashboardRequisitionCard";
 import { ScoutEntryCard } from "../../../candidates/presentation/components/ScoutEntryCard";
-import { CreateCvCard } from "../components/CreateCvCard";
+import { CreateCvPrompt } from "../components/CreateCvPrompt";
 
 export default function DashboardScreen() {
   const { session, state, services } = useApp();
@@ -28,7 +28,7 @@ export default function DashboardScreen() {
   if (session.role === "candidate")
     return (
       <AppShell>
-        {!state.cv.completed && <CreateCvCard key={session.email} />}
+        <CreateCvPrompt key={session.userId ?? session.email} />
         <Section
           title="Aktif Başvurular"
           action="Tümünü Gör"
