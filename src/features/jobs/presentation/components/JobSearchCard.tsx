@@ -1,6 +1,6 @@
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { Job } from "../../domain/entities/Job";
+import { JobSummary } from "../../domain/entities/Job";
 import {
   Card,
   Chip,
@@ -13,7 +13,7 @@ export function JobSearchCard({
   job,
   onPress,
 }: {
-  job: Job;
+  job: JobSummary;
   onPress: () => void;
 }) {
   const locationType =
@@ -36,11 +36,12 @@ export function JobSearchCard({
           <View style={cardStyles.heading}>
             <Title small>{job.title}</Title>
             <Label muted>
-              {job.company} · {job.office ?? job.location}
+              {job.company ? `${job.company} · ` : ""}
+              {job.office ?? job.location}
             </Label>
           </View>
           <Label muted>
-            Tam Zamanlı ·{" "}
+            {job.employmentType ?? "Tam Zamanlı"} ·{" "}
             {locationType === "remote"
               ? "Remote"
               : locationType === "hybrid"
