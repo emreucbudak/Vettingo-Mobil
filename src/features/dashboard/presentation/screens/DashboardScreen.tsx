@@ -38,7 +38,7 @@ export default function DashboardScreen() {
           .filter((item) => item.status !== "Rejected")
           .slice(0, 2)
           .map((item) => (
-            <ApplicationCard key={item.id} item={item} />
+            <ApplicationCard key={item.id} item={item} compact />
           ))}
         <Section
           title="Önerilen İlanlar"

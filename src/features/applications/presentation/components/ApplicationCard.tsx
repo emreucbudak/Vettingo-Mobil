@@ -13,28 +13,39 @@ import {
   Title,
 } from "../../../../shared/presentation/components/ui";
 
-export function ApplicationCard({ item }: { item: Application }) {
+export function ApplicationCard({
+  item,
+  compact = false,
+}: {
+  item: Application;
+  compact?: boolean;
+}) {
+  const status = (
+    <Badge success={item.status === "Interviewing"}>
+      {item.status === "Interviewing"
+        ? "Mülakat"
+        : item.status === "Rejected"
+          ? "Olumsuz"
+          : "Başvuruldu"}
+    </Badge>
+  );
+
   return (
     <Card>
-      <View style={styles.row}>
-        <Avatar initials={item.company.slice(0, 2).toUpperCase()} />
-        <View style={{ flex: 1 }}>
+      <View style={[styles.row, compact && { alignItems: "flex-start" }]}>
+        {!compact && <Avatar initials={item.company.slice(0, 2).toUpperCase()} />}
+        <View style={{ flex: 1, minWidth: 0 }}>
           <Title small>{item.title}</Title>
           <Label muted>
             {item.company} · {item.location}
           </Label>
         </View>
+        {compact && status}
       </View>
-      <Badge success={item.status === "Interviewing"}>
-        {item.status === "Interviewing"
-          ? "Mülakat"
-          : item.status === "Rejected"
-            ? "Olumsuz"
-            : "Başvuruldu"}
-      </Badge>
+      {!compact && status}
       <Progress value={item.progress} />
-      <Label muted>{item.next}</Label>
-      {item.status === "Interviewing" && (
+      {!compact && <Label muted>{item.next}</Label>}
+      {!compact && item.status === "Interviewing" && (
         <Button
           label="Teknik Değerlendirmeye Git"
           secondary
