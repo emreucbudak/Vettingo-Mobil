@@ -16,6 +16,7 @@ const postingsResponse = z.array(
   z.object({
     jobPostingId: z.string().uuid(),
     companyId: z.string().uuid(),
+    companyName: z.string(),
     title: z.string().min(1),
     cityName: z.string().min(1),
     employmentType: z.union([
@@ -63,7 +64,7 @@ export class ApiPersonalizedJobsRepository implements PersonalizedJobsRepository
     return postings.data.map((posting) => ({
       id: posting.jobPostingId,
       title: posting.title,
-      company: "",
+      company: posting.companyName,
       location: posting.cityName,
       office: posting.cityName,
       locationType: workingModels[posting.workingModel],
