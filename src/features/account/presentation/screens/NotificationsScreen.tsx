@@ -1,15 +1,10 @@
 import React, { useCallback, useRef, useState } from "react";
-import { ActivityIndicator, Text } from "react-native";
+import { ActivityIndicator } from "react-native";
 import { useFocusEffect } from "expo-router";
 import { AppShell } from "../../../../core/presentation/layout/AppShell";
 import { useApp } from "../../../../core/presentation/state/AppProvider";
 import { AccountNotification } from "../../domain/entities/AccountNotification";
-import { NotificationAuthenticationError } from "../../domain/errors/NotificationAuthenticationError";
-import {
-  Button,
-  Empty,
-  styles,
-} from "../../../../shared/presentation/components/ui";
+import { Empty } from "../../../../shared/presentation/components/ui";
 import { NotificationCard } from "../components/NotificationCard";
 
 export default function NotificationsScreen() {
@@ -18,7 +13,7 @@ export default function NotificationsScreen() {
     readonly AccountNotification[]
   >([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [failed, setFailed] = useState(false);
   const requestId = useRef(0);
   const userId = session?.userId;
   const accessToken = session?.accessToken;
@@ -26,7 +21,7 @@ export default function NotificationsScreen() {
   const loadNotifications = useCallback(() => {
     const currentRequest = ++requestId.current;
     setNotifications([]);
-    setError("");
+    setFailed(false);
     setLoading(true);
 
     void services.notifications
@@ -34,13 +29,8 @@ export default function NotificationsScreen() {
       .then((items) => {
         if (currentRequest === requestId.current) setNotifications(items);
       })
-      .catch((reason: unknown) => {
-        if (currentRequest === requestId.current)
-          setError(
-            reason instanceof NotificationAuthenticationError
-              ? reason.message
-              : "Bildirimler yüklenemedi. Lütfen tekrar deneyin.",
-          );
+      .catch(() => {
+        if (currentRequest === requestId.current) setFailed(true);
       })
       .finally(() => {
         if (currentRequest === requestId.current) setLoading(false);
@@ -61,15 +51,7 @@ export default function NotificationsScreen() {
       {loading && (
         <ActivityIndicator accessibilityLabel="Bildirimler yükleniyor" />
       )}
-      {!!error && (
-        <>
-          <Text accessibilityRole="alert" style={styles.error}>
-            {error}
-          </Text>
-          <Button label="Tekrar Dene" onPress={loadNotifications} />
-        </>
-      )}
-      {!loading && !error && notifications.length === 0 && (
+      {!loading && !failed && notifications.length === 0 && (
         <Empty label="Henüz bildiriminiz bulunmuyor." />
       )}
       {notifications.map((notification) => (

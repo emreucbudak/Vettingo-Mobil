@@ -218,12 +218,12 @@ test.each(["candidate", "employer", "hr"])(
         expect(screen.getByRole("button", { name: "Geri" })).toBeTruthy();
         expect(screen.queryByText("Bildirimler")).toBeNull();
         await waitFor(() =>
-          expect(
-            screen.getByText(
-              "Bildirimleri görmek için hesabınıza yeniden giriş yapın.",
-            ),
-          ).toBeTruthy(),
+          expect(screen.queryByLabelText("Bildirimler yükleniyor")).toBeNull(),
         );
+        expect(screen.queryByRole("alert")).toBeNull();
+        expect(
+          screen.queryByRole("button", { name: "Tekrar Dene" }),
+        ).toBeNull();
         expect(screen.queryByText("Vettingo’ya hoş geldin!")).toBeNull();
         expect(screen.queryByText("Alex")).toBeNull();
         await fireEvent.press(screen.getByRole("button", { name: "Geri" }));
