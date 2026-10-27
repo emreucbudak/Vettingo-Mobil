@@ -7,6 +7,8 @@ import { SystemClock } from "../shared/infrastructure/SystemClock";
 import { AuthUseCases } from "../features/auth/application/usecases/AuthUseCases";
 import { LocalAuthRepository } from "../features/auth/data/repositories/LocalAuthRepository";
 import { JobsQueries } from "../features/jobs/application/usecases/JobsQueries";
+import { PersonalizedJobsQueries } from "../features/jobs/application/usecases/PersonalizedJobsQueries";
+import { ApiPersonalizedJobsRepository } from "../features/jobs/data/repositories/ApiPersonalizedJobsRepository";
 import { DemoJobsRepository } from "../features/jobs/data/repositories/DemoJobsRepository";
 import { CandidatesQueries } from "../features/candidates/application/usecases/CandidatesQueries";
 import { DemoCandidatesRepository } from "../features/candidates/data/repositories/DemoCandidatesRepository";
@@ -47,6 +49,12 @@ export function createAppServices(): AppServices {
     requisitionRepository.snapshot(),
   );
   return {
+    personalizedJobs: new PersonalizedJobsQueries(
+      new ApiPersonalizedJobsRepository(
+        (input, init) => fetch(input, init),
+        process.env.EXPO_PUBLIC_JOB_API_URL,
+      ),
+    ),
     cv: new CvQueries(new ApiCvRepository((input, init) => fetch(input, init))),
     notifications: new NotificationQueries(
       new ApiNotificationsRepository((input, init) => fetch(input, init)),
