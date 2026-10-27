@@ -178,22 +178,22 @@ test("keeps the card hidden while waiting for the API result", async () => {
   expect(view.getByRole("button", { name: "CV oluştur" })).toBeTruthy();
 });
 
-test("keeps the card hidden on failure and retries the status request", async () => {
-  const request = jest
-    .fn<ReturnType<typeof fetch>, Parameters<typeof fetch>>()
-    .mockResolvedValueOnce(response(false, 500))
-    .mockResolvedValueOnce(response(false));
-  const { view } = await renderDashboard(request);
-  await waitFor(() => expect(view.getByRole("alert")).toBeTruthy());
-  expect(view.queryByRole("button", { name: "CV oluştur" })).toBeNull();
-  await fireEvent.press(
-    view.getByRole("button", { name: "CV durumunu tekrar kontrol et" }),
-  );
-  await waitFor(() =>
-    expect(view.getByRole("button", { name: "CV oluştur" })).toBeTruthy(),
-  );
-  expect(view.queryByRole("alert")).toBeNull();
-});
+test.each([401, 403, 500])(
+  "hides the CV prompt and error UI on HTTP %s",
+  async (status) => {
+    const request = jest
+      .fn<ReturnType<typeof fetch>, Parameters<typeof fetch>>()
+      .mockResolvedValue(response(false, status));
+    const { view } = await renderDashboard(request);
+    await waitFor(() => expect(request).toHaveBeenCalledTimes(1));
+    await act(async () => {});
+    expect(view.queryByRole("button", { name: "CV oluştur" })).toBeNull();
+    expect(
+      view.queryByRole("button", { name: "CV durumunu tekrar kontrol et" }),
+    ).toBeNull();
+    expect(view.queryByRole("alert")).toBeNull();
+  },
+);
 
 test("does not fabricate a no-CV result for demo sessions", async () => {
   const request = jest.fn<ReturnType<typeof fetch>, Parameters<typeof fetch>>();
@@ -202,7 +202,11 @@ test("does not fabricate a no-CV result for demo sessions", async () => {
     userId: undefined,
     accessToken: undefined,
   });
-  await waitFor(() => expect(view.getByRole("alert")).toBeTruthy());
+  await act(async () => {});
+  expect(view.queryByRole("alert")).toBeNull();
+  expect(
+    view.queryByRole("button", { name: "CV durumunu tekrar kontrol et" }),
+  ).toBeNull();
   expect(request).not.toHaveBeenCalled();
   expect(view.queryByRole("button", { name: "CV oluştur" })).toBeNull();
 });

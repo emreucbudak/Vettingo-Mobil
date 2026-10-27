@@ -1,5 +1,5 @@
 import React from "react";
-import { act, fireEvent, render, waitFor } from "@testing-library/react-native";
+import { act, render, waitFor } from "@testing-library/react-native";
 import { createAppServices } from "../src/composition/createAppServices";
 import { AppProvider } from "../src/core/presentation/state/AppProvider";
 import { NotificationQueries } from "../src/features/account/application/usecases/NotificationQueries";
@@ -189,34 +189,38 @@ test("shows loading while waiting and an empty state for an empty API result", a
   expect(view.getByText("Henüz bildiriminiz bulunmuyor.")).toBeTruthy();
 });
 
-test("retries a failed request and displays the returned cards", async () => {
+test("hides error and retry UI when the request fails", async () => {
   const request = jest
     .fn<ReturnType<typeof fetch>, Parameters<typeof fetch>>()
-    .mockRejectedValueOnce(new Error("Network request failed"))
-    .mockResolvedValueOnce(response([notification]));
+    .mockRejectedValue(new Error("Network request failed"));
   const view = await renderNotifications(request);
-  await waitFor(() => expect(view.getByRole("alert")).toBeTruthy());
+  await waitFor(() => expect(request).toHaveBeenCalledTimes(1));
+  await act(async () => {});
+  expect(view.queryByLabelText("Bildirimler yükleniyor")).toBeNull();
   expect(view.queryByText("Henüz bildiriminiz bulunmuyor.")).toBeNull();
-  await fireEvent.press(view.getByRole("button", { name: "Tekrar Dene" }));
-  await waitFor(() => expect(view.getByText(notification.title)).toBeTruthy());
+  expect(view.queryByRole("button", { name: "Tekrar Dene" })).toBeNull();
   expect(view.queryByRole("alert")).toBeNull();
-  expect(request).toHaveBeenCalledTimes(2);
 });
 
-test("demo sessions show the authentication state without a fake welcome notification", async () => {
-  const request = jest.fn<ReturnType<typeof fetch>, Parameters<typeof fetch>>();
-  const view = await renderNotifications(request, {
-    ...session,
-    userId: undefined,
-    accessToken: undefined,
-  });
-  await waitFor(() =>
-    expect(
-      view.getByText(
-        "Bildirimleri görmek için hesabınıza yeniden giriş yapın.",
-      ),
-    ).toBeTruthy(),
-  );
-  expect(request).not.toHaveBeenCalled();
-  expect(view.queryByText("Vettingo’ya hoş geldin!")).toBeNull();
-});
+test.each(["candidate", "employer", "hr"] as const)(
+  "%s demo sessions hide authentication and retry UI",
+  async (role) => {
+    const request = jest.fn<
+      ReturnType<typeof fetch>,
+      Parameters<typeof fetch>
+    >();
+    const view = await renderNotifications(request, {
+      ...session,
+      role,
+      userId: undefined,
+      accessToken: undefined,
+    });
+    await act(async () => {});
+    expect(view.queryByLabelText("Bildirimler yükleniyor")).toBeNull();
+    expect(view.queryByRole("alert")).toBeNull();
+    expect(view.queryByRole("button", { name: "Tekrar Dene" })).toBeNull();
+    expect(view.queryByText("Henüz bildiriminiz bulunmuyor.")).toBeNull();
+    expect(request).not.toHaveBeenCalled();
+    expect(view.queryByText("Vettingo’ya hoş geldin!")).toBeNull();
+  },
+);
