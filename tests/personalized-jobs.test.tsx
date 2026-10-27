@@ -10,6 +10,7 @@ import PersonalizedJobsScreen from "../src/features/jobs/presentation/screens/Pe
 const posting = {
   jobPostingId: "019a16b1-1234-7000-8000-000000000001",
   companyId: "019a16b1-1234-7000-8000-000000000002",
+  companyName: "Vettingo Teknoloji",
   title: "Backend Developer",
   cityName: "İstanbul",
   employmentType: 2,
@@ -51,7 +52,7 @@ test("loads job card data with the token and no company request", async () => {
     id: posting.jobPostingId,
     title: posting.title,
     location: "İstanbul",
-    company: "",
+    company: posting.companyName,
     employmentType: "Yarı Zamanlı",
     locationType: "hybrid",
     experienceRange: { min: 2, max: 5 },
@@ -105,7 +106,7 @@ test("renders API values in the existing card and opens the job ID", async () =>
   );
   await waitFor(() => expect(view.getByText(posting.title)).toBeTruthy());
   for (const text of [
-    "İstanbul",
+    "Vettingo Teknoloji · İstanbul",
     "Yarı Zamanlı · Hybrid",
     "Tecrübe 2–5 yıl",
     "Maaş 50.000–75.000 ₺",
