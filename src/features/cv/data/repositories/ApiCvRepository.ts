@@ -6,9 +6,9 @@ import {
 export class ApiCvRepository implements CvRepository {
   constructor(private readonly request: typeof fetch) {}
 
-  async hasCv({ userId, accessToken }: CvCredentials): Promise<boolean> {
+  async hasCv({ accessToken }: CvCredentials): Promise<boolean> {
     const response = await this.request(
-      `http://localhost:5083/api/evaluations/cv/user/${encodeURIComponent(userId)}/exists`,
+      "http://localhost:5083/api/evaluations/cv/exists",
       {
         method: "GET",
         headers: {

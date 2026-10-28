@@ -29,6 +29,10 @@ export default function ProfileScreen() {
       "Bu özellik backend bağlantısı tamamlandığında kullanıma sunulacak.",
     );
   function openMenuItem(label: string) {
+    if (label === "Ekip" && session?.role === "employer") {
+      router.push("/employer-team" as Href);
+      return;
+    }
     if (label === "Bildirimler") {
       router.push("/notifications" as Href);
       return;
@@ -92,7 +96,12 @@ export default function ProfileScreen() {
             />
           ))
         ) : (
-          ["Şirket", "Bildirimler", "Ekip ve Yetkiler", "Scout"].map((label) => (
+          [
+            "Şirket",
+            "Bildirimler",
+            session.role === "employer" ? "Ekip" : "Ekip ve Yetkiler",
+            "Scout",
+          ].map((label) => (
             <ProfileMenuRow
               key={label}
               label={label}

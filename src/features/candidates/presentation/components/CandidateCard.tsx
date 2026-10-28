@@ -6,7 +6,6 @@ import { candidateStage } from "../../domain/policies/stage";
 import { stageLabels } from "../formatters/labels";
 import { useApp } from "../../../../core/presentation/state/AppProvider";
 import {
-  Avatar,
   Badge,
   Card,
   Chip,
@@ -38,7 +37,6 @@ export function CandidateCard({ candidate }: { candidate: Candidate }) {
     >
       <Card>
         <View style={[styles.row, { alignItems: "flex-start" }]}>
-          <Avatar initials={candidate.initials} />
           <View style={{ flex: 1, minWidth: 0, alignSelf: "center" }}>
             <Title small>{candidate.name}</Title>
           </View>

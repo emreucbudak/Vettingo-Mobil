@@ -7,7 +7,6 @@ export function CreateCvPrompt() {
   const { services, session } = useApp();
   const [hasCv, setHasCv] = useState<boolean | null>(null);
   const requestId = useRef(0);
-  const userId = session?.userId;
   const accessToken = session?.accessToken;
 
   const loadCvStatus = useCallback(() => {
@@ -15,14 +14,14 @@ export function CreateCvPrompt() {
     setHasCv(null);
 
     void services.cv
-      .hasCv({ userId, accessToken })
+      .hasCv({ accessToken })
       .then((exists) => {
         if (currentRequest === requestId.current) setHasCv(exists);
       })
       .catch(() => {
-        // Keep the prompt hidden when the CV status cannot be determined.
+        
       });
-  }, [services.cv, userId, accessToken]);
+  }, [services.cv, accessToken]);
 
   useFocusEffect(
     useCallback(() => {

@@ -12,11 +12,11 @@ import { ApiCvRepository } from "../src/features/cv/data/repositories/ApiCvRepos
 import DashboardScreen from "../src/features/dashboard/presentation/screens/DashboardScreen";
 
 const credentials = {
-  userId: "019a16b1-1234-7000-8000-000000000001",
   accessToken: "test-access-token",
 };
 const session: Session = {
   ...credentials,
+  userId: "019a16b1-1234-7000-8000-000000000001",
   name: "Alex",
   email: "cv@vettingo.com",
   company: "",
@@ -47,7 +47,7 @@ test.each([true, false])(
 
     await expect(queries.hasCv(credentials)).resolves.toBe(exists);
     expect(request).toHaveBeenCalledWith(
-      `http://localhost:5083/api/evaluations/cv/user/${credentials.userId}/exists`,
+      "http://localhost:5083/api/evaluations/cv/exists",
       {
         method: "GET",
         headers: {
@@ -59,15 +59,8 @@ test.each([true, false])(
   },
 );
 
-test.each([
-  null,
-  {},
-  { userId: credentials.userId },
-  { accessToken: credentials.accessToken },
-  { ...credentials, userId: "invalid-guid" },
-  { ...credentials, userId: "00000000-0000-0000-0000-000000000000" },
-])(
-  "does not request a CV without a valid backend identity: %j",
+test.each([null, {}, { accessToken: "" }, { accessToken: "   " }])(
+  "does not request a CV without an access token: %j",
   async (identity) => {
     const repository = { hasCv: jest.fn() };
     await expect(new CvQueries(repository).hasCv(identity)).rejects.toThrow(
@@ -211,6 +204,20 @@ test("does not fabricate a no-CV result for demo sessions", async () => {
   expect(view.queryByRole("button", { name: "CV oluştur" })).toBeNull();
 });
 
+test("checks CV status with only a token even without a local user ID", async () => {
+  const request = jest
+    .fn<ReturnType<typeof fetch>, Parameters<typeof fetch>>()
+    .mockResolvedValue(response(false));
+  const { view } = await renderDashboard(request, false, {
+    ...session,
+    userId: undefined,
+  });
+  await waitFor(() =>
+    expect(view.getByRole("button", { name: "CV oluştur" })).toBeTruthy(),
+  );
+  expect(request).toHaveBeenCalledTimes(1);
+});
+
 test("ignores an old account's late response after switching accounts", async () => {
   let finishOld!: (result: Response) => void;
   const request = jest
@@ -226,6 +233,7 @@ test("ignores an old account's late response after switching accounts", async ()
   const nextSession = {
     ...session,
     userId: "019a16b1-1234-7000-8000-000000000002",
+    accessToken: "other-access-token",
     email: "other@vettingo.com",
   };
   jest.spyOn(services.sessions, "signIn").mockResolvedValue({

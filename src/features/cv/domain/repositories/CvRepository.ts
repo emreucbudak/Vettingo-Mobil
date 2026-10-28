@@ -1,5 +1,4 @@
 export interface CvCredentials {
-  userId: string;
   accessToken: string;
 }
 

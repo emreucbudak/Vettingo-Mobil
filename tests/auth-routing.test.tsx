@@ -175,6 +175,7 @@ test.each(["candidate", "employer", "hr"])(
         : [
             ["Şirket", `/${role}-company`],
             ["Bildirimler", "/notifications"],
+            ...(role === "employer" ? [["Ekip", "/employer-team"]] : []),
             ["Scout", "/scout"],
           ]),
       ["Güvenlik", `/${role}-security`],
@@ -185,20 +186,11 @@ test.each(["candidate", "employer", "hr"])(
       await waitFor(() => expect(view.getPathname()).toBe(path));
       expectProfileSelected();
       if (label === "Kişiselleştirilmiş İlanlar") {
-        expect(screen.getByText("Lead UI Developer")).toBeTruthy();
-        expect(screen.getByText("Senior Software Engineer")).toBeTruthy();
-        await fireEvent.press(
-          screen.getByRole("button", {
-            name: "Lead UI Developer ilan detayını aç",
-          }),
-        );
-        await waitFor(() => expect(view.getPathname()).toBe("/job-detail"));
-        expectProfileSelected();
-        await fireEvent.press(screen.getByRole("button", { name: "Geri" }));
-        await waitFor(() =>
-          expect(view.getPathname()).toBe("/candidate-personalized-jobs"),
-        );
-        expectProfileSelected();
+        expect(screen.queryByText("Lead UI Developer")).toBeNull();
+        expect(screen.queryByText("Senior Software Engineer")).toBeNull();
+        expect(
+          screen.getByText("Aramanızla eşleşen sonuç bulunamadı."),
+        ).toBeTruthy();
       }
       if (label === "Scout") {
         await fireEvent.press(
@@ -240,7 +232,7 @@ test.each(["candidate", "employer", "hr"])(
       true,
     );
     expectProfileSelected();
-    if (role !== "candidate") {
+    if (role === "hr") {
       const alert = jest.spyOn(Alert, "alert").mockImplementation(() => {});
       await fireEvent.press(
         screen.getByRole("button", { name: "Ekip ve Yetkiler" }),
