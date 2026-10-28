@@ -1,7 +1,6 @@
 jest.unmock("expo-router");
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Alert } from "react-native";
 import {
   act,
   fireEvent,
@@ -233,12 +232,10 @@ test.each(["candidate", "employer", "hr"])(
     );
     expectProfileSelected();
     if (role === "hr") {
-      const alert = jest.spyOn(Alert, "alert").mockImplementation(() => {});
-      await fireEvent.press(
-        screen.getByRole("button", { name: "Ekip ve Yetkiler" }),
-      );
-      expect(alert).toHaveBeenCalled();
-      expectProfileSelected();
+      expect(
+        screen.queryByRole("button", { name: "Ekip ve Yetkiler" }),
+      ).toBeNull();
+      expect(screen.queryByRole("button", { name: "Ekip" })).toBeNull();
     }
     const otherTab = role === "candidate" ? "Başvurularım" : "İlanlar";
     await fireEvent.press(screen.getByRole("tab", { name: otherTab }));

@@ -99,7 +99,7 @@ export default function ProfileScreen() {
           [
             "Şirket",
             "Bildirimler",
-            session.role === "employer" ? "Ekip" : "Ekip ve Yetkiler",
+            ...(session.role === "employer" ? ["Ekip"] : []),
             "Scout",
           ].map((label) => (
             <ProfileMenuRow
