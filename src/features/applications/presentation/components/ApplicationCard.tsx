@@ -3,7 +3,6 @@ import { View } from "react-native";
 import { router } from "expo-router";
 import { Application } from "../../domain/entities/Application";
 import {
-  Avatar,
   Badge,
   Button,
   Card,
@@ -32,19 +31,16 @@ export function ApplicationCard({
 
   return (
     <Card>
-      <View style={[styles.row, compact && { alignItems: "flex-start" }]}>
-        {!compact && <Avatar initials={item.company.slice(0, 2).toUpperCase()} />}
+      <View style={[styles.row, { alignItems: "flex-start" }]}>
         <View style={{ flex: 1, minWidth: 0 }}>
           <Title small>{item.title}</Title>
           <Label muted>
             {item.company} · {item.location}
           </Label>
         </View>
-        {compact && status}
+        {status}
       </View>
-      {!compact && status}
       <Progress value={item.progress} />
-      {!compact && <Label muted>{item.next}</Label>}
       {!compact && item.status === "Interviewing" && (
         <Button
           label="Teknik Değerlendirmeye Git"
