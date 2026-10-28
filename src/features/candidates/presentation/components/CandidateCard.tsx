@@ -17,7 +17,13 @@ import {
 
 const salaryFormatter = new Intl.NumberFormat("tr-TR");
 
-export function CandidateCard({ candidate }: { candidate: Candidate }) {
+export function CandidateCard({
+  candidate,
+  neutralStageBadge = false,
+}: {
+  candidate: Candidate;
+  neutralStageBadge?: boolean;
+}) {
   const { state, session } = useApp();
   const { tab } = useLocalSearchParams<{ tab?: string }>();
   const stage = candidateStage(candidate, state.decisions);
@@ -40,7 +46,13 @@ export function CandidateCard({ candidate }: { candidate: Candidate }) {
           <View style={{ flex: 1, minWidth: 0, alignSelf: "center" }}>
             <Title small>{candidate.name}</Title>
           </View>
-          <Badge success={session?.role !== "employer" && stage === "offer"}>
+          <Badge
+            success={
+              !neutralStageBadge &&
+              session?.role !== "employer" &&
+              stage === "offer"
+            }
+          >
             {stageLabels[stage]}
           </Badge>
         </View>

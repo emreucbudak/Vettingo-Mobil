@@ -14,7 +14,6 @@ import {
   Title,
 } from "../../../../shared/presentation/components/ui";
 import { ApplicationCard } from "../../../applications/presentation/components/ApplicationCard";
-import { DashboardCandidateCard } from "../components/DashboardCandidateCard";
 import { CandidateCard } from "../../../candidates/presentation/components/CandidateCard";
 import { JobSearchCard } from "../../../jobs/presentation/components/JobSearchCard";
 import { DashboardRequisitionCard } from "../components/DashboardRequisitionCard";
@@ -63,13 +62,13 @@ export default function DashboardScreen() {
         ["Toplam Başvuru", "1,248"],
         ["Açık Pozisyon", String(14 + state.requisitions.length - 3)],
         ["Aktif Aday", "8"],
-        ["Teklif Aşaması", "5"],
+        ["Planlanan Mülakat", "5"],
       ]
     : [
         ["Toplam Başvuru", "1,248"],
         ["Açık Pozisyon", String(14 + state.requisitions.length - 3)],
         ["Aktif Aday", "842"],
-        ["Büyüme", "+12%"],
+        ["Ekip Üyesi", "12"],
       ];
   return (
     <AppShell>
@@ -89,14 +88,20 @@ export default function DashboardScreen() {
               >
                 {label === "Toplam Başvuru" ||
                 label === "Açık Pozisyon" ||
-                label === "Aktif Aday" ? (
+                label === "Aktif Aday" ||
+                label === "Ekip Üyesi" ||
+                label === "Planlanan Mülakat" ? (
                   <MaterialIcons
                     name={
                       label === "Toplam Başvuru"
                         ? "groups"
                         : label === "Aktif Aday"
                           ? "person"
-                          : "search"
+                          : label === "Ekip Üyesi"
+                            ? "supervisor-account"
+                            : label === "Planlanan Mülakat"
+                              ? "event"
+                              : "search"
                     }
                     size={22}
                     color={colors.blue}
@@ -118,7 +123,7 @@ export default function DashboardScreen() {
       <ScoutEntryCard />
       {hr && (
         <>
-          <Section title="Yaklaşan Mülakatlar" />
+          <Section title="Günün Mülakatları" />
           {[
             ["10:30", "Sarah Jenkins", "Teknik görüşme"],
             ["15:00", "Michael Ross", "İK görüşmesi"],
@@ -138,12 +143,24 @@ export default function DashboardScreen() {
       {hr && (
         <>
           <Section
-            title="Öne Çıkan Adaylar"
+            title="Adaylar"
             action="Tümünü Gör"
             onPress={() => router.push(`/${session.role}-candidates` as Href)}
           />
           {candidates.slice(0, 2).map((candidate) => (
-            <DashboardCandidateCard key={candidate.id} candidate={candidate} />
+            <CandidateCard
+              key={candidate.id}
+              candidate={candidate}
+              neutralStageBadge
+            />
+          ))}
+          <Section
+            title="İlanlar"
+            action="Tümünü Gör"
+            onPress={() => router.push("/hr-jobs")}
+          />
+          {state.requisitions.slice(0, 3).map((job) => (
+            <DashboardRequisitionCard key={job.id} job={job} />
           ))}
         </>
       )}
