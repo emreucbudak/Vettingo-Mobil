@@ -2,6 +2,7 @@ import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { router } from "expo-router";
 import { Requisition } from "../../domain/entities/Requisition";
+import { useApp } from "../../../../core/presentation/state/AppProvider";
 import {
   Badge,
   Card,
@@ -14,6 +15,7 @@ import {
 const salaryFormatter = new Intl.NumberFormat("tr-TR");
 
 export function RequisitionCard({ job }: { job: Requisition }) {
+  const { session } = useApp();
   return (
     <Pressable
       accessibilityRole="button"
@@ -32,7 +34,11 @@ export function RequisitionCard({ job }: { job: Requisition }) {
               <View style={cardStyles.title}>
                 <Title small>{job.title}</Title>
               </View>
-              <Badge success={job.status === "Interviewing"}>
+              <Badge
+                success={
+                  session?.role !== "employer" && job.status === "Interviewing"
+                }
+              >
                 {job.status === "Interviewing" ? "Mülakat" : "Aday Aranıyor"}
               </Badge>
             </View>

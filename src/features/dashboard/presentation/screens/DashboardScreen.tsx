@@ -15,6 +15,7 @@ import {
 } from "../../../../shared/presentation/components/ui";
 import { ApplicationCard } from "../../../applications/presentation/components/ApplicationCard";
 import { DashboardCandidateCard } from "../components/DashboardCandidateCard";
+import { CandidateCard } from "../../../candidates/presentation/components/CandidateCard";
 import { JobSearchCard } from "../../../jobs/presentation/components/JobSearchCard";
 import { DashboardRequisitionCard } from "../components/DashboardRequisitionCard";
 import { ScoutEntryCard } from "../../../candidates/presentation/components/ScoutEntryCard";
@@ -155,6 +156,14 @@ export default function DashboardScreen() {
           />
           {state.requisitions.slice(0, 3).map((job) => (
             <DashboardRequisitionCard key={job.id} job={job} />
+          ))}
+          <Section
+            title="Adaylar"
+            action="Tümünü Gör"
+            onPress={() => router.push("/employer-candidates")}
+          />
+          {candidates.slice(0, 3).map((candidate) => (
+            <CandidateCard key={candidate.id} candidate={candidate} />
           ))}
         </>
       )}
