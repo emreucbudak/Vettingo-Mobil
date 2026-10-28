@@ -1,5 +1,5 @@
 import React from "react";
-import { Alert, Switch, View } from "react-native";
+import { Alert, View } from "react-native";
 import { router, Href } from "expo-router";
 import { AppShell } from "../../../../core/presentation/layout/AppShell";
 import {
@@ -20,7 +20,7 @@ const accountPages: Record<string, string> = {
 };
 
 export default function ProfileScreen() {
-  const { session, state, dispatch, signOut } = useApp();
+  const { session, signOut } = useApp();
   if (!session) return null;
   const candidate = session.role === "candidate";
   const unavailable = (label: string) =>
@@ -84,10 +84,6 @@ export default function ProfileScreen() {
             { label: "Profil", path: "/candidate-profile-details" },
             { label: "Bildirimler", path: "/notifications" },
             { label: "CV", path: "/cv-review" },
-            {
-              label: "Kişiselleştirilmiş İlanlar",
-              path: "/candidate-personalized-jobs",
-            },
           ].map(({ label, path }) => (
             <ProfileMenuRow
               key={label}
@@ -96,12 +92,7 @@ export default function ProfileScreen() {
             />
           ))
         ) : (
-          [
-            "Şirket",
-            "Bildirimler",
-            ...(session.role === "employer" ? ["Ekip"] : []),
-            "Scout",
-          ].map((label) => (
+          ["Şirket", "Bildirimler", "Scout"].map((label) => (
             <ProfileMenuRow
               key={label}
               label={label}
@@ -111,18 +102,14 @@ export default function ProfileScreen() {
         )}
       </ProfileMenuGroup>
       <ProfileMenuGroup>
-        <ProfileMenuRow
-          label="Bildirim Tercihi"
-          accessory={
-            <Switch
-              accessibilityLabel="Bildirim tercihi"
-              value={state.notifications}
-              onValueChange={(enabled) =>
-                dispatch({ type: "notifications", enabled })
-              }
-            />
-          }
-        />
+        {candidate ? (
+          <ProfileMenuRow
+            label="Kişiselleştirilmiş İlanlar"
+            onPress={() => router.push("/candidate-personalized-jobs")}
+          />
+        ) : session.role === "employer" ? (
+          <ProfileMenuRow label="Ekip" onPress={() => openMenuItem("Ekip")} />
+        ) : null}
         {["Güvenlik", "Yardım Merkezi"].map((label) => (
           <ProfileMenuRow
             key={label}

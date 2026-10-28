@@ -225,11 +225,9 @@ test.each(["candidate", "employer", "hr"])(
       expectProfileSelected();
     }
 
-    await fireEvent(
-      screen.getByRole("switch", { name: "Bildirim tercihi" }),
-      "valueChange",
-      true,
-    );
+    expect(
+      screen.queryByRole("switch", { name: "Bildirim tercihi" }),
+    ).toBeNull();
     expectProfileSelected();
     if (role === "hr") {
       expect(
