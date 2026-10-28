@@ -44,23 +44,4 @@ export const jobs: Job[] = [
     tags: ["Series B", "Developer Tools", "Kubernetes"],
   },
 ];
-export const recommendations: Job[] = [
-  {
-    id: "vercel",
-    title: "Lead UI Developer",
-    company: "Vercel",
-    location: "Remote",
-    salary: "$160k - $210k",
-    match: 94,
-    tags: ["React", "TypeScript"],
-  },
-  {
-    id: "plaid",
-    title: "Senior Software Engineer",
-    company: "Plaid",
-    location: "New York (Hybrid)",
-    salary: "$180k - $230k",
-    match: 88,
-    tags: ["Fintech", "React"],
-  },
-];
+export const recommendations: Job[] = [];

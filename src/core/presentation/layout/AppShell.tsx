@@ -86,6 +86,7 @@ export function AppShell({
   const main = tabs.some((tab) => tab.path === path);
   const profilePage =
     path === "/notifications" ||
+    path === "/employer-team" ||
     [
       `/${role}-profile-details`,
       `/${role}-company`,
