@@ -184,6 +184,28 @@ test.each(["candidate", "employer", "hr"])(
       await fireEvent.press(screen.getByRole("button", { name: label }));
       await waitFor(() => expect(view.getPathname()).toBe(path));
       expectProfileSelected();
+      if (label === "Şirket") {
+        expect(screen.getByText("Açık Pozisyon")).toBeTruthy();
+        const editButton = screen.queryByRole("button", {
+          name: "Şirket bilgilerini düzenle",
+        });
+        if (role === "employer") {
+          expect(editButton).toBeTruthy();
+          await fireEvent.press(editButton!);
+          await waitFor(() =>
+            expect(view.getPathname()).toBe("/employer-company-edit"),
+          );
+          expect(screen.getAllByText("Vettingo")).toHaveLength(1);
+          expect(screen.getAllByRole("tab")).toHaveLength(4);
+          expect(screen.queryByText("Açık Pozisyon")).toBeNull();
+          expect(screen.queryAllByRole("textbox")).toHaveLength(0);
+          expectProfileSelected();
+          await fireEvent.press(screen.getByRole("button", { name: "Geri" }));
+          await waitFor(() => expect(view.getPathname()).toBe(path));
+        } else {
+          expect(editButton).toBeNull();
+        }
+      }
       if (label === "Kişiselleştirilmiş İlanlar") {
         expect(screen.queryByText("Lead UI Developer")).toBeNull();
         expect(screen.queryByText("Senior Software Engineer")).toBeNull();

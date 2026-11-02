@@ -25,10 +25,12 @@ export function AppShell({
   children,
   title,
   actions,
+  headerRight,
   showBackButton = true,
 }: React.PropsWithChildren<{
   title?: string;
   actions?: React.ReactNode;
+  headerRight?: React.ReactNode;
   showBackButton?: boolean;
 }>) {
   const { session, storageError } = useApp();
@@ -87,6 +89,7 @@ export function AppShell({
   const profilePage =
     path === "/notifications" ||
     path === "/employer-team" ||
+    path === "/employer-company-edit" ||
     [
       `/${role}-profile-details`,
       `/${role}-company`,
@@ -131,6 +134,9 @@ export function AppShell({
           >
             <Ionicons name="chevron-back" size={22} color={colors.primary} />
           </Pressable>
+        )}
+        {headerRight && (
+          <View style={{ position: "absolute", right: 14 }}>{headerRight}</View>
         )}
       </View>
       {!!storageError && (
