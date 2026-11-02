@@ -25,10 +25,12 @@ export function AppShell({
   children,
   title,
   actions,
+  headerRight,
   showBackButton = true,
 }: React.PropsWithChildren<{
   title?: string;
   actions?: React.ReactNode;
+  headerRight?: React.ReactNode;
   showBackButton?: boolean;
 }>) {
   const { session, storageError } = useApp();
@@ -87,6 +89,7 @@ export function AppShell({
   const profilePage =
     path === "/notifications" ||
     path === "/employer-team" ||
+    path === "/employer-company-edit" ||
     [
       `/${role}-profile-details`,
       `/${role}-company`,
@@ -96,7 +99,12 @@ export function AppShell({
     (role === "candidate" &&
       ["/cv-review", "/candidate-personalized-jobs"].includes(path)) ||
     (sourceTab === "profile" &&
-      ["/scout", "/candidate-detail", "/job-detail"].includes(path));
+      [
+        "/scout",
+        "/candidate-detail",
+        "/job-detail",
+        "/candidate-company-detail",
+      ].includes(path));
   return (
     <SafeAreaView style={styles.page} edges={["top"]}>
       <View
@@ -131,6 +139,9 @@ export function AppShell({
           >
             <Ionicons name="chevron-back" size={22} color={colors.primary} />
           </Pressable>
+        )}
+        {headerRight && (
+          <View style={{ position: "absolute", right: 14 }}>{headerRight}</View>
         )}
       </View>
       {!!storageError && (
@@ -178,8 +189,12 @@ export function AppShell({
         {tabs.map((tab) => {
           const active =
             path === tab.path ||
+            (tab.path === "/candidate-dashboard" &&
+              path === "/candidate-company-detail" &&
+              sourceTab === "home") ||
             (tab.path === "/job-search" &&
-              path === "/job-detail" &&
+              ["/job-detail", "/candidate-company-detail"].includes(path) &&
+              sourceTab !== "home" &&
               sourceTab !== "profile") ||
             (tab.label === "Profil" && profilePage);
           return (

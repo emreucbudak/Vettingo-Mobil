@@ -106,7 +106,8 @@ test("renders API values in the existing card and opens the job ID", async () =>
   );
   await waitFor(() => expect(view.getByText(posting.title)).toBeTruthy());
   for (const text of [
-    "Vettingo Teknoloji · İstanbul",
+    "Vettingo Teknoloji",
+    "· İstanbul",
     "Yarı Zamanlı · Hybrid",
     "Tecrübe 2–5 yıl",
     "Maaş 50.000–75.000 ₺",
@@ -115,6 +116,15 @@ test("renders API values in the existing card and opens the job ID", async () =>
   ]) {
     expect(view.getByText(text)).toBeTruthy();
   }
+  await fireEvent.press(
+    view.getByRole("button", {
+      name: `${posting.companyName} şirket detayını aç`,
+    }),
+  );
+  expect(router.push).toHaveBeenCalledWith({
+    pathname: "/candidate-company-detail",
+    params: { companyName: posting.companyName, tab: "profile" },
+  });
   await fireEvent.press(
     view.getByRole("button", { name: `${posting.title} ilan detayını aç` }),
   );

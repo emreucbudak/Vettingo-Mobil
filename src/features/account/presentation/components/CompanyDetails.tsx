@@ -1,8 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { AppShell } from "../../../../core/presentation/layout/AppShell";
-import { useApp } from "../../../../core/presentation/state/AppProvider";
 import { colors } from "../../../../shared/presentation/components/ui";
 
 // Display-only values until company details are supplied by the API.
@@ -15,11 +13,9 @@ const statistics = [
   { label: "Görüşülen Aday", value: "0" },
 ];
 
-export default function CompanyScreen() {
-  const { session } = useApp();
-
+export function CompanyDetails({ companyName }: { companyName: string }) {
   return (
-    <AppShell>
+    <>
       <View style={companyStyles.details}>
         <View
           accessible
@@ -35,7 +31,7 @@ export default function CompanyScreen() {
           />
         </View>
         <Text accessibilityRole="header" style={companyStyles.name}>
-          {session?.company.trim() || "Vettingo"}
+          {companyName.trim() || "Vettingo"}
         </Text>
         <Text style={companyStyles.description}>{companyDescription}</Text>
       </View>
@@ -52,7 +48,7 @@ export default function CompanyScreen() {
           </View>
         ))}
       </View>
-    </AppShell>
+    </>
   );
 }
 
