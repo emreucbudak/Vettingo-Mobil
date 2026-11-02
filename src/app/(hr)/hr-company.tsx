@@ -1,1 +1,1 @@
-export { default } from "../../features/account/presentation/screens/CompanyScreen";
+export { default } from "../../features/account/presentation/screens/HrCompanyScreen";
