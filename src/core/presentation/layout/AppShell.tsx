@@ -99,7 +99,12 @@ export function AppShell({
     (role === "candidate" &&
       ["/cv-review", "/candidate-personalized-jobs"].includes(path)) ||
     (sourceTab === "profile" &&
-      ["/scout", "/candidate-detail", "/job-detail"].includes(path));
+      [
+        "/scout",
+        "/candidate-detail",
+        "/job-detail",
+        "/candidate-company-detail",
+      ].includes(path));
   return (
     <SafeAreaView style={styles.page} edges={["top"]}>
       <View
@@ -184,8 +189,12 @@ export function AppShell({
         {tabs.map((tab) => {
           const active =
             path === tab.path ||
+            (tab.path === "/candidate-dashboard" &&
+              path === "/candidate-company-detail" &&
+              sourceTab === "home") ||
             (tab.path === "/job-search" &&
-              path === "/job-detail" &&
+              ["/job-detail", "/candidate-company-detail"].includes(path) &&
+              sourceTab !== "home" &&
               sourceTab !== "profile") ||
             (tab.label === "Profil" && profilePage);
           return (

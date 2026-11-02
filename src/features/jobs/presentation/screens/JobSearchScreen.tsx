@@ -78,6 +78,12 @@ export function JobSearchScreen() {
         <JobSearchCard
           key={job.id}
           job={job}
+          onCompanyPress={() =>
+            router.push({
+              pathname: "/candidate-company-detail",
+              params: { companyName: job.company },
+            })
+          }
           onPress={() =>
             router.push({ pathname: "/job-detail", params: { id: job.id } })
           }

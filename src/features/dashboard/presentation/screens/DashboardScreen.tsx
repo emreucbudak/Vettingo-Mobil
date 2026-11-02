@@ -49,6 +49,12 @@ export default function DashboardScreen() {
           <JobSearchCard
             key={job.id}
             job={job}
+            onCompanyPress={() =>
+              router.push({
+                pathname: "/candidate-company-detail",
+                params: { companyName: job.company, tab: "home" },
+              })
+            }
             onPress={() =>
               router.push({ pathname: "/job-detail", params: { id: job.id } })
             }

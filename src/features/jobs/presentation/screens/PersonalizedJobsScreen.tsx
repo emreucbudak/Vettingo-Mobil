@@ -65,6 +65,12 @@ export default function PersonalizedJobsScreen() {
         <JobSearchCard
           key={job.id}
           job={job}
+          onCompanyPress={() =>
+            router.push({
+              pathname: "/candidate-company-detail",
+              params: { companyName: job.company, tab: "profile" },
+            })
+          }
           onPress={() =>
             router.push({
               pathname: "/job-detail",

@@ -126,6 +126,21 @@ test("job search cards open a blank candidate detail page and allow going back",
   ).toBeNull();
 
   await fireEvent.press(
+    screen.getByRole("button", { name: "Acme Corp şirket detayını aç" }),
+  );
+  await waitFor(() =>
+    expect(view.getPathname()).toBe("/candidate-company-detail"),
+  );
+  expect(screen.getByRole("header", { name: "Acme Corp" })).toBeTruthy();
+  expect(screen.getByText("Açık Pozisyon")).toBeTruthy();
+  expect(
+    screen.queryByRole("button", { name: "Şirket bilgilerini düzenle" }),
+  ).toBeNull();
+  expect(screen.getByRole("tab", { name: "Arama" })).toBeSelected();
+  await fireEvent.press(screen.getByRole("button", { name: "Geri" }));
+  await waitFor(() => expect(view.getPathname()).toBe("/job-search"));
+
+  await fireEvent.press(
     screen.getByRole("button", { name: "VP of Engineering ilan detayını aç" }),
   );
   await waitFor(() => expect(view.getPathname()).toBe("/job-detail"));

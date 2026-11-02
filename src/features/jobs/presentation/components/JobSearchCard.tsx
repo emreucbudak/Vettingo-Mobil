@@ -12,9 +12,11 @@ import {
 export function JobSearchCard({
   job,
   onPress,
+  onCompanyPress,
 }: {
   job: JobSummary;
   onPress: () => void;
+  onCompanyPress?: () => void;
 }) {
   const locationType =
     job.locationType ??
@@ -26,20 +28,42 @@ export function JobSearchCard({
   const skills = job.skills ?? job.tags;
 
   return (
-    <Pressable
-      accessibilityRole="button"
-      accessibilityLabel={`${job.title} ilan detayını aç`}
-      onPress={onPress}
-    >
-      <Card>
+    <Card>
+      <View style={cardStyles.heading}>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={`${job.title} ilan detayını aç`}
+          onPress={onPress}
+        >
+          <Title small>{job.title}</Title>
+        </Pressable>
+        <View style={cardStyles.companyRow}>
+          {!!job.company &&
+            (onCompanyPress ? (
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={`${job.company} şirket detayını aç`}
+                onPress={onCompanyPress}
+                hitSlop={6}
+              >
+                <Text style={cardStyles.companyLink}>{job.company}</Text>
+              </Pressable>
+            ) : (
+              <Label muted>{job.company}</Label>
+            ))}
+          <Label muted>
+            {job.company ? "· " : ""}
+            {job.office ?? job.location}
+          </Label>
+        </View>
+      </View>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={`${job.title} ilan bilgilerini aç`}
+        onPress={onPress}
+        style={cardStyles.content}
+      >
         <View style={cardStyles.content}>
-          <View style={cardStyles.heading}>
-            <Title small>{job.title}</Title>
-            <Label muted>
-              {job.company ? `${job.company} · ` : ""}
-              {job.office ?? job.location}
-            </Label>
-          </View>
           <Label muted>
             {job.employmentType ?? "Tam Zamanlı"} ·{" "}
             {locationType === "remote"
@@ -73,14 +97,26 @@ export function JobSearchCard({
             </View>
           </View>
         )}
-      </Card>
-    </Pressable>
+      </Pressable>
+    </Card>
   );
 }
 
 const cardStyles = StyleSheet.create({
   content: { gap: 8 },
   heading: { gap: 4 },
+  companyRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    alignItems: "center",
+    gap: 4,
+  },
+  companyLink: {
+    color: colors.blue,
+    fontSize: 13,
+    lineHeight: 20,
+    textDecorationLine: "underline",
+  },
   detailValue: {
     color: colors.ink,
     fontSize: 14,
