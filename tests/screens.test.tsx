@@ -441,6 +441,15 @@ test.each(["employer", "hr"])(
     expect(view.getByLabelText("İş Tanımı")).toHaveDisplayValue("");
     await fireEvent.changeText(view.getByLabelText("İş Tanımı"), "Build APIs");
     await fireEvent.press(view.getByRole("button", { name: "Devam Et" }));
+    expect(view.getByText("İş İlan Akışı")).toBeTruthy();
+    expect(view.queryByLabelText("İş Tanımı")).toBeNull();
+    expect(view.queryByRole("button", { name: "İlanı Oluştur" })).toBeNull();
+    expect(view.queryByRole("button", { name: "Önceki Adım" })).toBeNull();
+    await fireEvent.press(
+      view.getByRole("button", { name: "Sonraki adıma geç" }),
+    );
+    expect(view.getByText("Backend Engineer")).toBeTruthy();
+    expect(view.getByText("Build APIs")).toBeTruthy();
     expect(view.getByText("React Native")).toBeTruthy();
     await fireEvent.press(view.getByRole("button", { name: "İlanı Oluştur" }));
     expect(router.replace).toHaveBeenCalledWith(`/${role}-jobs`);

@@ -69,7 +69,7 @@ export default function RequisitionScreen() {
   return (
     <AppShell>
       <View style={styles.wrap}>
-        {["Role Definition", "Job Description", "Review"].map(
+        {["Role Definition", "Job Description", "İş İlan Akışı", "Review"].map(
           (label, index) => (
             <Chip
               key={label}
@@ -213,6 +213,11 @@ export default function RequisitionScreen() {
       )}
       {step === 2 && (
         <Card>
+          <Title small>İş İlan Akışı</Title>
+        </Card>
+      )}
+      {step === 3 && (
+        <Card>
           <Title small>{draft.title}</Title>
           {!!draft.department && <Label>{draft.department}</Label>}
           <Label muted>
@@ -240,10 +245,16 @@ export default function RequisitionScreen() {
       )}
       <View style={{ gap: 10 }}>
         <Button
-          label={step === 2 ? "İlanı Oluştur" : "Devam Et"}
-          onPress={step === 2 ? publish : next}
+          label={
+            step === 3
+              ? "İlanı Oluştur"
+              : step === 2
+                ? "Sonraki adıma geç"
+                : "Devam Et"
+          }
+          onPress={step === 3 ? publish : next}
         />
-        {step > 0 && (
+        {step > 0 && step !== 2 && (
           <Button
             label="Önceki Adım"
             secondary
