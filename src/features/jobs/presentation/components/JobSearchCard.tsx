@@ -115,7 +115,6 @@ const cardStyles = StyleSheet.create({
     color: colors.blue,
     fontSize: 13,
     lineHeight: 20,
-    textDecorationLine: "underline",
   },
   detailValue: {
     color: colors.ink,
