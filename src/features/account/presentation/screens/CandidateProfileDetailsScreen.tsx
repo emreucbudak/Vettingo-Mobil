@@ -1,8 +1,12 @@
 import React, { useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { Alert, StyleSheet, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { AppShell } from "../../../../core/presentation/layout/AppShell";
-import { colors, Field } from "../../../../shared/presentation/components/ui";
+import {
+  Button,
+  colors,
+  Field,
+} from "../../../../shared/presentation/components/ui";
 
 export default function CandidateProfileDetailsScreen() {
   const [firstName, setFirstName] = useState("");
@@ -42,6 +46,15 @@ export default function CandidateProfileDetailsScreen() {
         autoCapitalize="words"
         autoComplete="family-name"
         autoCorrect={false}
+      />
+      <Button
+        label="Profilini güncelle"
+        onPress={() =>
+          Alert.alert(
+            "Profilini güncelle",
+            "Profil güncelleme henüz kullanıma açık değil.",
+          )
+        }
       />
     </AppShell>
   );
