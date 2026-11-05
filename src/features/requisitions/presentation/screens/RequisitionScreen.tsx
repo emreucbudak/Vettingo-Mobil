@@ -7,6 +7,7 @@ import {
   Button,
   Card,
   Chip,
+  colors,
   Field,
   Label,
   Section,
@@ -68,14 +69,35 @@ export default function RequisitionScreen() {
   }
   return (
     <AppShell>
-      <View style={styles.wrap}>
+      <View style={{ flexDirection: "row", gap: 6 }}>
         {["Role Definition", "Job Description", "İş İlan Akışı", "Review"].map(
           (label, index) => (
-            <Chip
+            <View
               key={label}
-              label={`${index + 1}. ${label}`}
-              active={step === index}
-            />
+              style={{
+                flex: 1,
+                minWidth: 0,
+                minHeight: 48,
+                borderRadius: 999,
+                backgroundColor: step === index ? colors.primary : colors.soft,
+                paddingHorizontal: 4,
+                paddingVertical: 9,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Text
+                style={{
+                  color: step === index ? "#fff" : colors.muted,
+                  fontSize: 12,
+                  lineHeight: 16,
+                  fontWeight: "600",
+                  textAlign: "center",
+                }}
+              >
+                {label}
+              </Text>
+            </View>
           ),
         )}
       </View>
