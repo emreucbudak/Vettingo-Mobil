@@ -33,6 +33,12 @@ const questions = [
       "Adaylar sekmesindeki arama alanını ve aşama filtrelerini kullanın. Bir aday kartına dokunduğunuzda Yetenekler, Profesyonel Deneyim, Eğitim, Diller, Sertifikalar ve Projeler bölümlerini görebilirsiniz.",
   },
   {
+    id: "missing-interview-result",
+    question: "Mülakat sonucunu girmeyi unutursam ne olur?",
+    answer:
+      "Mülakat sonucunu girmezseniz aday otomatik olarak başarısız sayılır ve adayla olan bağlantınızı kaybedersiniz.",
+  },
+  {
     id: "comparison",
     question: "Bir pozisyon için adayları nasıl karşılaştırabilirim?",
     answer:

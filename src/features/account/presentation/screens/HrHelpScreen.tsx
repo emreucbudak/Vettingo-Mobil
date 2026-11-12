@@ -33,6 +33,12 @@ const questions = [
       "Aday Detayı sayfasındaki Mülakat Planla butonuna dokunun. Tarihi YYYY-AA-GG, saati SS:DD biçiminde girip Görüşmeyi Kaydet butonuna basın. Görüşme cihazda saklanır; takvim daveti gönderilmez.",
   },
   {
+    id: "missing-interview-result",
+    question: "Mülakat sonucunu girmeyi unutursam ne olur?",
+    answer:
+      "Mülakat sonucunu girmezseniz aday otomatik olarak başarısız sayılır ve adayla olan bağlantınızı kaybedersiniz.",
+  },
+  {
     id: "advance",
     question: "Adayı işe alım sürecinde nasıl ilerletebilirim?",
     answer:
