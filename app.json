@@ -19,7 +19,8 @@
           "imageWidth": 220
         }
       ],
-      "expo-font"
+      "expo-font",
+      "expo-status-bar"
     ],
     "web": {
       "output": "single",
