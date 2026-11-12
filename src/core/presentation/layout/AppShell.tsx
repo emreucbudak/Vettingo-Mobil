@@ -89,6 +89,7 @@ export function AppShell({
   const profilePage =
     path === "/notifications" ||
     path === "/employer-team" ||
+    path === "/employer-plans" ||
     path === "/employer-company-edit" ||
     [
       `/${role}-profile-details`,
