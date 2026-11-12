@@ -162,7 +162,7 @@ test("registration shows company field only for hiring roles and enforces consen
   expect(view.queryByText("Şirket adı en az 2 karakter olmalıdır.")).toBeNull();
 });
 
-test("login submits RHF values and respects the remember switch", async () => {
+test("login submits RHF values without a remember switch", async () => {
   const services = createAppServices();
   const signIn = jest.spyOn(services.sessions, "signIn");
   const view = await renderApp(
@@ -174,7 +174,7 @@ test("login submits RHF values and respects the remember switch", async () => {
     "alex@vettingo.com",
   );
   await fireEvent.changeText(view.getByLabelText("Şifre"), "secret");
-  await fireEvent(view.getByLabelText("Beni hatırla"), "valueChange", false);
+  expect(view.queryByLabelText("Beni hatırla")).toBeNull();
   await fireEvent.press(view.getByRole("button", { name: "Giriş Yap" }));
   await waitFor(() =>
     expect(router.push).toHaveBeenCalledWith("/verify-login-code"),
@@ -193,11 +193,10 @@ test("login submits RHF values and respects the remember switch", async () => {
     expect.objectContaining({
       email: "alex@vettingo.com",
       password: "secret",
-      remember: false,
+      remember: true,
       register: false,
     }),
   );
-  expect(await AsyncStorage.getItem("vettingo:demo-session:v1")).toBeNull();
   await view.unmount();
 });
 

@@ -265,35 +265,15 @@ export default function AuthScreen({
               )}
             </>
           ) : (
-            <View
-              style={[
-                styles.row,
-                { justifyContent: "space-between", flexWrap: "wrap" },
-              ]}
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => router.push("/forgot-password")}
+              style={{ alignSelf: "flex-end" }}
             >
-              <View style={styles.row}>
-                <Controller
-                  control={control}
-                  name="remember"
-                  render={({ field: { value, onChange } }) => (
-                    <Switch
-                      accessibilityLabel="Beni hatırla"
-                      value={value}
-                      onValueChange={onChange}
-                    />
-                  )}
-                />
-                <Label muted>Beni hatırla</Label>
-              </View>
-              <Pressable
-                accessibilityRole="button"
-                onPress={() => router.push("/forgot-password")}
-              >
-                <Text style={{ color: colors.blue, fontSize: 12 }}>
-                  Şifrenizi mi unuttunuz?
-                </Text>
-              </Pressable>
-            </View>
+              <Text style={{ color: colors.blue, fontSize: 12 }}>
+                Şifrenizi mi unuttunuz?
+              </Text>
+            </Pressable>
           )}
           <Button
             label={register ? "Kayıt Ol" : "Giriş Yap"}
