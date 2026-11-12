@@ -26,11 +26,13 @@ export function AppShell({
   title,
   actions,
   headerRight,
+  centerContent = false,
   showBackButton = true,
 }: React.PropsWithChildren<{
   title?: string;
   actions?: React.ReactNode;
   headerRight?: React.ReactNode;
+  centerContent?: boolean;
   showBackButton?: boolean;
 }>) {
   const { session, storageError } = useApp();
@@ -89,6 +91,8 @@ export function AppShell({
   const profilePage =
     path === "/notifications" ||
     path === "/employer-team" ||
+    path === "/employer-team-add" ||
+    path === "/employer-team-edit" ||
     path === "/employer-plans" ||
     path === "/employer-company-edit" ||
     [
@@ -157,7 +161,14 @@ export function AppShell({
         <ScrollView
           style={{ flex: 1 }}
           keyboardShouldPersistTaps="handled"
-          contentContainerStyle={styles.content}
+          contentContainerStyle={[
+            styles.content,
+            centerContent && {
+              flexGrow: 1,
+              justifyContent: "center",
+              paddingBottom: styles.content.padding,
+            },
+          ]}
         >
           {!!title && <Title>{title}</Title>}
           {children}
