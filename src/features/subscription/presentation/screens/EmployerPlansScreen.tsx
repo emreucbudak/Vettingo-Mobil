@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { AppShell } from "../../../../core/presentation/layout/AppShell";
-import { colors, Label } from "../../../../shared/presentation/components/ui";
+import { colors } from "../../../../shared/presentation/components/ui";
 
 type PlanPreview = {
   name: string;
@@ -105,8 +105,7 @@ export default function EmployerPlansScreen() {
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
 
   return (
-    <AppShell title="Abonelik Planları">
-      <Label muted>Örnek planlar ve fiyatlar</Label>
+    <AppShell>
       {previewPlans.map((plan) => (
         <PlanCard
           key={plan.name}

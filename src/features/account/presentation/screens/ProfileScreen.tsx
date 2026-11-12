@@ -110,19 +110,14 @@ export default function ProfileScreen() {
         ) : session.role === "employer" ? (
           <ProfileMenuRow label="Ekip" onPress={() => openMenuItem("Ekip")} />
         ) : null}
-        {session.role === "employer" && (
-          <ProfileMenuRow
-            label="Abonelik Planları"
-            onPress={() => router.push("/employer-plans" as Href)}
-          />
-        )}
-        {["Güvenlik", "Yardım Merkezi"].map((label) => (
-          <ProfileMenuRow
-            key={label}
-            label={label}
-            onPress={() => openMenuItem(label)}
-          />
-        ))}
+        <ProfileMenuRow
+          label={session.role === "employer" ? "Hesap ve Güvenlik" : "Güvenlik"}
+          onPress={() => openMenuItem("Güvenlik")}
+        />
+        <ProfileMenuRow
+          label="Yardım Merkezi"
+          onPress={() => openMenuItem("Yardım Merkezi")}
+        />
       </ProfileMenuGroup>
       <ProfileMenuGroup>
         <ProfileMenuRow

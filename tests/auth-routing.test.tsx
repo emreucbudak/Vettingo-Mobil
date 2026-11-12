@@ -177,6 +177,14 @@ test.each(["candidate", "employer", "hr"])(
       expect(screen.getAllByRole("tab", { selected: true })).toHaveLength(1);
     };
     await waitFor(expectProfileSelected);
+    if (role === "employer") {
+      expect(
+        screen.queryByRole("button", { name: "Abonelik Planları" }),
+      ).toBeNull();
+      expect(
+        screen.queryByRole("button", { name: "Hesap Aboneliği" }),
+      ).toBeNull();
+    }
 
     const pages = [
       ...(role === "candidate"
@@ -192,13 +200,33 @@ test.each(["candidate", "employer", "hr"])(
             ...(role === "employer" ? [["Ekip", "/employer-team"]] : []),
             ["Scout", "/scout"],
           ]),
-      ["Güvenlik", `/${role}-security`],
+      [
+        role === "employer" ? "Hesap ve Güvenlik" : "Güvenlik",
+        `/${role}-security`,
+      ],
       ["Yardım Merkezi", `/${role}-help`],
     ];
     for (const [label, path] of pages) {
       await fireEvent.press(screen.getByRole("button", { name: label }));
       await waitFor(() => expect(view.getPathname()).toBe(path));
       expectProfileSelected();
+      if (label === "Hesap ve Güvenlik") {
+        expect(screen.queryByText("Hesap ve Güvenlik")).toBeNull();
+        await fireEvent.press(
+          screen.getByRole("button", { name: "Hesap Aboneliği" }),
+        );
+        await waitFor(() =>
+          expect(view.getPathname()).toBe("/employer-plans"),
+        );
+        expect(screen.queryByText("Hesap Aboneliği")).toBeNull();
+        expect(screen.queryByText("Örnek planlar ve fiyatlar")).toBeNull();
+        expect(
+          screen.getByRole("button", { name: "Başlangıç planını seç" }),
+        ).toBeTruthy();
+        expectProfileSelected();
+        await fireEvent.press(screen.getByRole("button", { name: "Geri" }));
+        await waitFor(() => expect(view.getPathname()).toBe(path));
+      }
       if (label === "Ekip") {
         expect(screen.getByText("İsim Soyisim")).toBeTruthy();
         expect(screen.getByText("Eklenme Tarihi")).toBeTruthy();
