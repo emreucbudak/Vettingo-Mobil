@@ -27,6 +27,12 @@ const questions = [
       "Ana Sayfa veya Arama sekmesindeki ilan kartında yer alan Başvur butonuna dokunun. Başvuru eklendiğinde buton Başvuru Gönderildi olarak değişir; başvurunuzu Başvurularım sekmesinde görebilirsiniz.",
   },
   {
+    id: "application-privacy",
+    question: "Vettingo, aday bilgilerini toplamak için açılan ilanlara karşı beni nasıl korur?",
+    answer:
+      "İşe alım sürecinin son aşamasında size gönderilen teklifi kabul edene kadar hiçbir kişisel bilginiz işverenle paylaşılmaz.",
+  },
+  {
     id: "applications",
     question: "Başvurularımın durumunu nereden takip edebilirim?",
     answer:
