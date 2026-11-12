@@ -16,18 +16,6 @@ const leadershipExperience = [
       "Managed core data pipeline infrastructure. Grew team from 10 to 45.",
   },
 ];
-const education = [
-  {
-    degree: "M.S. Computer Science",
-    institution: "Stanford University",
-    period: "2014 - 2016",
-  },
-  {
-    degree: "AWS Certified Solutions Architect",
-    institution: "Amazon Web Services",
-    period: "2019",
-  },
-];
 export const candidates: Candidate[] = [
   {
     id: "sarah-jenkins",
@@ -41,16 +29,39 @@ export const candidates: Candidate[] = [
     match: 98,
     stage: "interview",
     skills: [
-      { name: "React", level: "Expert", score: 0.95 },
-      { name: "System Design", level: "Advanced", score: 0.85 },
-      { name: "Leadership", level: "Advanced", score: 0.9 },
-      { name: "UX/UI", level: "Expert", score: 0.96 },
-      { name: "Figma", level: "Expert", score: 0.92 },
+      { name: "React", level: "Expert", score: 0.95, experienceYears: 6 },
+      {
+        name: "System Design",
+        level: "Advanced",
+        score: 0.85,
+        experienceYears: 8,
+      },
+      {
+        name: "Leadership",
+        level: "Advanced",
+        score: 0.9,
+        experienceYears: 10,
+      },
+      { name: "UX/UI", level: "Expert", score: 0.96, experienceYears: 5 },
+      { name: "Figma", level: "Expert", score: 0.92, experienceYears: 4 },
     ],
     summary:
       "Sarah demonstrates exceptional technical leadership, having scaled engineering orgs from 50 to 200+ while maintaining high delivery velocity. Her background in distributed systems aligns with infrastructure overhaul requirements.",
     experiences: leadershipExperience,
-    education,
+    education: [
+      {
+        degree: "M.S. Computer Science",
+        institution: "Stanford University",
+        period: "2014 - 2016",
+      },
+    ],
+    certifications: [
+      {
+        name: "AWS Certified Solutions Architect",
+        issuer: "Amazon Web Services",
+        period: "2019",
+      },
+    ],
     requirements: [
       { name: "Distributed Systems", result: "EXCEEDS" },
       { name: "Team Scaling", result: "EXCEEDS" },
@@ -69,8 +80,8 @@ export const candidates: Candidate[] = [
     match: 94,
     stage: "screening",
     skills: [
-      { name: "React", level: "Expert", score: 0.94 },
-      { name: "TypeScript", level: "Advanced", score: 0.9 },
+      { name: "React", level: "Expert", score: 0.94, experienceYears: 5 },
+      { name: "TypeScript", level: "Advanced", score: 0.9, experienceYears: 4 },
     ],
     summary:
       "Experienced frontend engineer focused on accessible interfaces, React and TypeScript.",
@@ -107,9 +118,9 @@ export const candidates: Candidate[] = [
     match: 91,
     stage: "offer",
     skills: [
-      { name: "Python", level: "Expert", score: 0.95 },
-      { name: "SQL", level: "Expert", score: 0.93 },
-      { name: "ML", level: "Advanced", score: 0.88 },
+      { name: "Python", level: "Expert", score: 0.95, experienceYears: 7 },
+      { name: "SQL", level: "Expert", score: 0.93, experienceYears: 6 },
+      { name: "ML", level: "Advanced", score: 0.88, experienceYears: 4 },
     ],
     summary:
       "Veri analizi ve makine öğrenmesi alanlarında deneyimli; analitik sonuçları ürün kararlarına dönüştürüyor.",
@@ -145,8 +156,13 @@ export const candidates: Candidate[] = [
     match: 88,
     stage: "interview",
     skills: [
-      { name: "Leadership", level: "Advanced", score: 0.88 },
-      { name: "Cloud", level: "Expert", score: 0.92 },
+      {
+        name: "Leadership",
+        level: "Advanced",
+        score: 0.88,
+        experienceYears: 5,
+      },
+      { name: "Cloud", level: "Expert", score: 0.92, experienceYears: 6 },
     ],
     summary:
       "Bulut altyapısı ve mühendislik ekiplerinin yönetiminde deneyimli teknoloji lideri.",
@@ -191,9 +207,19 @@ export const comparisonCandidates: Candidate[] = [
     match: 88,
     stage: "screening",
     skills: [
-      { name: "React", level: "Advanced", score: 0.88 },
-      { name: "System Design", level: "Expert", score: 0.92 },
-      { name: "Leadership", level: "Intermediate", score: 0.7 },
+      { name: "React", level: "Advanced", score: 0.88, experienceYears: 4 },
+      {
+        name: "System Design",
+        level: "Expert",
+        score: 0.92,
+        experienceYears: 6,
+      },
+      {
+        name: "Leadership",
+        level: "Intermediate",
+        score: 0.7,
+        experienceYears: 2,
+      },
     ],
     summary:
       "Strong theoretical knowledge of distributed systems and backend integration.",
@@ -226,9 +252,19 @@ export const comparisonCandidates: Candidate[] = [
     match: 91,
     stage: "screening",
     skills: [
-      { name: "React", level: "Expert", score: 0.96 },
-      { name: "System Design", level: "Intermediate", score: 0.75 },
-      { name: "Leadership", level: "Advanced", score: 0.88 },
+      { name: "React", level: "Expert", score: 0.96, experienceYears: 6 },
+      {
+        name: "System Design",
+        level: "Intermediate",
+        score: 0.75,
+        experienceYears: 3,
+      },
+      {
+        name: "Leadership",
+        level: "Advanced",
+        score: 0.88,
+        experienceYears: 4,
+      },
     ],
     summary:
       "Excellent team mentor with a proven track record of upskilling junior developers.",

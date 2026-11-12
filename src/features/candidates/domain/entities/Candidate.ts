@@ -19,10 +19,16 @@ export interface Candidate {
   workingPreference?: WorkingPreference;
   match: number;
   stage: Stage;
-  skills: { name: string; level: string; score: number }[];
+  skills: {
+    name: string;
+    level: string;
+    score: number;
+    experienceYears?: number;
+  }[];
   summary: string;
   experiences: Experience[];
   education: Education[];
+  certifications?: { name: string; issuer: string; period: string }[];
   requirements: { name: string; result: string }[];
 }
 export type CandidateDecisions = Record<

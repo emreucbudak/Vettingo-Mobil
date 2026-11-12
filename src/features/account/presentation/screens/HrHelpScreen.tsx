@@ -24,7 +24,7 @@ const questions = [
     id: "candidate-details",
     question: "Adayın deneyim ve yeteneklerini nereden görebilirim?",
     answer:
-      "Aday kartına dokunarak Aday Detayı sayfasını açın. Bu sayfada aday özetini, rol uyumunu ve yeteneklerini inceleyebilirsiniz. Profesyonel Deneyim ve Eğitim ve Sertifikalar alanlarını açarak geçmiş bilgilerine ulaşabilirsiniz.",
+      "Aday kartına dokunun. Açılan ekranda Yetenekler, Profesyonel Deneyim, Eğitim, Diller, Sertifikalar ve Projeler bölümlerini görebilirsiniz.",
   },
   {
     id: "interview",

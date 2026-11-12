@@ -30,7 +30,7 @@ const questions = [
     id: "candidates",
     question: "Adayları nasıl bulup inceleyebilirim?",
     answer:
-      "Adaylar sekmesindeki arama alanını ve aşama filtrelerini kullanın. Bir aday kartına dokunarak adayın özetini, rol uyumunu, yeteneklerini, deneyimini ve eğitim bilgilerini inceleyebilirsiniz.",
+      "Adaylar sekmesindeki arama alanını ve aşama filtrelerini kullanın. Bir aday kartına dokunduğunuzda Yetenekler, Profesyonel Deneyim, Eğitim, Diller, Sertifikalar ve Projeler bölümlerini görebilirsiniz.",
   },
   {
     id: "comparison",
