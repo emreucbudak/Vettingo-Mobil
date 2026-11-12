@@ -5,7 +5,6 @@ import { AppShell } from "../../../../core/presentation/layout/AppShell";
 import {
   Avatar,
   Badge,
-  Button,
   Card,
   Empty,
   Label,
@@ -17,7 +16,7 @@ import { useApp } from "../../../../core/presentation/state/AppProvider";
 
 export default function CandidateDetailScreen() {
   const { id } = useLocalSearchParams<{ id?: string }>();
-  const { state, dispatch, services } = useApp();
+  const { state, services } = useApp();
   const candidate = services.candidates.find(id || "sarah-jenkins");
   if (!candidate)
     return (
@@ -118,17 +117,6 @@ export default function CandidateDetailScreen() {
       <Card>
         <Label muted>Proje kaydı yok.</Label>
       </Card>
-      <Button
-        label="Adayı İlerlet"
-        disabled={decision?.action === "advanced"}
-        onPress={() =>
-          dispatch({
-            type: "decision",
-            candidateId: candidate.id,
-            action: "advanced",
-          })
-        }
-      />
     </AppShell>
   );
 }
