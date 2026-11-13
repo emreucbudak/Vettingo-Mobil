@@ -5,7 +5,7 @@ import { ProfileMenuGroup, ProfileMenuRow } from "../components/ProfileMenu";
 
 export default function EmployerAccountPage() {
   return (
-    <AppShell>
+    <AppShell roleBar="employer" activeItem="profile">
       <ProfileMenuGroup>
         <ProfileMenuRow
           label="Hesap Aboneliği"

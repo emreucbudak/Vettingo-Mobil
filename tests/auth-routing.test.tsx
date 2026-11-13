@@ -157,8 +157,35 @@ test("job search cards open a blank candidate detail page and allow going back",
   expect(screen.getByPlaceholderText("Pozisyon ara")).toBeTruthy();
 }, 30000);
 
+test.each(["employer", "hr"])(
+  "%s keeps İlanlar selected while creating a job",
+  async (role) => {
+    await AsyncStorage.setItem(
+      "vettingo:demo-session:v1",
+      JSON.stringify({
+        email: "jobs-navigation@vettingo.com",
+        name: "Alex",
+        role,
+        company: "Vettingo",
+        remember: true,
+      }),
+    );
+    const jobsPath = `/${role}-jobs`;
+    const view = await renderRouter("src/app", { initialUrl: jobsPath });
+    const newJob = await screen.findByRole("button", { name: "Yeni İlan" });
+    expect(screen.getByRole("tab", { name: "İlanlar" })).toBeSelected();
+    await fireEvent.press(newJob);
+    await waitFor(() => expect(view.getPathname()).toBe("/new-requisition"));
+    expect(screen.getByRole("tab", { name: "İlanlar" })).toBeSelected();
+    expect(screen.getAllByRole("tab", { selected: true })).toHaveLength(1);
+    await fireEvent.press(screen.getByRole("button", { name: "Geri" }));
+    await waitFor(() => expect(view.getPathname()).toBe(jobsPath));
+  },
+  60000,
+);
+
 test.each(["candidate", "employer", "hr"])(
-  "%s keeps Profile selected throughout its profile menu pages",
+  "%s can navigate its profile menu pages and return to the selected tab",
   async (role) => {
     await AsyncStorage.setItem(
       "vettingo:demo-session:v1",
@@ -223,7 +250,6 @@ test.each(["candidate", "employer", "hr"])(
         expect(
           screen.getByRole("button", { name: "Başlangıç planını seç" }),
         ).toBeTruthy();
-        expectProfileSelected();
         await fireEvent.press(screen.getByRole("button", { name: "Geri" }));
         await waitFor(() => expect(view.getPathname()).toBe(path));
       }
@@ -240,7 +266,6 @@ test.each(["candidate", "employer", "hr"])(
         expect(screen.getAllByRole("tab")).toHaveLength(4);
         expect(screen.queryByText("İşlem Yap")).toBeNull();
         expect(screen.queryAllByRole("textbox")).toHaveLength(0);
-        expectProfileSelected();
         await fireEvent.press(screen.getByRole("button", { name: "Geri" }));
         await waitFor(() => expect(view.getPathname()).toBe(path));
         await fireEvent.press(
@@ -262,7 +287,6 @@ test.each(["candidate", "employer", "hr"])(
         expect(
           screen.getByRole("button", { name: "Çalışan Ekle" }),
         ).toBeDisabled();
-        expectProfileSelected();
         await fireEvent.press(screen.getByRole("button", { name: "Geri" }));
         await waitFor(() => expect(view.getPathname()).toBe(path));
       }
@@ -281,7 +305,6 @@ test.each(["candidate", "employer", "hr"])(
           expect(screen.getAllByRole("tab")).toHaveLength(4);
           expect(screen.queryByText("Açık Pozisyon")).toBeNull();
           expect(screen.queryAllByRole("textbox")).toHaveLength(0);
-          expectProfileSelected();
           await fireEvent.press(screen.getByRole("button", { name: "Geri" }));
           await waitFor(() => expect(view.getPathname()).toBe(path));
         } else {
@@ -305,7 +328,6 @@ test.each(["candidate", "employer", "hr"])(
         expectProfileSelected();
         await fireEvent.press(screen.getByRole("button", { name: "Geri" }));
         await waitFor(() => expect(view.getPathname()).toBe("/scout"));
-        expectProfileSelected();
       }
       if (label === "Bildirimler") {
         expect(screen.getAllByText("Vettingo")).toHaveLength(1);

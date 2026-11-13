@@ -2,5 +2,5 @@ import React from "react";
 import { AppShell } from "../../../../core/presentation/layout/AppShell";
 
 export default function HrAccountPage() {
-  return <AppShell />;
+  return <AppShell roleBar="hr" activeItem="profile" />;
 }

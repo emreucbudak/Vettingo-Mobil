@@ -3,6 +3,7 @@ import { Alert, ScrollView, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams } from "expo-router";
 import { AppShell } from "../../../../core/presentation/layout/AppShell";
+import { useApp } from "../../../../core/presentation/state/AppProvider";
 import {
   Button,
   colors,
@@ -10,9 +11,17 @@ import {
 } from "../../../../shared/presentation/components/ui";
 
 export default function ComparisonScreen() {
-  const { jobTitle } = useLocalSearchParams<{ jobTitle?: string }>();
+  const { jobTitle, tab } = useLocalSearchParams<{
+    jobTitle?: string;
+    tab?: string;
+  }>();
+  const { session } = useApp();
+  if (!session) return null;
   return (
-    <AppShell>
+    <AppShell
+      roleBar={session.role}
+      activeItem={tab === "home" ? "dashboard" : "jobs"}
+    >
       <View style={[styles.card, { gap: 24 }]}>
         <Text
           accessibilityRole="header"

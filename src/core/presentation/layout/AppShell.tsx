@@ -8,13 +8,12 @@ import {
   View,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { router, Href, useLocalSearchParams, usePathname } from "expo-router";
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from "react-native-safe-area-context";
+import { router } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useApp } from "../state/AppProvider";
+import type { Role } from "../../../features/auth/domain/entities/Session";
 import { homeFor } from "../../../features/auth/presentation/navigation/routes";
+import { barItemsByRole, type BarItemId } from "./barItems";
 import {
   colors,
   styles,
@@ -26,90 +25,20 @@ export function AppShell({
   title,
   actions,
   headerRight,
+  roleBar,
+  activeItem,
   centerContent = false,
   showBackButton = true,
 }: React.PropsWithChildren<{
   title?: string;
   actions?: React.ReactNode;
   headerRight?: React.ReactNode;
+  roleBar: Role;
+  activeItem: BarItemId;
   centerContent?: boolean;
   showBackButton?: boolean;
 }>) {
-  const { session, storageError } = useApp();
-  const path = usePathname();
-  const { tab: sourceTab } = useLocalSearchParams<{ tab?: string }>();
-  const insets = useSafeAreaInsets();
-  if (!session) return null;
-  const role = session.role;
-  const tabs: {
-    label: string;
-    path: string;
-    icon: keyof typeof Ionicons.glyphMap;
-  }[] =
-    role === "candidate"
-      ? [
-          {
-            label: "Ana Sayfa",
-            path: "/candidate-dashboard",
-            icon: "home-outline",
-          },
-          {
-            label: "Başvurularım",
-            path: "/candidate-applications",
-            icon: "briefcase-outline",
-          },
-          { label: "Arama", path: "/job-search", icon: "search-outline" },
-          {
-            label: "Profil",
-            path: "/candidate-profile",
-            icon: "person-circle-outline",
-          },
-        ]
-      : [
-          {
-            label: "Ana Sayfa",
-            path: `/${role}-dashboard`,
-            icon: "home-outline",
-          },
-          {
-            label: "İlanlar",
-            path: `/${role}-jobs`,
-            icon: "briefcase-outline",
-          },
-          {
-            label: "Adaylar",
-            path: `/${role}-candidates`,
-            icon: "people-outline",
-          },
-          {
-            label: "Profil",
-            path: `/${role}-profile`,
-            icon: "person-circle-outline",
-          },
-        ];
-  const main = tabs.some((tab) => tab.path === path);
-  const profilePage =
-    path === "/notifications" ||
-    path === "/employer-team" ||
-    path === "/employer-team-add" ||
-    path === "/employer-team-edit" ||
-    path === "/employer-plans" ||
-    path === "/employer-company-edit" ||
-    [
-      `/${role}-profile-details`,
-      `/${role}-company`,
-      `/${role}-security`,
-      `/${role}-help`,
-    ].includes(path) ||
-    (role === "candidate" &&
-      ["/cv-review", "/candidate-personalized-jobs"].includes(path)) ||
-    (sourceTab === "profile" &&
-      [
-        "/scout",
-        "/candidate-detail",
-        "/job-detail",
-        "/candidate-company-detail",
-      ].includes(path));
+  const { storageError } = useApp();
   return (
     <SafeAreaView style={styles.page} edges={["top"]}>
       <View
@@ -131,14 +60,14 @@ export function AppShell({
         >
           Vettingo
         </Text>
-        {!main && showBackButton && (
+        {showBackButton && (
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Geri"
             onPress={() =>
               router.canGoBack()
                 ? router.back()
-                : router.replace(homeFor(role) as Href)
+                : router.replace(homeFor(roleBar))
             }
             style={{ position: "absolute", left: 14, padding: 10 }}
           >
@@ -187,35 +116,26 @@ export function AppShell({
           </View>
         )}
       </KeyboardAvoidingView>
-      <View
+      <SafeAreaView
+        edges={{ bottom: "maximum" }}
         style={{
           flexDirection: "row",
           backgroundColor: "#fff",
           borderTopWidth: 1,
           borderTopColor: colors.border,
           paddingTop: 10,
-          // Extend the bar to the screen edge while keeping tabs above system gestures.
-          paddingBottom: Math.max(insets.bottom, 8),
+          paddingBottom: 8,
         }}
       >
-        {tabs.map((tab) => {
-          const active =
-            path === tab.path ||
-            (tab.path === "/candidate-dashboard" &&
-              path === "/candidate-company-detail" &&
-              sourceTab === "home") ||
-            (tab.path === "/job-search" &&
-              ["/job-detail", "/candidate-company-detail"].includes(path) &&
-              sourceTab !== "home" &&
-              sourceTab !== "profile") ||
-            (tab.label === "Profil" && profilePage);
+        {barItemsByRole[roleBar].map((tab) => {
+          const active = tab.id === activeItem;
           return (
             <Pressable
-              key={tab.path}
+              key={tab.id}
               accessibilityRole="tab"
               accessibilityLabel={tab.label}
               accessibilityState={{ selected: active }}
-              onPress={() => router.replace(tab.path as Href)}
+              onPress={() => router.replace(tab.href)}
               style={{ flex: 1, alignItems: "center", gap: 4, minHeight: 46 }}
             >
               <Ionicons
@@ -235,7 +155,7 @@ export function AppShell({
             </Pressable>
           );
         })}
-      </View>
+      </SafeAreaView>
     </SafeAreaView>
   );
 }

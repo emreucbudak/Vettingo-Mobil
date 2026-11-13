@@ -67,8 +67,9 @@ export default function RequisitionScreen() {
     setSkill("");
     setSkillOpen(false);
   }
+  if (!session) return null;
   return (
-    <AppShell>
+    <AppShell roleBar={session.role} activeItem="jobs">
       <View style={{ flexDirection: "row", gap: 6 }}>
         {["Role Definition", "Job Description", "İş İlan Akışı", "Review"].map(
           (label, index) => (

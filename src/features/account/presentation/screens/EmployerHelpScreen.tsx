@@ -59,5 +59,5 @@ const questions = [
 ];
 
 export default function EmployerHelpScreen() {
-  return <HelpPage questions={questions} />;
+  return <HelpPage roleBar="employer" questions={questions} />;
 }

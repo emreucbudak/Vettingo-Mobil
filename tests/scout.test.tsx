@@ -72,7 +72,7 @@ test("Scout searches skills, opens talent profiles and handles empty results", a
   );
   expect(router.push).toHaveBeenLastCalledWith({
     pathname: "/candidate-detail",
-    params: { id: "michael-ross" },
+    params: { id: "michael-ross", tab: "home" },
   });
   await fireEvent.changeText(search, "olmayan-yetenek");
   expect(view.getByText("Aramana uygun yetenek bulunamadı.")).toBeTruthy();

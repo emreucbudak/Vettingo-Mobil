@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useLocalSearchParams } from "expo-router";
 import { AppShell } from "../../../../core/presentation/layout/AppShell";
 import { useApp } from "../../../../core/presentation/state/AppProvider";
 import { Empty, Search } from "../../../../shared/presentation/components/ui";
@@ -7,7 +8,8 @@ import { ScoutFiltersDialog } from "../components/ScoutFiltersDialog";
 import { CandidateFilter } from "../../domain/policies/filters";
 
 export default function ScoutScreen() {
-  const { state, services } = useApp();
+  const { session, state, services } = useApp();
+  const { tab } = useLocalSearchParams<{ tab?: string }>();
   const [query, setQuery] = useState("");
   const [filters, setFilters] = useState<CandidateFilter[]>([]);
   const [filterOpen, setFilterOpen] = useState(false);
@@ -18,8 +20,12 @@ export default function ScoutScreen() {
     filters,
   );
 
+  if (!session) return null;
   return (
-    <AppShell>
+    <AppShell
+      roleBar={session.role}
+      activeItem={tab === "profile" ? "profile" : "dashboard"}
+    >
       <Search
         value={query}
         onChangeText={setQuery}

@@ -55,7 +55,7 @@ export function JobSearchScreen() {
     });
   }
   return (
-    <AppShell>
+    <AppShell roleBar="candidate" activeItem="search" showBackButton={false}>
       <Search
         value={query}
         onChangeText={setQuery}

@@ -6,10 +6,11 @@ import { RequisitionCard } from "../components/RequisitionCard";
 import { useApp } from "../../../../core/presentation/state/AppProvider";
 
 export function RequisitionsScreen() {
-  const { state } = useApp();
+  const { session, state } = useApp();
   const items = state.requisitions;
+  if (!session) return null;
   return (
-    <AppShell>
+    <AppShell roleBar={session.role} activeItem="jobs" showBackButton={false}>
       <Button
         label="Yeni İlan"
         onPress={() => router.push("/new-requisition")}

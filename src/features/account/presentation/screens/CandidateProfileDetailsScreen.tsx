@@ -13,7 +13,7 @@ export default function CandidateProfileDetailsScreen() {
   const [lastName, setLastName] = useState("");
 
   return (
-    <AppShell>
+    <AppShell roleBar="candidate" activeItem="profile">
       <View style={profileStyles.photoSection}>
         <View
           accessible
