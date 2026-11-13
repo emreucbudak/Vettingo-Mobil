@@ -25,7 +25,7 @@ export function ScoutCandidateCard({ candidate }: { candidate: Candidate }) {
           pathname: "/candidate-detail",
           params: {
             id: candidate.id,
-            ...(tab === "profile" ? { tab } : {}),
+            tab: tab === "profile" ? "profile" : "home",
           },
         })
       }

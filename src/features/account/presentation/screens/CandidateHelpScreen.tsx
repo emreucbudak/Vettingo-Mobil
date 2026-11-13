@@ -59,5 +59,5 @@ const questions = [
 ];
 
 export default function CandidateHelpScreen() {
-  return <HelpPage questions={questions} />;
+  return <HelpPage roleBar="candidate" questions={questions} />;
 }

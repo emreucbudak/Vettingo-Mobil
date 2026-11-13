@@ -11,7 +11,7 @@ import {
 
 export default function EmployerTeamScreen() {
   return (
-    <AppShell>
+    <AppShell roleBar="employer" activeItem="profile">
       <View style={teamStyles.addButton}>
         <Button
           label="Çalışan Ekle"

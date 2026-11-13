@@ -27,7 +27,7 @@ export default function DashboardScreen() {
   if (!session) return null;
   if (session.role === "candidate")
     return (
-      <AppShell>
+      <AppShell roleBar="candidate" activeItem="dashboard" showBackButton={false}>
         <CreateCvPrompt key={session.userId ?? session.email} />
         <Section
           title="Aktif Başvurular"
@@ -56,7 +56,10 @@ export default function DashboardScreen() {
               })
             }
             onPress={() =>
-              router.push({ pathname: "/job-detail", params: { id: job.id } })
+              router.push({
+                pathname: "/job-detail",
+                params: { id: job.id, tab: "home" },
+              })
             }
           />
         ))}
@@ -77,7 +80,7 @@ export default function DashboardScreen() {
         ["Ekip Üyesi", "12"],
       ];
   return (
-    <AppShell>
+    <AppShell roleBar={session.role} activeItem="dashboard" showBackButton={false}>
       <View style={styles.wrap}>
         {metrics.map(([label, value], index) => (
           <View key={label} style={{ width: "48%", flexGrow: 1 }}>

@@ -105,7 +105,7 @@ export default function EmployerPlansScreen() {
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
 
   return (
-    <AppShell>
+    <AppShell roleBar="employer" activeItem="profile">
       {previewPlans.map((plan) => (
         <PlanCard
           key={plan.name}

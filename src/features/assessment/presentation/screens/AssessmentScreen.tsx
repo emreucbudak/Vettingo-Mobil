@@ -49,6 +49,8 @@ export default function AssessmentScreen() {
     .padStart(2, "0")}:${(remaining % 60).toString().padStart(2, "0")}`;
   return (
     <AppShell
+      roleBar="candidate"
+      activeItem="applications"
       title="Technical Assessment"
       actions={
         <View style={styles.row}>

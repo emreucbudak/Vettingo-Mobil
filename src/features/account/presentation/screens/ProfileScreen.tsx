@@ -64,7 +64,7 @@ export default function ProfileScreen() {
     }
   }
   return (
-    <AppShell>
+    <AppShell roleBar={session.role} activeItem="profile" showBackButton={false}>
       <Card>
         <View style={styles.row}>
           <Avatar initials={session.name.slice(0, 2).toUpperCase()} />

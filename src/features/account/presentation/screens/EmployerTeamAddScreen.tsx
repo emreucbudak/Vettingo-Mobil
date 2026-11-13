@@ -9,7 +9,7 @@ export default function EmployerTeamAddScreen() {
   const [password, setPassword] = useState("");
 
   return (
-    <AppShell centerContent>
+    <AppShell roleBar="employer" activeItem="profile" centerContent>
       <Field
         label="İsim"
         value={firstName}

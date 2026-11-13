@@ -53,7 +53,7 @@ export default function PersonalizedJobsScreen() {
   );
 
   return (
-    <AppShell>
+    <AppShell roleBar="candidate" activeItem="profile">
       {loading && <ActivityIndicator accessibilityLabel="İlanlar yükleniyor" />}
       {!!error && (
         <>

@@ -15,19 +15,22 @@ import { decisionLabels } from "../formatters/labels";
 import { useApp } from "../../../../core/presentation/state/AppProvider";
 
 export default function CandidateDetailScreen() {
-  const { id } = useLocalSearchParams<{ id?: string }>();
-  const { state, services } = useApp();
+  const { id, tab } = useLocalSearchParams<{ id?: string; tab?: string }>();
+  const activeItem =
+    tab === "home" ? "dashboard" : tab === "profile" ? "profile" : "candidates";
+  const { session, state, services } = useApp();
+  if (!session) return null;
   const candidate = services.candidates.find(id || "sarah-jenkins");
   if (!candidate)
     return (
-      <AppShell>
+      <AppShell roleBar={session.role} activeItem={activeItem}>
         <Empty label="Aday bulunamadı." />
       </AppShell>
     );
   const decision = state.decisions[candidate.id];
   const certifications = candidate.certifications ?? [];
   return (
-    <AppShell>
+    <AppShell roleBar={session.role} activeItem={activeItem}>
       <Card>
         <View style={styles.row}>
           <Avatar initials={candidate.initials} />

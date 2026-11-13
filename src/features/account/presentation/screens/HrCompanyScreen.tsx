@@ -7,7 +7,7 @@ export default function HrCompanyScreen() {
   const { session } = useApp();
 
   return (
-    <AppShell>
+    <AppShell roleBar="hr" activeItem="profile">
       <CompanyDetails companyName={session?.company ?? ""} />
     </AppShell>
   );

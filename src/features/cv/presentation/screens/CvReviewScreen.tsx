@@ -74,7 +74,7 @@ export default function CvReviewScreen() {
     setError("");
   }
   return (
-    <AppShell>
+    <AppShell roleBar="candidate" activeItem="profile">
       {cv.completed && <Badge>Profil Kaydedildi</Badge>}
       {!!cv.fileName && <Label muted>Seçilen belge: {cv.fileName}</Label>}
       <Card>

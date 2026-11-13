@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { AppShell } from "../../../../core/presentation/layout/AppShell";
+import type { Role } from "../../../auth/domain/entities/Session";
 import { colors } from "../../../../shared/presentation/components/ui";
 
 export interface HelpQuestion {
@@ -12,13 +13,15 @@ export interface HelpQuestion {
 
 export function HelpPage({
   questions,
+  roleBar,
 }: {
   questions: readonly HelpQuestion[];
+  roleBar: Role;
 }) {
   const [openId, setOpenId] = useState<string | null>(null);
 
   return (
-    <AppShell>
+    <AppShell roleBar={roleBar} activeItem="profile">
       {questions.map((item) => {
         const expanded = openId === item.id;
 

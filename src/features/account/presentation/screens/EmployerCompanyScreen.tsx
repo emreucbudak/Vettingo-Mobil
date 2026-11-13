@@ -12,6 +12,8 @@ export default function EmployerCompanyScreen() {
 
   return (
     <AppShell
+      roleBar="employer"
+      activeItem="profile"
       headerRight={
         <Pressable
           accessibilityRole="button"

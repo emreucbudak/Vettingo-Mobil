@@ -19,8 +19,9 @@ export function CandidatesScreen() {
   const [query, setQuery] = useState("");
   const [stage, setStage] = useState<Stage | "all">("all");
   const items = services.candidates.search(query, stage, state.decisions);
+  if (!session) return null;
   return (
-    <AppShell>
+    <AppShell roleBar={session.role} activeItem="candidates" showBackButton={false}>
       <Search
         value={query}
         onChangeText={setQuery}

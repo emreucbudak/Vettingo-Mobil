@@ -21,7 +21,7 @@ export function DashboardRequisitionCard({ job }: { job: Requisition }) {
       onPress={() =>
         router.push({
           pathname: "/talent-comparison",
-          params: { jobTitle: job.title },
+          params: { jobTitle: job.title, tab: "home" },
         })
       }
     >

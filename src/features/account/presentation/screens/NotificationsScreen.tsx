@@ -46,8 +46,9 @@ export default function NotificationsScreen() {
     }, [loadNotifications]),
   );
 
+  if (!session) return null;
   return (
-    <AppShell>
+    <AppShell roleBar={session.role} activeItem="profile">
       {loading && (
         <ActivityIndicator accessibilityLabel="Bildirimler yükleniyor" />
       )}

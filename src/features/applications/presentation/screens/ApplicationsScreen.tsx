@@ -17,7 +17,7 @@ export function ApplicationsScreen() {
     (item) => filter === "Tümü" || item.status === filter,
   );
   return (
-    <AppShell>
+    <AppShell roleBar="candidate" activeItem="applications" showBackButton={false}>
       <View style={styles.wrap}>
         {[
           ["Tümü", "Tümü"],
