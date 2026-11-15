@@ -49,7 +49,7 @@ export function CandidatesScreen() {
           ),
         )}
       </ScrollView>
-      <Label muted>{items.length} aday</Label>
+      {!employer && <Label muted>{items.length} aday</Label>}
       {items.map((candidate) => (
         <CandidateCard key={candidate.id} candidate={candidate} />
       ))}

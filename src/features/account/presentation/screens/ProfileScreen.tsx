@@ -79,7 +79,7 @@ export default function ProfileScreen() {
           [
             { label: "Profil", path: "/candidate-profile-details" },
             { label: "Bildirimler", path: "/notifications" },
-            { label: "CV", path: "/cv-review" },
+            { label: "Özgeçmiş", path: "/cv-review" },
           ].map(({ label, path }) => (
             <ProfileMenuRow
               key={label}

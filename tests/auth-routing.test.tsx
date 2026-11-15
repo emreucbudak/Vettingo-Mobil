@@ -252,7 +252,7 @@ test.each(["candidate", "employer", "hr"])(
         ? [
             ["Profil", "/candidate-profile-details"],
             ["Bildirimler", "/notifications"],
-            ["CV", "/cv-review"],
+            ["Özgeçmiş", "/cv-review"],
             ["Kişiselleştirilmiş İlanlar", "/candidate-personalized-jobs"],
           ]
         : [
