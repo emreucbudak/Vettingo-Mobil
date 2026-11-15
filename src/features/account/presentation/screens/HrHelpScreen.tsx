@@ -9,12 +9,6 @@ const questions = [
       "İlanlar sekmesindeki Yeni İlan butonuna dokunun. Pozisyon, departman, çalışma modeli ve yetenekleri belirleyin. İş tanımını ekleyip kontrol adımına geçin ve İlanı Oluştur butonuna basın.",
   },
   {
-    id: "search-candidates",
-    question: "Adaylar arasında nasıl arama yapabilirim?",
-    answer:
-      "Ana Sayfa’daki Adaylar bölümünde Tümünü Gör’e dokunun. Arama alanına aday adı, pozisyon veya yetenek yazın. Detayları incelemek için aday kartına dokunun.",
-  },
-  {
     id: "stages",
     question: "Adayları süreç aşamasına göre nasıl filtreleyebilirim?",
     answer:
@@ -39,16 +33,10 @@ const questions = [
       "Mülakat sonucunu girmezseniz aday otomatik olarak başarısız sayılır ve adayla olan bağlantınızı kaybedersiniz.",
   },
   {
-    id: "advance",
-    question: "Adayı işe alım sürecinde nasıl ilerletebilirim?",
-    answer:
-      "Aday Detayı sayfasında veya Yetenek Karşılaştırma ekranında Adayı İlerlet butonunu kullanın. İşlem sonrasında adayın karar durumu İlerletildi olarak görünür.",
-  },
-  {
     id: "comparison",
-    question: "Bir pozisyonun adaylarını nasıl karşılaştırabilirim?",
+    question: "Bir ilanın adaylarını nasıl görebilirim?",
     answer:
-      "İlanlar sekmesindeki ilgili ilan kartına dokunun. Yetenek Karşılaştırma ekranında aday isimlerini seçerek yetenekleri ve uyum oranlarını inceleyebilir, karşılaştırma özetini görebilirsiniz.",
+      "İlanlar sekmesinde ilgili ilan kartına dokunun. O ilana ait adaylar listelenir. Adayın profilini açmak için kartına dokunun.",
   },
   {
     id: "scout",
