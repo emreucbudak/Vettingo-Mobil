@@ -49,6 +49,8 @@ test.each(["employer", "hr"])(
     await home.unmount();
 
     const jobs = await signedIn(<RequisitionsScreen />, role);
+    expect(jobs.getByText("Eşleşen ilan bulunamadı.")).toBeTruthy();
+    expect(jobs.queryAllByRole("button", { name: /adaylarını gör$/ })).toEqual([]);
     await fireEvent.press(jobs.getByRole("button", { name: "Yeni İlan" }));
     expect(router.push).toHaveBeenLastCalledWith("/new-requisition");
     await jobs.unmount();

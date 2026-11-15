@@ -8,6 +8,7 @@ import {
   screen,
   waitFor,
 } from "expo-router/testing-library";
+import { initialWorkspace } from "../src/core/data/datasources/DemoWorkspaceSource";
 
 beforeEach(async () => {
   await AsyncStorage.clear();
@@ -158,22 +159,37 @@ test("job search cards open a blank candidate detail page and allow going back",
 }, 30000);
 
 test.each(["employer", "hr"])(
-  "%s keeps İlanlar selected while creating a job and viewing its candidates",
+  "%s hides saved demo jobs and keeps İlanlar selected for published jobs",
   async (role) => {
+    const email = "jobs-navigation@vettingo.com";
     await AsyncStorage.setItem(
       "vettingo:demo-session:v1",
       JSON.stringify({
-        email: "jobs-navigation@vettingo.com",
+        email,
         name: "Alex",
         role,
         company: "Vettingo",
         remember: true,
       }),
     );
+    const workspace = initialWorkspace();
+    workspace.requisitions.push({
+      ...workspace.requisitions[0],
+      id: "requisition-1",
+      title: "Frontend Developer",
+      description: "Lead the frontend team.",
+    });
+    await AsyncStorage.setItem(
+      `vettingo:workspace:v1:${role}:${email}`,
+      JSON.stringify(workspace),
+    );
     const jobsPath = `/${role}-jobs`;
     const view = await renderRouter("src/app", { initialUrl: jobsPath });
     const newJob = await screen.findByRole("button", { name: "Yeni İlan" });
     expect(screen.getByRole("tab", { name: "İlanlar" })).toBeSelected();
+    expect(
+      screen.getAllByRole("button", { name: /adaylarını gör$/ }),
+    ).toHaveLength(1);
     await fireEvent.press(newJob);
     await waitFor(() => expect(view.getPathname()).toBe("/new-requisition"));
     expect(screen.getByRole("tab", { name: "İlanlar" })).toBeSelected();
@@ -182,38 +198,23 @@ test.each(["employer", "hr"])(
     await waitFor(() => expect(view.getPathname()).toBe(jobsPath));
 
     await fireEvent.press(
-      screen.getByRole("button", { name: "Lead Data Scientist adaylarını gör" }),
+      screen.getByRole("button", { name: "Frontend Developer adaylarını gör" }),
     );
-    await waitFor(() => expect(view.getPathname()).toBe("/requisition-candidates"));
-    expect(view.getSearchParams()).toEqual({ requisitionId: "data-scientist" });
+    await waitFor(() =>
+      expect(view.getPathname()).toBe("/requisition-candidates"),
+    );
+    expect(view.getSearchParams()).toEqual({ requisitionId: "requisition-1" });
     expect(screen.getByRole("tab", { name: "İlanlar" })).toBeSelected();
     expect(
-      screen.queryByRole("header", { name: "Lead Data Scientist · Adaylar" }),
+      screen.queryByRole("header", { name: "Frontend Developer · Adaylar" }),
     ).toBeNull();
     expect(screen.queryAllByRole("textbox")).toHaveLength(0);
-    expect(
-      screen.queryByRole("button", { name: "Can Demir profilini aç" }),
-    ).toBeNull();
-
-    await fireEvent.press(
-      screen.getByRole("button", { name: "Zeynep Kaya profilini aç" }),
-    );
-    await waitFor(() => expect(view.getPathname()).toBe("/candidate-detail"));
-    expect(screen.getByRole("tab", { name: "İlanlar" })).toBeSelected();
-    await fireEvent.press(screen.getByRole("button", { name: "Geri" }));
-    await waitFor(() => expect(view.getPathname()).toBe("/requisition-candidates"));
-    await fireEvent.press(screen.getByRole("button", { name: "Geri" }));
-    await waitFor(() => expect(view.getPathname()).toBe(jobsPath));
-
-    await fireEvent.press(
-      screen.getByRole("button", {
-        name: "Senior Marketing Manager adaylarını gör",
-      }),
-    );
     expect(await screen.findByText("Bu ilan için henüz aday yok.")).toBeTruthy();
     expect(screen.queryAllByRole("button", { name: /profilini aç/ })).toHaveLength(
       0,
     );
+    await fireEvent.press(screen.getByRole("button", { name: "Geri" }));
+    await waitFor(() => expect(view.getPathname()).toBe(jobsPath));
   },
   60000,
 );
