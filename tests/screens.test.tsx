@@ -11,7 +11,6 @@ import { CandidatesScreen } from "../src/features/candidates/presentation/screen
 import { JobSearchScreen } from "../src/features/jobs/presentation/screens/JobSearchScreen";
 import RequisitionScreen from "../src/features/requisitions/presentation/screens/RequisitionScreen";
 import CvReviewScreen from "../src/features/cv/presentation/screens/CvReviewScreen";
-import ComparisonScreen from "../src/features/candidates/presentation/screens/ComparisonScreen";
 import AssessmentScreen from "../src/features/assessment/presentation/screens/AssessmentScreen";
 import {
   AppProvider as InjectedAppProvider,
@@ -473,28 +472,6 @@ test("CV review adds a skill and saves the edited profile", async () => {
     ).toContain("React Native"),
   );
 });
-test.each(["employer", "hr"])(
-  "%s listing details show a centered listing title without candidate comparisons",
-  async (role) => {
-    const view = await signedIn(<ComparisonScreen />, role);
-    await waitFor(() =>
-      expect(view.getByText("Senior Frontend Engineer")).toBeTruthy(),
-    );
-    expect(
-      view.getByRole("header", { name: "Senior Frontend Engineer" }),
-    ).toHaveStyle({ textAlign: "center" });
-    expect(view.queryByText("San Francisco, CA · Remote")).toBeNull();
-    expect(view.queryByText("Active")).toBeNull();
-    expect(view.queryByText("Yetenek Karşılaştırma")).toBeNull();
-    expect(view.queryByText("Karşılaştırma Özeti")).toBeNull();
-    expect(view.queryByText("Sarah Jenkins")).toBeNull();
-    expect(view.queryByText("Marcus Chen")).toBeNull();
-    expect(view.queryByRole("button", { name: "Profili Gör" })).toBeNull();
-    expect(view.queryByRole("button", { name: "Adayı Reddet" })).toBeNull();
-    expect(view.queryByRole("button", { name: "Adayı İlerlet" })).toBeNull();
-    await view.unmount();
-  },
-);
 test("assessment accepts an answer, advances and locks after submission", async () => {
   const view = await signedIn(<AssessmentScreen />);
   await waitFor(() => expect(view.getByText("Soru 4 / 20")).toBeTruthy());

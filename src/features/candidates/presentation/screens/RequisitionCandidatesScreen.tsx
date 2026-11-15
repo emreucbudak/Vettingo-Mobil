@@ -6,14 +6,18 @@ import { Empty } from "../../../../shared/presentation/components/ui";
 import { CandidateCard } from "../components/CandidateCard";
 
 export default function RequisitionCandidatesScreen() {
-  const { requisitionId } = useLocalSearchParams<{ requisitionId?: string }>();
+  const { requisitionId, tab } = useLocalSearchParams<{
+    requisitionId?: string;
+    tab?: string;
+  }>();
+  const activeItem = tab === "home" ? "dashboard" : "jobs";
   const { session, state, services } = useApp();
   if (!session) return null;
 
   const requisition = state.requisitions.find(({ id }) => id === requisitionId);
   if (!requisition) {
     return (
-      <AppShell roleBar={session.role} activeItem="jobs" title="Adaylar">
+      <AppShell roleBar={session.role} activeItem={activeItem} title="Adaylar">
         <Empty label="İlan bulunamadı." />
       </AppShell>
     );
@@ -24,9 +28,13 @@ export default function RequisitionCandidatesScreen() {
   );
 
   return (
-    <AppShell roleBar={session.role} activeItem="jobs">
+    <AppShell roleBar={session.role} activeItem={activeItem}>
       {candidates.map((candidate) => (
-        <CandidateCard key={candidate.id} candidate={candidate} fromJobs />
+        <CandidateCard
+          key={candidate.id}
+          candidate={candidate}
+          fromJobs={activeItem === "jobs"}
+        />
       ))}
       {candidates.length === 0 && (
         <Empty label="Bu ilan için henüz aday yok." />

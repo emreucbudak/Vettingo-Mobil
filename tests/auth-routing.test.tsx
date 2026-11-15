@@ -218,6 +218,52 @@ test.each(["employer", "hr"])(
   60000,
 );
 
+test.each(["employer", "hr"])(
+  "%s opens requisition candidates from the dashboard",
+  async (role) => {
+    await AsyncStorage.setItem(
+      "vettingo:demo-session:v1",
+      JSON.stringify({
+        email: "dashboard-navigation@vettingo.com",
+        name: "Alex",
+        role,
+        company: "Vettingo",
+        remember: true,
+      }),
+    );
+    const dashboardPath = `/${role}-dashboard`;
+    const view = await renderRouter("src/app", { initialUrl: dashboardPath });
+    await fireEvent.press(
+      await screen.findByRole("button", {
+        name: "Lead Data Scientist adaylarını gör",
+      }),
+    );
+    await waitFor(() =>
+      expect(view.getPathname()).toBe("/requisition-candidates"),
+    );
+    expect(view.getSearchParams()).toEqual({
+      requisitionId: "data-scientist",
+      tab: "home",
+    });
+    expect(screen.getByRole("tab", { name: "Ana Sayfa" })).toBeSelected();
+    expect(screen.queryAllByRole("button", { name: /profilini aç/ })).toHaveLength(
+      1,
+    );
+    await fireEvent.press(
+      screen.getByRole("button", { name: "Zeynep Kaya profilini aç" }),
+    );
+    await waitFor(() => expect(view.getPathname()).toBe("/candidate-detail"));
+    expect(screen.getByRole("tab", { name: "Ana Sayfa" })).toBeSelected();
+    await fireEvent.press(screen.getByRole("button", { name: "Geri" }));
+    await waitFor(() =>
+      expect(view.getPathname()).toBe("/requisition-candidates"),
+    );
+    await fireEvent.press(screen.getByRole("button", { name: "Geri" }));
+    await waitFor(() => expect(view.getPathname()).toBe(dashboardPath));
+  },
+  60000,
+);
+
 test.each(["candidate", "employer", "hr"])(
   "%s can navigate its profile menu pages and return to the selected tab",
   async (role) => {
