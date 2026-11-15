@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { router } from "expo-router";
 import { Requisition } from "../../domain/entities/Requisition";
 import { useApp } from "../../../../core/presentation/state/AppProvider";
+import { RequisitionDeleteIcon } from "./RequisitionDeleteIcon";
 import {
   Badge,
   Card,
@@ -41,6 +42,7 @@ export function RequisitionCard({ job }: { job: Requisition }) {
               >
                 {job.status === "Interviewing" ? "Mülakat" : "Aday Aranıyor"}
               </Badge>
+              {job.status === "Sourcing" && <RequisitionDeleteIcon />}
             </View>
             {!!job.office.trim() && <Label muted>{job.office}</Label>}
           </View>

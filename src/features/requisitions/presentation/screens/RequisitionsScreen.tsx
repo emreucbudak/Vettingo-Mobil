@@ -6,8 +6,8 @@ import { RequisitionCard } from "../components/RequisitionCard";
 import { useApp } from "../../../../core/presentation/state/AppProvider";
 
 export function RequisitionsScreen() {
-  const { session, state } = useApp();
-  const items = state.requisitions;
+  const { session, state, services } = useApp();
+  const items = services.requisitionCatalog.listWithoutDemo(state.requisitions);
   if (!session) return null;
   return (
     <AppShell roleBar={session.role} activeItem="jobs" showBackButton={false}>

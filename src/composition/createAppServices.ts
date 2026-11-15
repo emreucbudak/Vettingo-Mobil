@@ -15,6 +15,7 @@ import { DemoCandidatesRepository } from "../features/candidates/data/repositori
 import { AssessmentQueries } from "../features/assessment/application/usecases/AssessmentQueries";
 import { DemoAssessmentRepository } from "../features/assessment/data/repositories/DemoAssessmentRepository";
 import { RequisitionQueries } from "../features/requisitions/application/usecases/RequisitionQueries";
+import { requisitions as demoRequisitions } from "../features/requisitions/data/fixtures/requisitions";
 import { DemoRequisitionCatalogRepository } from "../features/requisitions/data/repositories/DemoRequisitionCatalogRepository";
 import { CvUseCases } from "../features/cv/application/usecases/CvUseCases";
 import { ExpoCvDocumentPicker } from "../features/cv/infrastructure/ExpoCvDocumentPicker";
@@ -47,6 +48,7 @@ export function createAppServices(): AppServices {
   const requisitionCatalog = new RequisitionQueries(
     requisitionRepository,
     requisitionRepository.snapshot(),
+    new Set(demoRequisitions.map(({ id }) => id)),
   );
   return {
     personalizedJobs: new PersonalizedJobsQueries(
