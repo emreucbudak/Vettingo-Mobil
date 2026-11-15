@@ -52,10 +52,10 @@ const EmployerBar: readonly BarItem[] = [
     href: "/employer-jobs",
   },
   {
-    id: "candidates",
+    id: "scout",
     icon: "people-outline",
-    label: "Adaylar",
-    href: "/employer-candidates",
+    label: "Scout",
+    href: "/scout",
   },
   {
     id: "profile",
@@ -79,10 +79,10 @@ const HrBar: readonly BarItem[] = [
     href: "/hr-jobs",
   },
   {
-    id: "candidates",
+    id: "scout",
     icon: "people-outline",
-    label: "Adaylar",
-    href: "/hr-candidates",
+    label: "Scout",
+    href: "/scout",
   },
   {
     id: "profile",

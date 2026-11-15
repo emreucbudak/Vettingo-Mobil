@@ -33,7 +33,7 @@ beforeEach(async () => {
 });
 
 test.each(["employer", "hr"])(
-  "%s can open Scout from home and profile and create jobs from listings",
+  "%s can open Scout from home and create jobs from listings",
   async (role) => {
     const home = await signedIn(<DashboardScreen />, role);
     expect(
@@ -42,16 +42,11 @@ test.each(["employer", "hr"])(
     await fireEvent.press(
       home.getByRole("button", { name: "Scout · Yetenek Keşfet" }),
     );
-    expect(router.push).toHaveBeenLastCalledWith("/scout");
-    await home.unmount();
-
-    const profile = await signedIn(<ProfileScreen />, role);
-    await fireEvent.press(profile.getByRole("button", { name: "Scout" }));
     expect(router.push).toHaveBeenLastCalledWith({
       pathname: "/scout",
-      params: { tab: "profile" },
+      params: { tab: "home" },
     });
-    await profile.unmount();
+    await home.unmount();
 
     const jobs = await signedIn(<RequisitionsScreen />, role);
     await fireEvent.press(jobs.getByRole("button", { name: "Yeni İlan" }));
@@ -61,23 +56,15 @@ test.each(["employer", "hr"])(
   30000,
 );
 
-test("Scout searches skills, opens talent profiles and handles empty results", async () => {
+test("Scout shows no demo profiles before or after entering a search", async () => {
   const view = await signedIn(<ScoutScreen />, "employer");
   const search = view.getByLabelText("Yetenek Ara");
+  expect(view.queryAllByRole("button", { name: /profilini aç/ })).toHaveLength(0);
   await fireEvent.changeText(search, "TypeScript");
-  expect(view.getByText("Michael Ross")).toBeTruthy();
-  expect(view.queryByText("Zeynep Kaya")).toBeNull();
-  await fireEvent.press(
-    view.getByRole("button", { name: "Michael Ross profilini aç" }),
-  );
-  expect(router.push).toHaveBeenLastCalledWith({
-    pathname: "/candidate-detail",
-    params: { id: "michael-ross", tab: "home" },
-  });
-  await fireEvent.changeText(search, "olmayan-yetenek");
-  expect(view.getByText("Aramana uygun yetenek bulunamadı.")).toBeTruthy();
+  expect(view.queryAllByRole("button", { name: /profilini aç/ })).toHaveLength(0);
+  expect(view.getByText("Henüz gösterilecek yetenek yok.")).toBeTruthy();
   await fireEvent.press(view.getByRole("button", { name: "Aramayı temizle" }));
-  expect(view.getByText("Zeynep Kaya")).toBeTruthy();
+  expect(view.getByLabelText("Yetenek Ara")).toHaveDisplayValue("");
   await view.unmount();
 });
 
@@ -93,10 +80,7 @@ test.each(["employer", "hr"])(
     await fireEvent.press(view.getByRole("button", { name: "50.000–100.000" }));
     await fireEvent.press(view.getByRole("button", { name: "Uzaktan" }));
     await fireEvent.press(view.getByRole("button", { name: "Kapat" }));
-    expect(view.getByText("Michael Ross")).toBeTruthy();
-    expect(view.queryByText("Sarah Jenkins")).toBeNull();
-    expect(view.queryByText("Can Demir")).toBeNull();
-    expect(view.queryByText("Zeynep Kaya")).toBeNull();
+    expect(view.getByText("Henüz gösterilecek yetenek yok.")).toBeTruthy();
 
     await fireEvent.press(view.getByRole("button", { name: "Filtreler" }));
     expect(view.getByRole("button", { name: "0–5 yıl" })).toBeSelected();
@@ -108,21 +92,18 @@ test.each(["employer", "hr"])(
       view.getByRole("button", { name: "50.000–100.000" }),
     ).not.toBeSelected();
     await fireEvent.press(view.getByRole("button", { name: "Kapat" }));
-    expect(view.getByText("Can Demir")).toBeTruthy();
-    expect(view.queryByText("Michael Ross")).toBeNull();
 
     await fireEvent.press(view.getByRole("button", { name: "Filtreler" }));
     await fireEvent.press(view.getByRole("button", { name: "5–10 yıl" }));
     await fireEvent.press(view.getByRole("button", { name: "100.000+" }));
     await fireEvent.press(view.getByRole("button", { name: "Uzaktan" }));
+    expect(view.getByRole("button", { name: "5–10 yıl" })).not.toBeSelected();
+    expect(view.getByRole("button", { name: "100.000+" })).not.toBeSelected();
+    expect(view.getByRole("button", { name: "Uzaktan" })).not.toBeSelected();
     await fireEvent.press(view.getByRole("button", { name: "Kapat" }));
-    for (const name of [
-      "Sarah Jenkins",
-      "Michael Ross",
-      "Zeynep Kaya",
-      "Can Demir",
-    ])
-      expect(view.getByText(name)).toBeTruthy();
+    expect(view.queryAllByRole("button", { name: /profilini aç/ })).toHaveLength(
+      0,
+    );
     await view.unmount();
   },
   30000,
@@ -138,6 +119,7 @@ test("candidate home and profile do not show Scout entry points", async () => {
       view.queryByRole("button", { name: "Scout · Yetenek Keşfet" }),
     ).toBeNull();
     expect(view.queryByRole("button", { name: "Scout" })).toBeNull();
+    expect(view.queryByRole("tab", { name: "Scout" })).toBeNull();
     await view.unmount();
   }
 });

@@ -30,7 +30,7 @@ const questions = [
     id: "candidates",
     question: "Adayları nasıl bulup inceleyebilirim?",
     answer:
-      "Adaylar sekmesindeki arama alanını ve aşama filtrelerini kullanın. Bir aday kartına dokunduğunuzda Yetenekler, Profesyonel Deneyim, Eğitim, Diller, Sertifikalar ve Projeler bölümlerini görebilirsiniz.",
+      "Ana Sayfa’daki Adaylar bölümünde Tümünü Gör’e dokunun ve arama alanını veya aşama filtrelerini kullanın. Bir aday kartına dokunduğunuzda Yetenekler, Profesyonel Deneyim, Eğitim, Diller, Sertifikalar ve Projeler bölümlerini görebilirsiniz.",
   },
   {
     id: "missing-interview-result",
@@ -54,7 +54,7 @@ const questions = [
     id: "scout",
     question: "Scout üzerinden nasıl yeni yetenekler bulabilirim?",
     answer:
-      "Profil menüsünden Scout seçeneğine dokunun. İsim, pozisyon veya yetenek bilgisiyle arama yapabilir, sonuçlardaki aday kartlarını açarak şirketiniz için uygun profilleri inceleyebilirsiniz.",
+      "Alt menüdeki Scout sekmesine dokunun. İsim, pozisyon veya yetenek bilgisiyle arama yapabilir, sonuçlardaki aday kartlarını açarak şirketiniz için uygun profilleri inceleyebilirsiniz.",
   },
 ];
 

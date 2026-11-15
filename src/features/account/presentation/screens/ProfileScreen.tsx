@@ -37,10 +37,6 @@ export default function ProfileScreen() {
       router.push("/notifications" as Href);
       return;
     }
-    if (label === "Scout") {
-      router.push({ pathname: "/scout", params: { tab: "profile" } });
-      return;
-    }
     const page = accountPages[label];
     if (session?.role === "candidate" && (page === "security" || page === "help")) {
       router.push(`/candidate-${page}` as Href);
@@ -92,7 +88,7 @@ export default function ProfileScreen() {
             />
           ))
         ) : (
-          ["Şirket", "Bildirimler", "Scout"].map((label) => (
+          ["Şirket", "Bildirimler"].map((label) => (
             <ProfileMenuRow
               key={label}
               label={label}
