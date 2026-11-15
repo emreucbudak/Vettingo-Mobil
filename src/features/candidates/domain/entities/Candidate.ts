@@ -14,6 +14,7 @@ export interface Candidate {
   initials: string;
   role: string;
   appliedRole: string;
+  requisitionId?: string;
   experienceYears?: number;
   salaryExpectation?: number;
   workingPreference?: WorkingPreference;

@@ -158,7 +158,7 @@ test("job search cards open a blank candidate detail page and allow going back",
 }, 30000);
 
 test.each(["employer", "hr"])(
-  "%s keeps İlanlar selected while creating a job",
+  "%s keeps İlanlar selected while creating a job and viewing its candidates",
   async (role) => {
     await AsyncStorage.setItem(
       "vettingo:demo-session:v1",
@@ -180,6 +180,40 @@ test.each(["employer", "hr"])(
     expect(screen.getAllByRole("tab", { selected: true })).toHaveLength(1);
     await fireEvent.press(screen.getByRole("button", { name: "Geri" }));
     await waitFor(() => expect(view.getPathname()).toBe(jobsPath));
+
+    await fireEvent.press(
+      screen.getByRole("button", { name: "Lead Data Scientist adaylarını gör" }),
+    );
+    await waitFor(() => expect(view.getPathname()).toBe("/requisition-candidates"));
+    expect(view.getSearchParams()).toEqual({ requisitionId: "data-scientist" });
+    expect(screen.getByRole("tab", { name: "İlanlar" })).toBeSelected();
+    expect(
+      screen.queryByRole("header", { name: "Lead Data Scientist · Adaylar" }),
+    ).toBeNull();
+    expect(screen.queryAllByRole("textbox")).toHaveLength(0);
+    expect(
+      screen.queryByRole("button", { name: "Can Demir profilini aç" }),
+    ).toBeNull();
+
+    await fireEvent.press(
+      screen.getByRole("button", { name: "Zeynep Kaya profilini aç" }),
+    );
+    await waitFor(() => expect(view.getPathname()).toBe("/candidate-detail"));
+    expect(screen.getByRole("tab", { name: "İlanlar" })).toBeSelected();
+    await fireEvent.press(screen.getByRole("button", { name: "Geri" }));
+    await waitFor(() => expect(view.getPathname()).toBe("/requisition-candidates"));
+    await fireEvent.press(screen.getByRole("button", { name: "Geri" }));
+    await waitFor(() => expect(view.getPathname()).toBe(jobsPath));
+
+    await fireEvent.press(
+      screen.getByRole("button", {
+        name: "Senior Marketing Manager adaylarını gör",
+      }),
+    );
+    expect(await screen.findByText("Bu ilan için henüz aday yok.")).toBeTruthy();
+    expect(screen.queryAllByRole("button", { name: /profilini aç/ })).toHaveLength(
+      0,
+    );
   },
   60000,
 );

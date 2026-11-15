@@ -115,6 +115,7 @@ export const candidates: Candidate[] = [
     initials: "ZK",
     role: "Senior Data Analyst",
     appliedRole: "Lead Data Scientist",
+    requisitionId: "data-scientist",
     match: 91,
     stage: "offer",
     skills: [
@@ -153,6 +154,7 @@ export const candidates: Candidate[] = [
     initials: "CD",
     role: "Engineering Manager",
     appliedRole: "VP of Engineering",
+    requisitionId: "vp-engineering",
     match: 88,
     stage: "interview",
     skills: [

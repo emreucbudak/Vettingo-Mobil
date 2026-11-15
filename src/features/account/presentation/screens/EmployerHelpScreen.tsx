@@ -27,12 +27,6 @@ const questions = [
       "İlanlar sekmesinde pozisyonlarınızı listeleyebilirsiniz. İlan kartlarında çalışma modeli, süreç durumu, tecrübe, maaş ve istenen yetenekler bulunur. Ana Sayfa üzerindeki Aktif İlanlar bölümünden de ilanlarınıza ulaşabilirsiniz.",
   },
   {
-    id: "candidates",
-    question: "Adayları nasıl bulup inceleyebilirim?",
-    answer:
-      "Ana Sayfa’daki Adaylar bölümünde Tümünü Gör’e dokunun ve arama alanını veya aşama filtrelerini kullanın. Bir aday kartına dokunduğunuzda Yetenekler, Profesyonel Deneyim, Eğitim, Diller, Sertifikalar ve Projeler bölümlerini görebilirsiniz.",
-  },
-  {
     id: "missing-interview-result",
     question: "Mülakat sonucunu girmeyi unutursam ne olur?",
     answer:
@@ -40,15 +34,9 @@ const questions = [
   },
   {
     id: "comparison",
-    question: "Bir pozisyon için adayları nasıl karşılaştırabilirim?",
+    question: "Bir ilanın adaylarını nasıl görebilirim?",
     answer:
-      "İlgili ilan kartına dokunarak Yetenek Karşılaştırma ekranını açın. Aday isimleri arasında geçiş yaparak uyum oranlarını ve yetenekleri inceleyin. Karşılaştırma Özeti bölümünde adayların uyum ve karar durumlarını birlikte görebilirsiniz.",
-  },
-  {
-    id: "decisions",
-    question: "Bir aday için nasıl ilerletme veya ret kararı verebilirim?",
-    answer:
-      "Yetenek Karşılaştırma ekranında ilgili adayı seçin. Adayı İlerlet veya Adayı Reddet butonuna dokunun. Verdiğiniz karar adayın durum bilgisinde ve karşılaştırma özetinde görünür.",
+      "İlanlar sekmesinde ilgili ilan kartına dokunun. O ilana ait adaylar listelenir. Adayın profilini açmak için kartına dokunun.",
   },
   {
     id: "scout",

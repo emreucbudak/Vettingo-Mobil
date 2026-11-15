@@ -19,11 +19,11 @@ export function RequisitionCard({ job }: { job: Requisition }) {
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={`${job.title} adaylarını karşılaştır`}
+      accessibilityLabel={`${job.title} adaylarını gör`}
       onPress={() =>
         router.push({
-          pathname: "/talent-comparison",
-          params: { jobTitle: job.title },
+          pathname: "/requisition-candidates",
+          params: { requisitionId: job.id },
         })
       }
     >

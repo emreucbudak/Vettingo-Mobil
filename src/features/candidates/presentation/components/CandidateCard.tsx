@@ -20,12 +20,15 @@ const salaryFormatter = new Intl.NumberFormat("tr-TR");
 export function CandidateCard({
   candidate,
   neutralStageBadge = false,
+  fromJobs = false,
 }: {
   candidate: Candidate;
   neutralStageBadge?: boolean;
+  fromJobs?: boolean;
 }) {
   const { state, session } = useApp();
   const { tab } = useLocalSearchParams<{ tab?: string }>();
+  const detailTab = fromJobs ? "jobs" : tab === "profile" ? tab : undefined;
   const stage = candidateStage(candidate, state.decisions);
   return (
     <Pressable
@@ -36,7 +39,7 @@ export function CandidateCard({
           pathname: "/candidate-detail",
           params: {
             id: candidate.id,
-            ...(tab === "profile" ? { tab } : {}),
+            ...(detailTab ? { tab: detailTab } : {}),
           },
         })
       }
