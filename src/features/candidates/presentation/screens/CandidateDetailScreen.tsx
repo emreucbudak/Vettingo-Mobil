@@ -16,8 +16,7 @@ import { useApp } from "../../../../core/presentation/state/AppProvider";
 
 export default function CandidateDetailScreen() {
   const { id, tab } = useLocalSearchParams<{ id?: string; tab?: string }>();
-  const activeItem =
-    tab === "home" ? "dashboard" : tab === "profile" ? "profile" : "candidates";
+  const activeItem = tab === "scout" || tab === "profile" ? tab : "dashboard";
   const { session, state, services } = useApp();
   if (!session) return null;
   const candidate = services.candidates.find(id || "sarah-jenkins");

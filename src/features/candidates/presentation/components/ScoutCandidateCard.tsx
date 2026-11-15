@@ -1,6 +1,6 @@
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { router, useLocalSearchParams } from "expo-router";
+import { router } from "expo-router";
 import { Candidate } from "../../domain/entities/Candidate";
 import {
   Avatar,
@@ -14,8 +14,6 @@ import {
 const salaryFormatter = new Intl.NumberFormat("tr-TR");
 
 export function ScoutCandidateCard({ candidate }: { candidate: Candidate }) {
-  const { tab } = useLocalSearchParams<{ tab?: string }>();
-
   return (
     <Pressable
       accessibilityRole="button"
@@ -25,7 +23,7 @@ export function ScoutCandidateCard({ candidate }: { candidate: Candidate }) {
           pathname: "/candidate-detail",
           params: {
             id: candidate.id,
-            tab: tab === "profile" ? "profile" : "home",
+            tab: "scout",
           },
         })
       }

@@ -225,7 +225,6 @@ test.each(["candidate", "employer", "hr"])(
             ["Şirket", `/${role}-company`],
             ["Bildirimler", "/notifications"],
             ...(role === "employer" ? [["Ekip", "/employer-team"]] : []),
-            ["Scout", "/scout"],
           ]),
       [
         role === "employer" ? "Hesap ve Güvenlik" : "Güvenlik",
@@ -318,17 +317,6 @@ test.each(["candidate", "employer", "hr"])(
           screen.getByText("Aramanızla eşleşen sonuç bulunamadı."),
         ).toBeTruthy();
       }
-      if (label === "Scout") {
-        await fireEvent.press(
-          screen.getByRole("button", { name: "Sarah Jenkins profilini aç" }),
-        );
-        await waitFor(() =>
-          expect(view.getPathname()).toBe("/candidate-detail"),
-        );
-        expectProfileSelected();
-        await fireEvent.press(screen.getByRole("button", { name: "Geri" }));
-        await waitFor(() => expect(view.getPathname()).toBe("/scout"));
-      }
       if (label === "Bildirimler") {
         expect(screen.getAllByText("Vettingo")).toHaveLength(1);
         expect(screen.getAllByRole("tab")).toHaveLength(4);
@@ -355,6 +343,22 @@ test.each(["candidate", "employer", "hr"])(
       screen.queryByRole("switch", { name: "Bildirim tercihi" }),
     ).toBeNull();
     expectProfileSelected();
+    if (role !== "candidate") {
+      expect(screen.queryByRole("button", { name: "Scout" })).toBeNull();
+      expect(screen.queryByRole("tab", { name: "Adaylar" })).toBeNull();
+      const expectScoutSelected = () => {
+        expect(screen.getByRole("tab", { name: "Scout" })).toBeSelected();
+        expect(screen.getAllByRole("tab", { selected: true })).toHaveLength(1);
+      };
+      await fireEvent.press(screen.getByRole("tab", { name: "Scout" }));
+      await waitFor(() => expect(view.getPathname()).toBe("/scout"));
+      expectScoutSelected();
+      expect(screen.queryByRole("button", { name: "Geri" })).toBeNull();
+      expect(screen.getByText("Henüz gösterilecek yetenek yok.")).toBeTruthy();
+      await fireEvent.press(screen.getByRole("tab", { name: "Profil" }));
+      await waitFor(() => expect(view.getPathname()).toBe(profilePath));
+      expectProfileSelected();
+    }
     if (role === "hr") {
       expect(
         screen.queryByRole("button", { name: "Ekip ve Yetkiler" }),

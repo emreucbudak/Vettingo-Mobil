@@ -9,7 +9,9 @@ export function ScoutEntryCard() {
     <Pressable
       accessibilityRole="button"
       accessibilityLabel="Scout · Yetenek Keşfet"
-      onPress={() => router.push("/scout")}
+      onPress={() =>
+        router.push({ pathname: "/scout", params: { tab: "home" } })
+      }
       style={({ pressed }) => [scoutStyles.card, pressed && { opacity: 0.8 }]}
     >
       <Text style={scoutStyles.brand}>Scout</Text>

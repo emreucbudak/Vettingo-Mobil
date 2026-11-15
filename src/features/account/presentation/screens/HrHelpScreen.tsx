@@ -12,13 +12,13 @@ const questions = [
     id: "search-candidates",
     question: "Adaylar arasında nasıl arama yapabilirim?",
     answer:
-      "Adaylar sekmesindeki arama alanına aday adı, pozisyon veya yetenek yazın. Aramanızla eşleşen adaylar listelenir; detaylarını incelemek için aday kartına dokunun.",
+      "Ana Sayfa’daki Adaylar bölümünde Tümünü Gör’e dokunun. Arama alanına aday adı, pozisyon veya yetenek yazın. Detayları incelemek için aday kartına dokunun.",
   },
   {
     id: "stages",
     question: "Adayları süreç aşamasına göre nasıl filtreleyebilirim?",
     answer:
-      "Adaylar sekmesindeki Sınav, Mülakat, Teklif ve Reddedildi seçeneklerinden birine dokunun. Tüm adayları tekrar görmek için Tümü seçeneğini kullanın.",
+      "Ana Sayfa’daki Adaylar bölümünde Tümünü Gör’e dokunun. Sınav, Mülakat, Teklif ve Reddedildi seçeneklerinden birini seçin. Tüm adayları tekrar görmek için Tümü seçeneğini kullanın.",
   },
   {
     id: "candidate-details",
@@ -54,7 +54,7 @@ const questions = [
     id: "scout",
     question: "Scout ile nasıl yetenek keşfedebilirim?",
     answer:
-      "Profil menüsündeki Scout seçeneğini açın. İsim, pozisyon veya yetenek yazarak arama yapın; ilgilendiğiniz adayın kartına dokunarak profilini inceleyin.",
+      "Alt menüdeki Scout sekmesini açın. İsim, pozisyon veya yetenek yazarak arama yapın; ilgilendiğiniz adayın kartına dokunarak profilini inceleyin.",
   },
 ];
 

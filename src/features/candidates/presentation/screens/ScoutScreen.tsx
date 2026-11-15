@@ -3,28 +3,22 @@ import { useLocalSearchParams } from "expo-router";
 import { AppShell } from "../../../../core/presentation/layout/AppShell";
 import { useApp } from "../../../../core/presentation/state/AppProvider";
 import { Empty, Search } from "../../../../shared/presentation/components/ui";
-import { ScoutCandidateCard } from "../components/ScoutCandidateCard";
 import { ScoutFiltersDialog } from "../components/ScoutFiltersDialog";
 import { CandidateFilter } from "../../domain/policies/filters";
 
 export default function ScoutScreen() {
-  const { session, state, services } = useApp();
+  const { session } = useApp();
   const { tab } = useLocalSearchParams<{ tab?: string }>();
   const [query, setQuery] = useState("");
   const [filters, setFilters] = useState<CandidateFilter[]>([]);
   const [filterOpen, setFilterOpen] = useState(false);
-  const candidates = services.candidates.search(
-    query,
-    "all",
-    state.decisions,
-    filters,
-  );
 
   if (!session) return null;
   return (
     <AppShell
       roleBar={session.role}
-      activeItem={tab === "profile" ? "profile" : "dashboard"}
+      activeItem="scout"
+      showBackButton={tab === "home"}
     >
       <Search
         value={query}
@@ -32,12 +26,7 @@ export default function ScoutScreen() {
         placeholder="Yetenek Ara"
         onFilter={() => setFilterOpen(true)}
       />
-      {candidates.map((candidate) => (
-        <ScoutCandidateCard key={candidate.id} candidate={candidate} />
-      ))}
-      {!candidates.length && (
-        <Empty label="Aramana uygun yetenek bulunamadı." />
-      )}
+      <Empty label="Henüz gösterilecek yetenek yok." />
       <ScoutFiltersDialog
         visible={filterOpen}
         filters={filters}
