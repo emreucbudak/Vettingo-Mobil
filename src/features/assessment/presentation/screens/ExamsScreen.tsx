@@ -1,5 +1,5 @@
 import React from "react";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { AppShell } from "../../../../core/presentation/layout/AppShell";
@@ -50,7 +50,7 @@ export default function ExamsScreen() {
               disabled
               style={examStyles.iconButton}
             >
-              <Ionicons name="pencil-outline" size={20} color={colors.muted} />
+              <MaterialIcons name="edit" size={20} color={colors.muted} />
             </Pressable>
             <Pressable
               accessibilityRole="button"
