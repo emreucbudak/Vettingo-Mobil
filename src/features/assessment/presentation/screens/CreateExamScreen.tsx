@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { colors, styles } from "../../shared/presentation/components/ui";
-import { ExamSettingsCard } from "../../features/exam-settings/presentation/components/ExamSettingsCard";
-import { MultipleChoiceQuestionCard } from "../../features/exam-questions/presentation/components/MultipleChoiceQuestionCard";
-import { TrueFalseQuestionCard } from "../../features/exam-questions/presentation/components/TrueFalseQuestionCard";
+import { AppShell } from "../../../../core/presentation/layout/AppShell";
+import { useApp } from "../../../../core/presentation/state/AppProvider";
+import { colors, styles } from "../../../../shared/presentation/components/ui";
+import { ExamSettingsCard } from "../components/ExamSettingsCard";
+import { MultipleChoiceQuestionCard } from "../components/MultipleChoiceQuestionCard";
+import { TrueFalseQuestionCard } from "../components/TrueFalseQuestionCard";
 
 const questionTypes = [
   { type: "multiple-choice", label: "Çoktan Seçmeli" },
@@ -13,13 +15,16 @@ const questionTypes = [
 
 type QuestionType = (typeof questionTypes)[number]["type"];
 
-export function ExamEditorWidget() {
+export default function CreateExamScreen() {
+  const { session } = useApp();
   const [questions, setQuestions] = useState<
     { id: number; type: QuestionType }[]
   >([]);
 
+  if (!session) return null;
+
   return (
-    <>
+    <AppShell roleBar={session.role} activeItem="profile">
       <ExamSettingsCard />
       <View style={examStyles.row}>
         {questionTypes.map(({ type, label }) => (
@@ -57,7 +62,7 @@ export function ExamEditorWidget() {
           <TrueFalseQuestionCard key={id} number={id} />
         ),
       )}
-    </>
+    </AppShell>
   );
 }
 
