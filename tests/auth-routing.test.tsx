@@ -336,6 +336,44 @@ test.each(["candidate", "employer", "hr"])(
         await fireEvent.press(screen.getByRole("button", { name: "Yeni Sınav" }));
         await waitFor(() => expect(view.getPathname()).toBe("/create-exam"));
         expectProfileSelected();
+        expect(screen.getByLabelText("Sınav Adı")).toBeTruthy();
+        for (const label of ["Süre (Dakika)", "Geçme Notu"]) {
+          expect(screen.getByLabelText(label).props.keyboardType).toBe(
+            "number-pad",
+          );
+        }
+        const trueFalse = screen.getByRole("button", { name: "Doğru / Yanlış" });
+        const multipleChoice = screen.getByRole("button", {
+          name: "Çoktan Seçmeli",
+        });
+        expect(
+          screen.getAllByRole("button", {
+            name: /^(Çoktan Seçmeli|Doğru \/ Yanlış)$/,
+          }),
+        ).toEqual([multipleChoice, trueFalse]);
+        await fireEvent.press(multipleChoice);
+        expect(screen.getByRole("header", { name: "Soru 1" })).toBeTruthy();
+        for (const letter of ["A", "B", "C", "D", "E"]) {
+          expect(screen.getByLabelText(`${letter} seçeneği`)).toBeTruthy();
+        }
+        await fireEvent.changeText(screen.getByLabelText("A seçeneği"), "Paris");
+        await fireEvent.press(
+          screen.getByRole("radio", {
+            name: "A seçeneğini doğru cevap olarak işaretle",
+          }),
+        );
+        await fireEvent.press(trueFalse);
+        expect(screen.getByRole("header", { name: "Soru 2" })).toBeTruthy();
+        expect(screen.getAllByLabelText("Soru Metni")).toHaveLength(2);
+        expect(screen.getByLabelText("A seçeneği")).toHaveDisplayValue("Paris");
+        expect(
+          screen.getByRole("radio", {
+            name: "A seçeneğini doğru cevap olarak işaretle",
+          }),
+        ).toBeChecked();
+        await fireEvent.press(screen.getByRole("radio", { name: "Yanlış" }));
+        expect(screen.getByRole("radio", { name: "Yanlış" })).toBeChecked();
+        expect(screen.getByRole("radio", { name: "Doğru" })).not.toBeChecked();
         await fireEvent.press(screen.getByRole("button", { name: "Geri" }));
         await waitFor(() => expect(view.getPathname()).toBe("/exams"));
       }
