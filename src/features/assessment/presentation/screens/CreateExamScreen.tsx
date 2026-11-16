@@ -4,9 +4,9 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { AppShell } from "../../../../core/presentation/layout/AppShell";
 import { useApp } from "../../../../core/presentation/state/AppProvider";
 import { colors, styles } from "../../../../shared/presentation/components/ui";
-import { ExamSettingsCard } from "../components/ExamSettingsCard";
-import { MultipleChoiceQuestionCard } from "../components/MultipleChoiceQuestionCard";
-import { TrueFalseQuestionCard } from "../components/TrueFalseQuestionCard";
+import { ExamSettingsCard } from "../../../exam-settings/presentation/components/ExamSettingsCard";
+import { MultipleChoiceQuestionCard } from "../../../exam-questions/presentation/components/MultipleChoiceQuestionCard";
+import { TrueFalseQuestionCard } from "../../../exam-questions/presentation/components/TrueFalseQuestionCard";
 
 const questionTypes = [
   { type: "multiple-choice", label: "Çoktan Seçmeli" },
