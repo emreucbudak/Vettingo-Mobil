@@ -37,6 +37,10 @@ export default function ProfileScreen() {
       router.push("/notifications" as Href);
       return;
     }
+    if (label === "Sınavlar") {
+      router.push("/exams");
+      return;
+    }
     const page = accountPages[label];
     if (session?.role === "candidate" && (page === "security" || page === "help")) {
       router.push(`/candidate-${page}` as Href);
@@ -88,7 +92,7 @@ export default function ProfileScreen() {
             />
           ))
         ) : (
-          ["Şirket", "Bildirimler"].map((label) => (
+          ["Şirket", "Bildirimler", "Sınavlar"].map((label) => (
             <ProfileMenuRow
               key={label}
               label={label}
