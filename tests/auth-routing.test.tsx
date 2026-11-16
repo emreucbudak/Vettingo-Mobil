@@ -324,9 +324,20 @@ test.each(["candidate", "employer", "hr"])(
       if (label === "Sınavlar") {
         expect(screen.getByText("Vettingo")).toBeTruthy();
         expect(screen.getAllByRole("tab")).toHaveLength(4);
-        expect(screen.getAllByRole("button")).toHaveLength(1);
         expect(screen.getByRole("button", { name: "Geri" })).toBeTruthy();
-        expect(screen.queryByRole("header")).toBeNull();
+        for (const name of ["Sınav Adı", "Oluşturulma Tarihi", "İşlem"]) {
+          expect(screen.getByRole("columnheader", { name })).toBeTruthy();
+        }
+        expect(screen.getByText("Sınav kaydı yok.")).toBeTruthy();
+        expect(
+          screen.getByRole("button", { name: "Sınavı Düzenle" }),
+        ).toBeDisabled();
+        expect(screen.getByRole("button", { name: "Sınavı Sil" })).toBeDisabled();
+        await fireEvent.press(screen.getByRole("button", { name: "Yeni Sınav" }));
+        await waitFor(() => expect(view.getPathname()).toBe("/create-exam"));
+        expectProfileSelected();
+        await fireEvent.press(screen.getByRole("button", { name: "Geri" }));
+        await waitFor(() => expect(view.getPathname()).toBe("/exams"));
       }
       if (label === "Hesap ve Güvenlik") {
         expect(screen.queryByText("Hesap ve Güvenlik")).toBeNull();

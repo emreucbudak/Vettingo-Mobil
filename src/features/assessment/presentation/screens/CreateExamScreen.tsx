@@ -5,5 +5,5 @@ import { useApp } from "../../../../core/presentation/state/AppProvider";
 export default function CreateExamScreen() {
   const { session } = useApp();
   if (!session) return null;
-  return <AppShell roleBar={session.role} activeItem="jobs" />;
+  return <AppShell roleBar={session.role} activeItem="profile" />;
 }
