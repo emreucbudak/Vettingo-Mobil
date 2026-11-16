@@ -285,6 +285,9 @@ test.each(["candidate", "employer", "hr"])(
       expect(screen.getAllByRole("tab", { selected: true })).toHaveLength(1);
     };
     await waitFor(expectProfileSelected);
+    if (role === "candidate") {
+      expect(screen.queryByRole("button", { name: "Sınavlar" })).toBeNull();
+    }
     if (role === "employer") {
       expect(
         screen.queryByRole("button", { name: "Abonelik Planları" }),
@@ -305,6 +308,7 @@ test.each(["candidate", "employer", "hr"])(
         : [
             ["Şirket", `/${role}-company`],
             ["Bildirimler", "/notifications"],
+            ["Sınavlar", "/exams"],
             ...(role === "employer" ? [["Ekip", "/employer-team"]] : []),
           ]),
       [
@@ -317,6 +321,13 @@ test.each(["candidate", "employer", "hr"])(
       await fireEvent.press(screen.getByRole("button", { name: label }));
       await waitFor(() => expect(view.getPathname()).toBe(path));
       expectProfileSelected();
+      if (label === "Sınavlar") {
+        expect(screen.getByText("Vettingo")).toBeTruthy();
+        expect(screen.getAllByRole("tab")).toHaveLength(4);
+        expect(screen.getAllByRole("button")).toHaveLength(1);
+        expect(screen.getByRole("button", { name: "Geri" })).toBeTruthy();
+        expect(screen.queryByRole("header")).toBeNull();
+      }
       if (label === "Hesap ve Güvenlik") {
         expect(screen.queryByText("Hesap ve Güvenlik")).toBeNull();
         await fireEvent.press(
