@@ -47,10 +47,10 @@ export default function ExamsScreen() {
             <Pressable
               accessibilityRole="button"
               accessibilityLabel="Sınavı Düzenle"
-              disabled
+              onPress={() => router.push("/updateexam")}
               style={examStyles.iconButton}
             >
-              <MaterialIcons name="edit" size={20} color={colors.muted} />
+              <MaterialIcons name="edit" size={20} color={colors.ink} />
             </Pressable>
             <Pressable
               accessibilityRole="button"
