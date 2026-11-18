@@ -13,7 +13,7 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - run: npm ci
+      - run: npx --yes npm@11.21.1 ci
       - run: npm run typecheck
       - run: npm run lint
       - run: npm test -- --runInBand
