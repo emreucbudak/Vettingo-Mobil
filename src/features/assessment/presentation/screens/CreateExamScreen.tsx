@@ -1,5 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 import { Ionicons } from "@expo/vector-icons";
+import {
+  get,
+  useFieldArray,
+  useForm,
+  useWatch,
+  type FieldPathByValue,
+} from "react-hook-form";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { AppShell } from "../../../../core/presentation/layout/AppShell";
 import { useApp } from "../../../../core/presentation/state/AppProvider";
@@ -15,29 +22,59 @@ const questionTypes = [
 
 type QuestionType = (typeof questionTypes)[number]["type"];
 
+type ExamFormValues = {
+  title: string;
+  durationMinutes: string;
+  passingScore: string;
+  questions: {
+    type: QuestionType;
+    questionText: string;
+    weight: string;
+    answer: string;
+    options: Record<string, string>;
+  }[];
+};
+
 export default function CreateExamScreen() {
   const { session } = useApp();
-  const [questions, setQuestions] = useState<
-    { id: number; type: QuestionType }[]
-  >([]);
+  const { control, setValue } = useForm<ExamFormValues>({
+    defaultValues: {
+      title: "",
+      durationMinutes: "",
+      passingScore: "",
+      questions: [],
+    },
+  });
+  const { fields, append } = useFieldArray({ control, name: "questions" });
+  const values = useWatch({ control });
 
   if (!session) return null;
 
+  function input(name: FieldPathByValue<ExamFormValues, string>) {
+    return {
+      value: get(values, name, "") as string,
+      onChangeText: (value: string) =>
+        setValue(name, value, { shouldDirty: true }),
+    };
+  }
+
+  function addQuestion(type: QuestionType) {
+    append(
+      { type, questionText: "", weight: "", answer: "", options: {} },
+      { shouldFocus: false },
+    );
+  }
+
   return (
     <AppShell roleBar={session.role} activeItem="profile">
-      <ExamSettingsCard />
+      <ExamSettingsCard input={input} />
       <View style={examStyles.row}>
         {questionTypes.map(({ type, label }) => (
           <Pressable
             key={type}
             accessibilityRole="button"
             accessibilityLabel={label}
-            onPress={() =>
-              setQuestions((current) => [
-                ...current,
-                { id: current.length + 1, type },
-              ])
-            }
+            onPress={() => addQuestion(type)}
             style={({ pressed }) => [
               examStyles.questionType,
               pressed && examStyles.pressedType,
@@ -55,13 +92,19 @@ export default function CreateExamScreen() {
           </Pressable>
         ))}
       </View>
-      {questions.map(({ id, type }) =>
-        type === "multiple-choice" ? (
-          <MultipleChoiceQuestionCard key={id} number={id} />
-        ) : (
-          <TrueFalseQuestionCard key={id} number={id} />
-        ),
-      )}
+      {fields.map(({ id, type }, index) => {
+        const QuestionCard =
+          type === "multiple-choice"
+            ? MultipleChoiceQuestionCard
+            : TrueFalseQuestionCard;
+        return (
+          <QuestionCard
+            key={id}
+            number={index + 1}
+            input={(name) => input(`questions.${index}.${name}`)}
+          />
+        );
+      })}
     </AppShell>
   );
 }
