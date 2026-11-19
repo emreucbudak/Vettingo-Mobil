@@ -15,6 +15,8 @@ import { ProfileMenuGroup, ProfileMenuRow } from "../components/ProfileMenu";
 
 const accountPages: Record<string, string> = {
   Şirket: "company",
+  "Yetenek Havuzu": "talent-pool",
+  Abonelik: "plans",
   Güvenlik: "security",
   "Yardım Merkezi": "help",
 };
@@ -23,6 +25,7 @@ export default function ProfileScreen() {
   const { session, signOut } = useApp();
   if (!session) return null;
   const candidate = session.role === "candidate";
+  const employer = session.role === "employer";
   const unavailable = (label: string) =>
     Alert.alert(
       label,
@@ -92,7 +95,12 @@ export default function ProfileScreen() {
             />
           ))
         ) : (
-          ["Şirket", "Bildirimler", "Sınavlar"].map((label) => (
+          [
+            "Şirket",
+            "Bildirimler",
+            "Sınavlar",
+            ...(employer ? ["Yetenek Havuzu"] : []),
+          ].map((label) => (
             <ProfileMenuRow
               key={label}
               label={label}
@@ -107,11 +115,17 @@ export default function ProfileScreen() {
             label="Kişiselleştirilmiş İlanlar"
             onPress={() => router.push("/candidate-personalized-jobs")}
           />
-        ) : session.role === "employer" ? (
-          <ProfileMenuRow label="Ekip" onPress={() => openMenuItem("Ekip")} />
+        ) : employer ? (
+          ["Ekip", "Abonelik"].map((label) => (
+            <ProfileMenuRow
+              key={label}
+              label={label}
+              onPress={() => openMenuItem(label)}
+            />
+          ))
         ) : null}
         <ProfileMenuRow
-          label={session.role === "employer" ? "Hesap ve Güvenlik" : "Güvenlik"}
+          label="Güvenlik"
           onPress={() => openMenuItem("Güvenlik")}
         />
         <ProfileMenuRow

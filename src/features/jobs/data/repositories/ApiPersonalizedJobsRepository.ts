@@ -16,7 +16,7 @@ const postingsResponse = z.array(
   z.object({
     jobPostingId: z.string().uuid(),
     companyId: z.string().uuid(),
-    companyName: z.string(),
+    companyName: z.string().default(""),
     title: z.string().min(1),
     cityName: z.string().min(1),
     employmentType: z.union([
@@ -30,7 +30,7 @@ const postingsResponse = z.array(
     maximumExperienceYear: z.number().int().nonnegative(),
     minSalary: z.number().int().nonnegative(),
     maxSalary: z.number().int().nonnegative(),
-    requirementSkills: z.record(z.string(), z.number().int()),
+    requirementSkills: z.record(z.string(), z.number().int()).default({}),
   }),
 );
 const loadError =
@@ -53,7 +53,7 @@ export class ApiPersonalizedJobsRepository implements PersonalizedJobsRepository
       },
     };
     const response = await this.request(
-      `${this.jobApiUrl}/personalized-job-postings/user`,
+      `${this.jobApiUrl}/personalized-job-postings`,
       init,
     );
     this.checkResponse(response);

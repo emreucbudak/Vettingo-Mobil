@@ -265,6 +265,63 @@ test.each(["employer", "hr"])(
   60000,
 );
 
+test("employer profile shows the reordered menu and opens its separate pages", async () => {
+  await AsyncStorage.setItem(
+    "vettingo:demo-session:v1",
+    JSON.stringify({
+      email: "profile-navigation@vettingo.com",
+      name: "Alex",
+      role: "employer",
+      company: "Vettingo",
+      remember: true,
+    }),
+  );
+  const view = await renderRouter("src/app", { initialUrl: "/employer-profile" });
+  await screen.findByRole("button", { name: "Şirket" });
+  expect(
+    screen.getAllByRole("button").map((row) => row.props.accessibilityLabel),
+  ).toEqual([
+    "Şirket",
+    "Bildirimler",
+    "Sınavlar",
+    "Yetenek Havuzu",
+    "Ekip",
+    "Abonelik",
+    "Güvenlik",
+    "Yardım Merkezi",
+    "Çıkış Yap",
+  ]);
+
+  const pages = [
+    ["Yetenek Havuzu", "/employer-talent-pool"],
+    ["Abonelik", "/employer-plans"],
+    ["Güvenlik", "/employer-security"],
+  ];
+  for (const [label, path] of pages) {
+    await fireEvent.press(screen.getByRole("button", { name: label }));
+    await waitFor(() => expect(view.getPathname()).toBe(path));
+    expect(screen.getByRole("tab", { name: "Profil" })).toBeSelected();
+    if (label === "Yetenek Havuzu") {
+      expect(screen.getByText("Vettingo")).toBeTruthy();
+      expect(screen.getAllByRole("tab")).toHaveLength(4);
+      expect(screen.queryAllByRole("header")).toHaveLength(0);
+      expect(screen.getAllByRole("button")).toEqual([
+        screen.getByRole("button", { name: "Geri" }),
+      ]);
+    }
+    if (label === "Abonelik") {
+      expect(
+        screen.getByRole("button", { name: "Başlangıç planını seç" }),
+      ).toBeTruthy();
+    }
+    if (label === "Güvenlik") {
+      expect(screen.getByText("Güvenlik")).toBeTruthy();
+    }
+    await fireEvent.press(screen.getByRole("button", { name: "Geri" }));
+    await waitFor(() => expect(view.getPathname()).toBe("/employer-profile"));
+  }
+}, 30000);
+
 test.each(["candidate", "employer", "hr"])(
   "%s can navigate its profile menu pages and return to the selected tab",
   async (role) => {
@@ -288,15 +345,6 @@ test.each(["candidate", "employer", "hr"])(
     if (role === "candidate") {
       expect(screen.queryByRole("button", { name: "Sınavlar" })).toBeNull();
     }
-    if (role === "employer") {
-      expect(
-        screen.queryByRole("button", { name: "Abonelik Planları" }),
-      ).toBeNull();
-      expect(
-        screen.queryByRole("button", { name: "Hesap Aboneliği" }),
-      ).toBeNull();
-    }
-
     const pages = [
       ...(role === "candidate"
         ? [
@@ -311,10 +359,7 @@ test.each(["candidate", "employer", "hr"])(
             ["Sınavlar", "/exams"],
             ...(role === "employer" ? [["Ekip", "/employer-team"]] : []),
           ]),
-      [
-        role === "employer" ? "Hesap ve Güvenlik" : "Güvenlik",
-        `/${role}-security`,
-      ],
+      ["Güvenlik", `/${role}-security`],
       ["Yardım Merkezi", `/${role}-help`],
     ];
     for (const [label, path] of pages) {
@@ -376,22 +421,6 @@ test.each(["candidate", "employer", "hr"])(
         expect(screen.getByRole("radio", { name: "Doğru" })).not.toBeChecked();
         await fireEvent.press(screen.getByRole("button", { name: "Geri" }));
         await waitFor(() => expect(view.getPathname()).toBe("/exams"));
-      }
-      if (label === "Hesap ve Güvenlik") {
-        expect(screen.queryByText("Hesap ve Güvenlik")).toBeNull();
-        await fireEvent.press(
-          screen.getByRole("button", { name: "Hesap Aboneliği" }),
-        );
-        await waitFor(() =>
-          expect(view.getPathname()).toBe("/employer-plans"),
-        );
-        expect(screen.queryByText("Hesap Aboneliği")).toBeNull();
-        expect(screen.queryByText("Örnek planlar ve fiyatlar")).toBeNull();
-        expect(
-          screen.getByRole("button", { name: "Başlangıç planını seç" }),
-        ).toBeTruthy();
-        await fireEvent.press(screen.getByRole("button", { name: "Geri" }));
-        await waitFor(() => expect(view.getPathname()).toBe(path));
       }
       if (label === "Ekip") {
         expect(screen.getByText("İsim Soyisim")).toBeTruthy();
