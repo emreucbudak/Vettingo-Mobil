@@ -2,17 +2,25 @@ import React, { useState } from "react";
 import { StyleSheet, Text, TextInput, View } from "react-native";
 import { styles } from "../../../../shared/presentation/components/ui";
 import { ExamAnswerButton } from "./ExamAnswerButton";
-import { ExamQuestionCard } from "./ExamQuestionCard";
+import {
+  ExamQuestionCard,
+  type ExamQuestionCardProps,
+} from "./ExamQuestionCard";
 
 const optionLetters = ["A", "B", "C", "D", "E"] as const;
 
-export function MultipleChoiceQuestionCard({ number }: { number: number }) {
+export function MultipleChoiceQuestionCard({
+  number,
+  input,
+}: ExamQuestionCardProps) {
   const [answer, setAnswer] = useState<(typeof optionLetters)[number] | null>(
     null,
   );
 
+  const formAnswer = input?.("answer");
+
   return (
-    <ExamQuestionCard number={number}>
+    <ExamQuestionCard number={number} input={input}>
       <Text style={styles.label}>Seçenekler</Text>
       {optionLetters.map((letter) => (
         <View key={letter} style={styles.row}>
@@ -20,11 +28,12 @@ export function MultipleChoiceQuestionCard({ number }: { number: number }) {
           <TextInput
             accessibilityLabel={`${letter} seçeneği`}
             style={[styles.input, questionStyles.optionInput]}
+            {...input?.(`options.${letter}`)}
           />
           <ExamAnswerButton
             label={`${letter} seçeneğini doğru cevap olarak işaretle`}
-            checked={answer === letter}
-            onPress={() => setAnswer(letter)}
+            checked={(formAnswer?.value ?? answer) === letter}
+            onPress={() => (formAnswer?.onChangeText ?? setAnswer)(letter)}
           />
         </View>
       ))}

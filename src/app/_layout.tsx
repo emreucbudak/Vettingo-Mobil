@@ -1,4 +1,5 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createAppServices } from "../composition/createAppServices";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -53,13 +54,16 @@ function Routes() {
   );
 }
 export default function RootLayout() {
+  const [queryClient] = useState(() => new QueryClient());
   // Fast Refresh must rebuild services when their composition changes.
   const services = useMemo(() => createAppServices(), []);
   return (
     <SafeAreaProvider>
-      <AppProvider services={services}>
-        <Routes />
-      </AppProvider>
+      <QueryClientProvider client={queryClient}>
+        <AppProvider services={services}>
+          <Routes />
+        </AppProvider>
+      </QueryClientProvider>
     </SafeAreaProvider>
   );
 }

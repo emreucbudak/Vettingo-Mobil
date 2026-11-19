@@ -7,14 +7,22 @@ import {
   styles,
 } from "../../../../shared/presentation/components/ui";
 
+export type ExamQuestionCardProps = {
+  number: number;
+  input?: (
+    name: "questionText" | "weight" | "answer" | `options.${string}`,
+  ) => Pick<React.ComponentProps<typeof Field>, "value" | "onChangeText">;
+};
+
 export function ExamQuestionCard({
   number,
+  input,
   children,
-}: React.PropsWithChildren<{ number: number }>) {
+}: React.PropsWithChildren<ExamQuestionCardProps>) {
   return (
     <Card>
       <Title small>Soru {number}</Title>
-      <Field label="Soru Metni" multiline />
+      <Field label="Soru Metni" multiline {...input?.("questionText")} />
       {children}
       <View style={[styles.row, questionStyles.weightRow]}>
         <Text style={styles.label}>Soru Ağırlığı</Text>
@@ -22,6 +30,7 @@ export function ExamQuestionCard({
           accessibilityLabel="Soru Ağırlığı"
           keyboardType="number-pad"
           style={[styles.input, questionStyles.weightInput]}
+          {...input?.("weight")}
         />
       </View>
     </Card>

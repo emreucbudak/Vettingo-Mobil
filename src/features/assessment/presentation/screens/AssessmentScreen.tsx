@@ -23,7 +23,7 @@ export default function AssessmentScreen() {
   const [finishOpen, setFinishOpen] = useState(false);
   useEffect(() => {
     dispatch({ type: "start-assessment" });
-  }, [dispatch]); // Remounts resume the stored deadline.
+  }, [dispatch]); 
   useEffect(() => {
     if (assessment.finished) return;
     const timer = setInterval(
