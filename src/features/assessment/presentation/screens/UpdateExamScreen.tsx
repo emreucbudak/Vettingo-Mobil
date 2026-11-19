@@ -1,37 +1,52 @@
-import React, { useState } from "react";
+import React from "react";
+import { Text } from "react-native";
 import { AppShell } from "../../../../core/presentation/layout/AppShell";
 import { useApp } from "../../../../core/presentation/state/AppProvider";
+import { Button, styles } from "../../../../shared/presentation/components/ui";
 import { MultipleChoiceQuestionCard } from "../../../exam-questions/presentation/components/MultipleChoiceQuestionCard";
 import { TrueFalseQuestionCard } from "../../../exam-questions/presentation/components/TrueFalseQuestionCard";
 import { ExamSettingsCard } from "../../../exam-settings/presentation/components/ExamSettingsCard";
-import {
-  UpdateExamQuestionTypePicker,
-  type UpdateExamQuestionType,
-} from "../components/UpdateExamQuestionTypePicker";
+import { UpdateExamQuestionTypePicker } from "../components/UpdateExamQuestionTypePicker";
+import { examTitleLimits } from "../model/examFormSchema";
+import { useExamForm } from "../model/useExamForm";
 
 export default function UpdateExamScreen() {
   const { session } = useApp();
-  const [questions, setQuestions] = useState<
-    { id: number; type: UpdateExamQuestionType }[]
-  >([]);
+  const { fields, addQuestion, input, validate, validation } =
+    useExamForm("update");
 
   if (!session) return null;
 
-  function addQuestion(type: UpdateExamQuestionType) {
-    setQuestions((current) => [...current, { id: current.length + 1, type }]);
-  }
-
   return (
-    <AppShell roleBar={session.role} activeItem="profile" title="Sınavı Düzenle">
-      <ExamSettingsCard />
-      <UpdateExamQuestionTypePicker onAddQuestion={addQuestion} />
-      {questions.map(({ id, type }) =>
-        type === "multiple-choice" ? (
-          <MultipleChoiceQuestionCard key={id} number={id} />
-        ) : (
-          <TrueFalseQuestionCard key={id} number={id} />
-        ),
+    <AppShell
+      roleBar={session.role}
+      activeItem="profile"
+      title="Sınavı Düzenle"
+      actions={<Button label="Formu Doğrula" onPress={() => void validate()} />}
+    >
+      {validation && (
+        <Text
+          accessibilityRole={validation.error ? "alert" : undefined}
+          style={validation.error ? styles.error : styles.muted}
+        >
+          {validation.message}
+        </Text>
       )}
+      <ExamSettingsCard input={input} titleMaxLength={examTitleLimits.update} />
+      <UpdateExamQuestionTypePicker onAddQuestion={addQuestion} />
+      {fields.map(({ id, type }, index) => {
+        const QuestionCard =
+          type === "multiple-choice"
+            ? MultipleChoiceQuestionCard
+            : TrueFalseQuestionCard;
+        return (
+          <QuestionCard
+            key={id}
+            number={index + 1}
+            input={(name) => input(`questions.${index}.${name}`)}
+          />
+        );
+      })}
     </AppShell>
   );
 }
