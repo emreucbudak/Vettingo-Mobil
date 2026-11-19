@@ -7,10 +7,9 @@ import { PersonalizedJobsQueries } from "../src/features/jobs/application/usecas
 import { ApiPersonalizedJobsRepository } from "../src/features/jobs/data/repositories/ApiPersonalizedJobsRepository";
 import PersonalizedJobsScreen from "../src/features/jobs/presentation/screens/PersonalizedJobsScreen";
 
-const posting = {
+const backendPosting = {
   jobPostingId: "019a16b1-1234-7000-8000-000000000001",
   companyId: "019a16b1-1234-7000-8000-000000000002",
-  companyName: "Vettingo Teknoloji",
   title: "Backend Developer",
   cityName: "İstanbul",
   employmentType: 2,
@@ -19,6 +18,10 @@ const posting = {
   maximumExperienceYear: 5,
   minSalary: 50000,
   maxSalary: 75000,
+};
+const posting = {
+  ...backendPosting,
+  companyName: "Vettingo Teknoloji",
   requirementSkills: { "C#": 3, SQL: 2 },
 };
 const response = (body: unknown, status = 200) =>
@@ -39,7 +42,7 @@ test("loads job card data with the token and no company request", async () => {
 
   expect(request).toHaveBeenCalledTimes(1);
   expect(request).toHaveBeenCalledWith(
-    "http://localhost:5257/api/personalized-job-postings/user",
+    "http://localhost:5257/api/personalized-job-postings",
     {
       method: "GET",
       headers: {
@@ -58,6 +61,23 @@ test("loads job card data with the token and no company request", async () => {
     experienceRange: { min: 2, max: 5 },
     salary: "50.000–75.000 ₺",
     skills: ["C#", "SQL"],
+  });
+});
+
+test("loads postings without a company name or required skills", async () => {
+  const request = jest
+    .fn<ReturnType<typeof fetch>, Parameters<typeof fetch>>()
+    .mockResolvedValue(response([backendPosting]));
+  const repository = new ApiPersonalizedJobsRepository(request);
+
+  const jobs = await repository.list({ accessToken: "candidate-token" });
+
+  expect(jobs[0]).toMatchObject({
+    id: backendPosting.jobPostingId,
+    title: backendPosting.title,
+    company: "",
+    skills: [],
+    tags: [],
   });
 });
 
