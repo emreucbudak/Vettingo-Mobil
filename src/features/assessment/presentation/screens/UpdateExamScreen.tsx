@@ -12,8 +12,14 @@ import { useExamForm } from "../model/useExamForm";
 
 export default function UpdateExamScreen() {
   const { session } = useApp();
-  const { fields, addQuestion, input, validate, validation } =
-    useExamForm("update");
+  const {
+    fields,
+    addQuestion,
+    input,
+    validate,
+    validationPassed,
+    questionListError,
+  } = useExamForm("update");
 
   if (!session) return null;
 
@@ -24,16 +30,14 @@ export default function UpdateExamScreen() {
       title="Sınavı Düzenle"
       actions={<Button label="Formu Doğrula" onPress={() => void validate()} />}
     >
-      {validation && (
-        <Text
-          accessibilityRole={validation.error ? "alert" : undefined}
-          style={validation.error ? styles.error : styles.muted}
-        >
-          {validation.message}
-        </Text>
-      )}
+      {validationPassed && <Text style={styles.muted}>Form doğrulandı.</Text>}
       <ExamSettingsCard input={input} titleMaxLength={examTitleLimits.update} />
       <UpdateExamQuestionTypePicker onAddQuestion={addQuestion} />
+      {questionListError && (
+        <Text accessibilityRole="alert" style={styles.error}>
+          {questionListError}
+        </Text>
+      )}
       {fields.map(({ id, type }, index) => {
         const QuestionCard =
           type === "multiple-choice"

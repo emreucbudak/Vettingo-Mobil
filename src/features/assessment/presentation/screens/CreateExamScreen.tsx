@@ -21,8 +21,14 @@ const questionTypes = [
 
 export default function CreateExamScreen() {
   const { session } = useApp();
-  const { fields, addQuestion, input, validate, validation } =
-    useExamForm("create");
+  const {
+    fields,
+    addQuestion,
+    input,
+    validate,
+    validationPassed,
+    questionListError,
+  } = useExamForm("create");
 
   if (!session) return null;
 
@@ -32,14 +38,7 @@ export default function CreateExamScreen() {
       activeItem="profile"
       actions={<Button label="Formu Doğrula" onPress={() => void validate()} />}
     >
-      {validation && (
-        <Text
-          accessibilityRole={validation.error ? "alert" : undefined}
-          style={validation.error ? styles.error : styles.muted}
-        >
-          {validation.message}
-        </Text>
-      )}
+      {validationPassed && <Text style={styles.muted}>Form doğrulandı.</Text>}
       <ExamSettingsCard input={input} titleMaxLength={examTitleLimits.create} />
       <View style={examStyles.row}>
         {questionTypes.map(({ type, label }) => (
@@ -65,6 +64,11 @@ export default function CreateExamScreen() {
           </Pressable>
         ))}
       </View>
+      {questionListError && (
+        <Text accessibilityRole="alert" style={styles.error}>
+          {questionListError}
+        </Text>
+      )}
       {fields.map(({ id, type }, index) => {
         const QuestionCard =
           type === "multiple-choice"

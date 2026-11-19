@@ -10,7 +10,10 @@ export function ExamSettingsCard({
 }: {
   input?: (
     name: SettingsField,
-  ) => Pick<React.ComponentProps<typeof Field>, "value" | "onChangeText">;
+  ) => Pick<
+    React.ComponentProps<typeof Field>,
+    "value" | "onChangeText" | "error"
+  >;
   titleMaxLength?: number;
 }) {
   return (
