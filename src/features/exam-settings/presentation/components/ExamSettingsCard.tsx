@@ -6,17 +6,19 @@ type SettingsField = "title" | "durationMinutes" | "passingScore";
 
 export function ExamSettingsCard({
   input,
+  titleMaxLength = 150,
 }: {
   input?: (
     name: SettingsField,
   ) => Pick<React.ComponentProps<typeof Field>, "value" | "onChangeText">;
+  titleMaxLength?: number;
 }) {
   return (
     <Card>
       <Field
         label="Sınav Adı"
         placeholder="Sınav adını girin"
-        maxLength={150}
+        maxLength={titleMaxLength}
         {...input?.("title")}
       />
       <View style={settingsStyles.row}>

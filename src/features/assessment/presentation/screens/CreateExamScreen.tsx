@@ -1,73 +1,46 @@
 import React from "react";
 import { Ionicons } from "@expo/vector-icons";
-import {
-  get,
-  useFieldArray,
-  useForm,
-  useWatch,
-  type FieldPathByValue,
-} from "react-hook-form";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { AppShell } from "../../../../core/presentation/layout/AppShell";
 import { useApp } from "../../../../core/presentation/state/AppProvider";
-import { colors, styles } from "../../../../shared/presentation/components/ui";
+import {
+  Button,
+  colors,
+  styles,
+} from "../../../../shared/presentation/components/ui";
 import { ExamSettingsCard } from "../../../exam-settings/presentation/components/ExamSettingsCard";
 import { MultipleChoiceQuestionCard } from "../../../exam-questions/presentation/components/MultipleChoiceQuestionCard";
 import { TrueFalseQuestionCard } from "../../../exam-questions/presentation/components/TrueFalseQuestionCard";
+import { examTitleLimits } from "../model/examFormSchema";
+import { useExamForm } from "../model/useExamForm";
 
 const questionTypes = [
   { type: "multiple-choice", label: "Çoktan Seçmeli" },
   { type: "true-false", label: "Doğru / Yanlış" },
 ] as const;
 
-type QuestionType = (typeof questionTypes)[number]["type"];
-
-type ExamFormValues = {
-  title: string;
-  durationMinutes: string;
-  passingScore: string;
-  questions: {
-    type: QuestionType;
-    questionText: string;
-    weight: string;
-    answer: string;
-    options: Record<string, string>;
-  }[];
-};
-
 export default function CreateExamScreen() {
   const { session } = useApp();
-  const { control, setValue } = useForm<ExamFormValues>({
-    defaultValues: {
-      title: "",
-      durationMinutes: "",
-      passingScore: "",
-      questions: [],
-    },
-  });
-  const { fields, append } = useFieldArray({ control, name: "questions" });
-  const values = useWatch({ control });
+  const { fields, addQuestion, input, validate, validation } =
+    useExamForm("create");
 
   if (!session) return null;
 
-  function input(name: FieldPathByValue<ExamFormValues, string>) {
-    return {
-      value: get(values, name, "") as string,
-      onChangeText: (value: string) =>
-        setValue(name, value, { shouldDirty: true }),
-    };
-  }
-
-  function addQuestion(type: QuestionType) {
-    append(
-      { type, questionText: "", weight: "", answer: "", options: {} },
-      { shouldFocus: false },
-    );
-  }
-
   return (
-    <AppShell roleBar={session.role} activeItem="profile">
-      <ExamSettingsCard input={input} />
+    <AppShell
+      roleBar={session.role}
+      activeItem="profile"
+      actions={<Button label="Formu Doğrula" onPress={() => void validate()} />}
+    >
+      {validation && (
+        <Text
+          accessibilityRole={validation.error ? "alert" : undefined}
+          style={validation.error ? styles.error : styles.muted}
+        >
+          {validation.message}
+        </Text>
+      )}
+      <ExamSettingsCard input={input} titleMaxLength={examTitleLimits.create} />
       <View style={examStyles.row}>
         {questionTypes.map(({ type, label }) => (
           <Pressable
