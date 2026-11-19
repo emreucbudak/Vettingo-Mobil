@@ -22,21 +22,31 @@ export function MultipleChoiceQuestionCard({
   return (
     <ExamQuestionCard number={number} input={input}>
       <Text style={styles.label}>Seçenekler</Text>
-      {optionLetters.map((letter) => (
-        <View key={letter} style={styles.row}>
-          <Text style={styles.label}>{letter}</Text>
-          <TextInput
-            accessibilityLabel={`${letter} seçeneği`}
-            style={[styles.input, questionStyles.optionInput]}
-            {...input?.(`options.${letter}`)}
-          />
-          <ExamAnswerButton
-            label={`${letter} seçeneğini doğru cevap olarak işaretle`}
-            checked={(formAnswer?.value ?? answer) === letter}
-            onPress={() => (formAnswer?.onChangeText ?? setAnswer)(letter)}
-          />
-        </View>
-      ))}
+      {optionLetters.map((letter) => {
+        const { error, ...optionInput } = input?.(`options.${letter}`) ?? {};
+        return (
+          <View key={letter}>
+            <View style={styles.row}>
+              <Text style={styles.label}>{letter}</Text>
+              <TextInput
+                accessibilityLabel={`${letter} seçeneği`}
+                style={[styles.input, questionStyles.optionInput]}
+                {...optionInput}
+              />
+              <ExamAnswerButton
+                label={`${letter} seçeneğini doğru cevap olarak işaretle`}
+                checked={(formAnswer?.value ?? answer) === letter}
+                onPress={() => (formAnswer?.onChangeText ?? setAnswer)(letter)}
+              />
+            </View>
+            {error && (
+              <Text accessibilityRole="alert" style={styles.error}>
+                {error}
+              </Text>
+            )}
+          </View>
+        );
+      })}
     </ExamQuestionCard>
   );
 }

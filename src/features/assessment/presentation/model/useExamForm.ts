@@ -16,15 +16,15 @@ import {
 } from "./examFormSchema";
 
 export function useExamForm(mode: "create" | "update") {
-  const [validation, setValidation] = useState<{
-    error: boolean;
-    message: string;
-  } | null>(null);
-  const { control, setValue, handleSubmit } = useForm<
-    ExamFormValues,
-    unknown,
-    ValidatedExamFormValues
-  >({
+  const [validationPassed, setValidationPassed] = useState(false);
+  const {
+    control,
+    getFieldState,
+    handleSubmit,
+    setValue,
+    trigger,
+    formState: { errors, isSubmitted },
+  } = useForm<ExamFormValues, unknown, ValidatedExamFormValues>({
     resolver: zodResolver(
       mode === "create" ? createExamFormSchema : updateExamFormSchema,
     ),
@@ -41,9 +41,16 @@ export function useExamForm(mode: "create" | "update") {
   function input(name: FieldPathByValue<ExamFormValues, string>) {
     return {
       value: get(values, name, "") as string,
+      error: getFieldState(name).error?.message,
       onChangeText: (value: string) => {
         setValue(name, value, { shouldDirty: true });
-        setValidation(null);
+        setValidationPassed(false);
+        if (isSubmitted) {
+          const [group, index] = name.split(".");
+          void trigger(
+            group === "questions" ? `questions.${Number(index)}` : name,
+          );
+        }
       },
     };
   }
@@ -53,34 +60,24 @@ export function useExamForm(mode: "create" | "update") {
       { type, questionText: "", weight: "", answer: "", options: {} },
       { shouldFocus: false },
     );
-    setValidation(null);
+    setValidationPassed(false);
   }
 
   const validate = handleSubmit(
-    () => setValidation({ error: false, message: "Form doğrulandı." }),
-    (errors) => {
-      const message =
-        errors.title?.message ??
-        errors.durationMinutes?.message ??
-        errors.passingScore?.message ??
-        errors.questions?.root?.message ??
-        errors.questions?.message ??
-        fields
-          .map((_, index) => {
-            const error = errors.questions?.[index];
-            if (!error) return undefined;
-            const issue =
-              error.questionText?.message ??
-              error.weight?.message ??
-              error.answer?.message ??
-              "Soru seçeneklerini kontrol edin.";
-            return `Soru ${index + 1}: ${issue}`;
-          })
-          .find(Boolean) ??
-        "Sınav bilgilerini kontrol edin.";
-      setValidation({ error: true, message });
-    },
+    () => setValidationPassed(true),
+    () => setValidationPassed(false),
   );
+  const questionListError =
+    fields.length === 0
+      ? (errors.questions?.root?.message ?? errors.questions?.message)
+      : undefined;
 
-  return { fields, addQuestion, input, validate, validation };
+  return {
+    fields,
+    addQuestion,
+    input,
+    validate,
+    validationPassed,
+    questionListError,
+  };
 }
